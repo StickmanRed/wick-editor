@@ -3,7 +3,7 @@
   "version": "1.19.3",
   "author": "Wicklets LLC",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://stickmanred.github.io/wick-editor",
   "main": "./public/electron.js",
   "repository": {
     "type": "git",
@@ -101,7 +101,7 @@
     "eject": "react-scripts eject",
     "dist": "electron-builder",
     "start": "react-scripts start",
-    "build": "react-scripts build && cp CNAME_editor ./build/CNAME;",
+    "build": "react-scripts build",
     "build-engine": "cd engine; mkdir dist/; gulp; cp -a dist/. ../public/corelibs/wick-engine/",
     "build-engine-windows": "cd engine & mkdir dist  2>nul &    gulp & xcopy /EY dist\\. ..\\public\\corelibs\\wick-engine\\",
     "test": "react-scripts test",
