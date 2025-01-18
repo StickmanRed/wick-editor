@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2021.1.6.13.37.59";
+var WICK_ENGINE_BUILD_VERSION = "2021.1.18.12.6.20";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -49128,6 +49128,20 @@ Wick.Base = class {
     return Wick.ObjectCache.objectNeedsAutosave(this);
   }
   /**
+   * Signals if an object is removed from the project while playing.
+   * This is a temprary variable.
+   * @type {boolean}
+   */
+
+
+  get removed() {
+    return typeof this._removed === 'undefined' ? false : this._removed;
+  }
+
+  set removed(bool) {
+    this._removed = bool;
+  }
+  /**
    * Returns the classname of a Wick Base object.
    * @type {string}
    */
@@ -57085,7 +57099,6 @@ Wick.Clip = class extends Wick.Tickable {
 
     this._playedOnce = false;
     this._isSynced = false;
-    this._removed = false;
     this._transformation = args.transformation || new Wick.Transformation();
     this.cursor = 'default';
     this._isClone = false;
@@ -57173,18 +57186,6 @@ Wick.Clip = class extends Wick.Tickable {
     } else {
       this.timeline.playheadPosition = 1;
     }
-  }
-  /**
-   * Signals if an object is removed.
-   */
-
-
-  get removed() {
-    return this._removed;
-  }
-
-  set removed(bool) {
-    this._removed = bool;
   }
   /**
    * Determines whether or not the clip is the currently focused clip in the project.
@@ -57449,7 +57450,8 @@ Wick.Clip = class extends Wick.Tickable {
   remove() {
     // Don't attempt to remove if the object has already been removed.
     // (This is caused by calling remove() multiple times on one object inside a script.)
-    if (!this.parent) return; // Force unload to run now, before object is removed;
+    if (!this.parent || this._willBeRemoved) return;
+    this._willBeRemoved = true; // Force unload to run now, before object is removed;
 
     this.runScript('unload'); // Remove from the clones array.
 
