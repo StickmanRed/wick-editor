@@ -105,6 +105,8 @@ Wick.Selection = class extends Wick.Base {
             "fullRotations",
             "scaleX",
             "scaleY",
+            "skewX",
+            "skewY",
             "animationType",
             "singleFrameNumber",
             "isSynced",
@@ -627,6 +629,50 @@ Wick.Selection = class extends Wick.Base {
     }
 
     /**
+     * The skew of the selection on the X axis.
+     * @type {number}
+     */
+    get skewX() {
+        // Clips store their skew state internally
+        if (this.selectionType === "clip" || this.selectionType === "button") {
+            return this.getSelectedObject().transformation.skewX;
+        } else {
+            return this.view._widget.skewX * this.scaleX / this.scaleY;
+        }
+    }
+
+    set skewX(skewX) {
+        // Clips store their skew state internally
+        if (this.selectionType === "clip" || this.selectionType === "button") {
+            this.getSelectedObject().skewX = skewX;
+        } else {
+            this.view._widget.skewX = skewX * this.scaleY / this.scaleX;
+        }
+    }
+
+    /**
+     * The skew of the selection on the Y axis.
+     * @type {number}
+     */
+    get skewY() {
+        // Clips store their skew state internally
+        if (this.selectionType === "clip" || this.selectionType === "button") {
+            return this.getSelectedObject().transformation.skewY;
+        } else {
+            return this.view._widget.skewY * this.scaleY / this.scaleX;
+        }
+    }
+
+    set skewY(skewY) {
+        // Clips store their skew state internally
+        if (this.selectionType === "clip" || this.selectionType === "button") {
+            this.getSelectedObject().skewY = skewY;
+        } else {
+            this.view._widget.skewY = skewY * this.scaleX / this.scaleY;
+        }
+    }
+
+    /**
      * Determines if a clip is synced to the timeline.
      */
     get isSynced () {
@@ -976,6 +1022,7 @@ Wick.Selection = class extends Wick.Base {
         if (selectedObject instanceof Wick.Clip) {
             // Single clip selected: Use that Clip's transformation for the pivot point and rotation
             this._widgetRotation = selectedObject.transformation.rotation;
+            this.view._widget._shearFactor = new paper.Point(selectedObject.transformation.skewX, selectedObject.transformation.skewY);
             this._pivotPoint = {
                 x: selectedObject.transformation.x,
                 y: selectedObject.transformation.y,
@@ -983,6 +1030,7 @@ Wick.Selection = class extends Wick.Base {
         } else {
             // Path selected or multiple objects selected: Reset rotation and use center for pivot point
             this._widgetRotation = 0;
+            this.view._widget._shearFactor = new paper.Point(0, 0);
 
             var boundsCenter = this.view._getSelectedObjectsBounds().center;
             this._pivotPoint = {
