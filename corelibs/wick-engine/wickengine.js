@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.1.19.20.48.46";
+var WICK_ENGINE_BUILD_VERSION = "2025.1.19.20.52.55";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -62093,9 +62093,9 @@ class SelectionWidget {
     } else if (this.mod.action === 'rotate') {
       this.rotateSelection(this._ghost.rotation);
     } else if (this.mod.action === 'move-corner') {
-      this.scaleSelectionMod(this.mod.scaleFactor, this.mod.truePivot);
+      this.scaleSelection(this.mod.scaleFactor, this.mod.truePivot);
     } else {
-      this.transformSelectionMod(this.mod.transformMatrix, this.mod.truePivot);
+      this.transformSelection(this.mod.transformMatrix, this.mod.truePivot);
     }
 
     this._currentTransformation = null;
