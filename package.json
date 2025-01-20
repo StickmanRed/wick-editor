@@ -7,7 +7,7 @@
   "main": "./public/electron.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Wicklets/wick-editor.git"
+    "url": "https://github.com/StickmanRed/wick-editor.git"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.7.0",
