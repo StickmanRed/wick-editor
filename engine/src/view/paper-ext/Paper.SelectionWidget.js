@@ -382,9 +382,9 @@ class SelectionWidget {
         } else if (this.mod.action === 'rotate') {
             this.rotateSelection(this._ghost.rotation);
         } else if (this.mod.action === 'move-corner') {
-            this.scaleSelectionMod(this.mod.scaleFactor, this.mod.truePivot);
+            this.scaleSelection(this.mod.scaleFactor, this.mod.truePivot);
         } else {
-            this.transformSelectionMod(this.mod.transformMatrix, this.mod.truePivot);
+            this.transformSelection(this.mod.transformMatrix, this.mod.truePivot);
         }
     
         this._currentTransformation = null;
