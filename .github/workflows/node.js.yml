@@ -19,7 +19,7 @@ jobs:
         cache: 'npm'
     - name: Do the website thing please
       run: |
-        git config user.email "you@example.com"
-        git config user.name "funny bot"
+        git config user.email "catsrulemeow13@gmail.com"
+        git config user.name "catkitty12021"
         npm install
         npm run deploy
