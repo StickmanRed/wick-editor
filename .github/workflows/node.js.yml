@@ -21,6 +21,5 @@ jobs:
       run: |
         git config user.email "you@example.com"
         git config user.name "funny bot"
-        cd wick-editor
         npm install
         npm run deploy
