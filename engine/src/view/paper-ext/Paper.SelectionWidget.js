@@ -27,6 +27,8 @@ class SelectionWidget {
 
         this._layer = args.layer;
         this._item = new paper.Group({ insert:false });
+
+        this._shearFactor = new paper.Point(0, 0);
     }
 
     /**
@@ -111,6 +113,38 @@ class SelectionWidget {
     set height (height) {
         var d = height / this.height;
         this.scaleSelection(new paper.Point(1.0, d));
+    }
+
+    /**
+     *
+     */
+    get skewX () {
+        return this._shearFactor.x;
+    }
+
+    set skewX (skewX) {
+        var transform = new paper.Matrix();
+        transform.shear(this._shearFactor).invert();
+        this._shearFactor.x = skewX;
+        transform.shear(this._shearFactor);
+        
+        this.transformSelection(transform);
+    }
+
+    /**
+     *
+     */
+    get skewY () {
+        return this._shearFactor.y;
+    }
+
+    set skewY (skewY) {
+        var transform = new paper.Matrix();
+        transform.shear(this._shearFactor).invert();
+        this._shearFactor.y = skewY;
+        transform.shear(this._shearFactor);
+        
+        this.transformSelection(transform);
     }
 
     /**
@@ -226,6 +260,7 @@ class SelectionWidget {
             }
     
             this.mod.onePoint = new paper.Point(1, 1);
+            this.mod.zeroPoint = new paper.Point(0, 0);
             this.mod.initialPoint = e.point;
     
             this.mod.truePivot = this.pivot;
@@ -245,6 +280,8 @@ class SelectionWidget {
                 this.mod.vertical = item.data.handleEdge === 'topCenter' || item.data.handleEdge === 'bottomCenter';
     
                 this.mod.transformMatrix = new paper.Matrix();
+                this.mod.scaleFactor = this.mod.onePoint;
+                this.mod.shearFactor = this.mod.zeroPoint;
             } else {
                 this.mod.action = 'move-corner';
                 this.mod.scaleFactor = this.mod.onePoint;
@@ -345,6 +382,10 @@ class SelectionWidget {
                 }
     
                 this.mod.transformMatrix.scale(scaleFactor)
+                this.mod.scaleFactor = scaleFactor;
+            }
+            else {
+                this.mod.scaleFactor = this.mod.onePoint;
             }
             if (this.mod.modifiers.skew) {
                 // Shear is still a factor. Apply shear after scale to transform properly
@@ -360,8 +401,12 @@ class SelectionWidget {
                 if (this.mod.topLeft) {
                     shearFactor = shearFactor.multiply(-1);
                 };
-    
+
                 this.mod.transformMatrix.shear(shearFactor.transform(this.mod.transformMatrix.inverted()));
+                this.mod.shearFactor = shearFactor;
+            }
+            else {
+                this.mod.shearFactor = this.mod.zeroPoint;
             }
     
             this._ghost.translate(this.mod.truePivot.multiply(-1)).transform(this.mod.transformMatrix).translate(this.mod.truePivot);
@@ -385,6 +430,7 @@ class SelectionWidget {
             this.scaleSelection(this.mod.scaleFactor, this.mod.truePivot);
         } else {
             this.transformSelection(this.mod.transformMatrix, this.mod.truePivot);
+            this._shearFactor = this.mod.shearFactor;
         }
     
         this._currentTransformation = null;
@@ -414,6 +460,7 @@ class SelectionWidget {
      *
      */
     scaleSelection (scale, pivot) {
+        pivot = pivot ?? this.pivot;
         this._itemsInSelection.forEach(item => {
             item.rotate(-this.boxRotation, this.pivot);
             item.scale(scale, pivot);
@@ -428,6 +475,7 @@ class SelectionWidget {
      *
      */
     transformSelection (matrix, pivot) {
+        pivot = pivot ?? this.pivot;
         this._itemsInSelection.forEach(item => {
             item.rotate(-this.boxRotation, this.pivot);
             item.translate(pivot.multiply(-1)).transform(matrix).translate(pivot);
