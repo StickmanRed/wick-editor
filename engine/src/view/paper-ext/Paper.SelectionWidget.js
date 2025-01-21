@@ -361,7 +361,7 @@ class SelectionWidget {
                     shearFactor = shearFactor.multiply(-1);
                 };
     
-                this.mod.transformMatrix.shear(shearFactor.transform(this.mod.transformMatrix.inverted()));
+                this.mod.transformMatrix.shear(shearFactor/*.transform(this.mod.transformMatrix.inverted())*/);
             }
     
             this._ghost.translate(this.mod.truePivot.multiply(-1)).transform(this.mod.transformMatrix).translate(this.mod.truePivot);

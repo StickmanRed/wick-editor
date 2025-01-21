@@ -173,11 +173,17 @@ Wick.View.Clip = class extends Wick.View {
         //this._radius = null;
 
         this.group.pivot = new this.paper.Point(0,0);
-        this.group.position.x = this.model.transformation.x;
-        this.group.position.y = this.model.transformation.y;
-        this.group.scaling.x = this.model.transformation.scaleX;
-        this.group.scaling.y = this.model.transformation.scaleY;
-        this.group.rotation = this.model.transformation.rotation;
+
+        /* Order of Transformations:
+         * Translate
+         * Scale
+         * Skew
+         * Rotate
+         */
+        this.group.translate(this.model.transformation.x, this.model.transformation.y);
+        this.group.scale(this.model.transformation.scaleX, this.model.transformation.scaleY);
+        this.group.rotate(this.model.transformation.rotation);
+
         this.group.opacity = this.model.transformation.opacity;
     }
 
