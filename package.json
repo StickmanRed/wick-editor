@@ -20,7 +20,7 @@
     "electron-is-dev": "^1.2.0",
     "electron-updater": "^4.2.5",
     "file-saver": "^2.0.5",
-    "localforage": "^1.7.3",
+    "localforage": "^1.10.0",
     "node-sass": "^4.9.4",
     "query-string": "^6.9.0",
     "rc-slider": "^8.6.3",
