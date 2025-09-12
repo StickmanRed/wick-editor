@@ -165,6 +165,8 @@ class ToolSettings extends Component {
       brushModeIcon = 'brushmodeinside';
     } else if (brushMode === 'outside') {
       brushModeIcon = 'brushmodeoutside';
+    } else if (brushMode === 'merge') {
+      brushModeIcon = 'brushmodemerge';
     }
 
     return (
@@ -201,6 +203,12 @@ class ToolSettings extends Component {
                   type='checkbox'
                   value={this.props.getToolSetting('brushMode') === 'outside'}
                   onChange={() => this.props.setToolSetting('brushMode', 'outside')}/>
+                <ToolSettingsInput renderSize={this.props.renderSize}
+                  name='Merge'
+                  icon='brushmodemerge'
+                  type='checkbox'
+                  value={this.props.getToolSetting('brushMode') === 'merge'}
+                  onChange={() => this.props.setToolSetting('brushMode', 'merge')}/>
               </div>
             </div>
           </PopupMenu>
