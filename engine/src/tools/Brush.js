@@ -398,6 +398,31 @@ Wick.Tools.Brush = class extends Wick.Tool {
             return path;
         }
 
+        if(mode === 'merge') {
+            var merged = path.clone({insert:false});
+            
+            // Should iterate backwards through layer.children, where the last element is the front
+            layer.children.findLast(otherPath => {
+                var objectNotPath = (otherPath.className !== "Path") && (otherPath.className !== "CompoundPath");
+                var objectDifferentColor = !otherPath.fillColor.equals(path.fillColor);
+                if (objectNotPath || objectDifferentColor) {
+                    // Stops findLast from iterating
+                    return true;
+                }
+                merged = merged.unite(otherPath);
+                merged.remove();
+                
+                // Since we're merging the two paths, remove otherPath
+                if (otherPath.data.wickUUID) {
+                    var otherWickPath = this.project.getObjectByUUID(otherPath.data.wickUUID);
+                    otherWickPath.remove();
+                }
+                otherPath.remove();
+            });
+
+            return merged;
+        }
+
         var booleanOpName = {
             'inside': 'intersect',
             'outside': 'subtract',
