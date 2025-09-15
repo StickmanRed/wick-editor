@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/wick-editor/precache-manifest.f31569f2a7a95d9473125fb8b675cda6.js"
+  "/test/ /precache-manifest.106a213ff3b5e8489d83ea5a36cd35d0.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/wick-editor/index.html", {
+workbox.routing.registerNavigationRoute("/test/ /index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
