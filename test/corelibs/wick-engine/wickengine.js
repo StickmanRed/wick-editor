@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.12.16.7.48";
+var WICK_ENGINE_BUILD_VERSION = "2025.9.19.20.21.25";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -59330,13 +59330,13 @@ Wick.Tools.Brush = class extends Wick.Tool {
       }); // Should iterate backwards through layer.children, where the last element is the front
 
       layer.children.findLast(otherPath => {
-        var objectNotPath = otherPath.className !== "Path" && otherPath.className !== "CompoundPath";
-        var objectDifferentColor = !otherPath.fillColor.equals(path.fillColor);
-
-        if (objectNotPath || objectDifferentColor) {
-          // Stops findLast from iterating
-          return true;
-        }
+        if (otherPath.className !== "Path" && otherPath.className !== "CompoundPath" || // Object is not path
+        !otherPath.intersects(merged) || // Object is separate from merge group
+        !otherPath.fillColor.equals(path.fillColor) // Object has different style
+        ) {
+            // Stops findLast from iterating
+            return true;
+          }
 
         merged = merged.unite(otherPath);
         merged.remove(); // Since we're merging the two paths, remove otherPath
