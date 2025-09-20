@@ -403,9 +403,10 @@ Wick.Tools.Brush = class extends Wick.Tool {
             
             // Should iterate backwards through layer.children, where the last element is the front
             layer.children.findLast(otherPath => {
-                var objectNotPath = (otherPath.className !== "Path") && (otherPath.className !== "CompoundPath");
-                var objectDifferentColor = !otherPath.fillColor.equals(path.fillColor);
-                if (objectNotPath || objectDifferentColor) {
+                if ((otherPath.className !== "Path") && (otherPath.className !== "CompoundPath") || // Object is not path
+                    !otherPath.intersects(merged) || // Object is separate from merge group
+                    !otherPath.fillColor.equals(path.fillColor) // Object has different style
+                ) {
                     // Stops findLast from iterating
                     return true;
                 }
