@@ -68,7 +68,7 @@ class SelectionWidget {
     set transformMode (transformMode) {
         this._transformMode = transformMode;
         this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
-        this._freescaleMode = this._transformMode === 'freescale';
+        this._freescaleMode = this._transformMode !== 'uniform';
         this._skewscaleMode = this._transformMode === 'skewscale';
     }
 
