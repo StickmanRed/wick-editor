@@ -51,6 +51,11 @@ import iconPoint from 'resources/tool-icons/point.svg';
 import iconBrushPressure from 'resources/tool-icons/brushpressure.png';
 import iconRelativeBrushSize from 'resources/tool-icons/relativebrush.png';
 
+import iconCursorTransformModeUniform from 'resources/tool-icons/cursor-transform-mode-uniform.png';
+import iconCursorTransformModeFreescale from 'resources/tool-icons/cursor-transform-mode-freescale.png';
+import iconCursorTransformModeSkew from 'resources/tool-icons/cursor-transform-mode-skew.png';
+import iconCursorTransformModeSkewscale from 'resources/tool-icons/cursor-transform-mode-skewscale.png';
+
 import iconBrushModeNone from 'resources/tool-icons/brush-mode-none.png';
 import iconBrushModeInside from 'resources/tool-icons/brush-mode-inside.png';
 import iconBrushModeOutside from 'resources/tool-icons/brush-mode-outside.png';
@@ -290,6 +295,10 @@ const icons = {
   "mascotmarkdark": mascotMarkDark,
   "mascotmarkwhite": mascotMarkWhite,
   "mascot": mascot,
+  "cursortransformmodeuniform": iconCursorTransformModeUniform,
+  "cursortransformmodefreescale": iconCursorTransformModeFreescale,
+  "cursortransformmodeskew": iconCursorTransformModeSkew,
+  "cursortransformmodeskewscale": iconCursorTransformModeSkewscale,
   "brushmodenone": iconBrushModeNone,
   "brushmodeinside": iconBrushModeInside,
   "brushmodeoutside": iconBrushModeOutside,

@@ -81,6 +81,7 @@ class Editor extends EditorCore {
       scriptToEdit: "default",
       showCanvasActions: false,
       showBrushModes: false,
+      showCursorTransformModes: false,
       showCodeErrors: false,
       codeError: null,
       popoutOutlinerSize: 250,
@@ -614,6 +615,22 @@ class Editor extends EditorCore {
 
     this.setState({
       showBrushModes: state,
+      showCursorTransformModes: false
+    });
+  }
+
+  /**
+   * Opens and closes the cursor transform modes popover.
+   * @param {boolean} state - Optional. True will open the cursor transform modes menu, false will close.
+   */
+  toggleCursorTransformModes = (state) => {
+    if (state === undefined || (typeof state !== "boolean")) {
+      state = !this.state.showCursorTransformModes;
+    }
+
+    this.setState({
+      showBrushModes: false,
+      showCursorTransformModes: state
     });
   }
 
@@ -972,8 +989,10 @@ class Editor extends EditorCore {
                       getToolSettingRestrictions={this.getToolSettingRestrictions}
                       showCanvasActions={this.state.showCanvasActions}
                       showBrushModes={this.state.showBrushModes}
+                      showCursorTransformModes={this.state.showCursorTransformModes}
                       toggleCanvasActions={this.toggleCanvasActions}
                       toggleBrushModes={this.toggleBrushModes}
+                      toggleCursorTransformModes={this.toggleCursorTransformModes}
                       colorPickerType={this.state.colorPickerType}
                       changeColorPickerType={this.changeColorPickerType}
                       updateLastColors={this.updateLastColors}
