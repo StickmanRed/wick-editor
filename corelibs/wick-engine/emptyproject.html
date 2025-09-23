@@ -14,7 +14,7 @@
         <!-- The Wick Engine build is injected here during the engine build step (see gulpfile.js) -->
         <script>
             /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.22.16.57.56";
+var WICK_ENGINE_BUILD_VERSION = "2025.9.23.12.52.10";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -46890,6 +46890,11 @@ Wick.ToolSettings = class {
       type: "boolean",
       name: 'outsideClipShowBorder',
       default: false
+    }, {
+      type: "choice",
+      name: 'cursorTransformMode',
+      default: 'freescale',
+      options: ['freescale', 'uniform', 'skew', 'skewscale']
     }];
   }
   /**
@@ -59497,6 +59502,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     super.onMouseDown(e);
     if (!e.modifiers) e.modifiers = {};
     this.hitResult = this._updateHitResult(e);
+    this._widget.transformMode = this.getSetting('cursorTransformMode');
 
     if (this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {// Clicked the selection box GUI, do nothing
     } else if (this.hitResult.item && this._isItemSelected(this.hitResult.item)) {
@@ -61861,6 +61867,7 @@ class SelectionWidget {
     this._item = new paper.Group({
       insert: false
     });
+    this.transformMode = 'freescale';
   }
   /**
    * The item containing the widget GUI
@@ -61893,6 +61900,21 @@ class SelectionWidget {
 
   set boxRotation(boxRotation) {
     this._boxRotation = boxRotation;
+  }
+  /**
+   * The transformation mode of the widget.
+   */
+
+
+  get transformMode() {
+    return this._transformMode;
+  }
+
+  set transformMode(transformMode) {
+    this._transformMode = transformMode;
+    this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
+    this._freescaleMode = this._transformMode !== 'uniform';
+    this._skewscaleMode = this._transformMode === 'skewscale';
   }
   /**
    * The items currently inside the selection widget
@@ -62096,15 +62118,18 @@ class SelectionWidget {
         this.mod.action = 'move-corner';
         this.mod.scaleFactor = this.mod.onePoint;
       }
-    }
+    } // A === !B is XOR
+    // Skew when either the mode is 'skew' or Ctrl/Cmd is pressed. If both are true, don't skew
+    // Always scale from center unless Alt is pressed
+    // Scale freely when either the mode is 'freescale' or Shift is pressed. If both are true, scale uniformly
+    // Skew and scale perpendicularly when either the mode is 'skew-scale' or Shift is pressed. If both are true, do not scale
+
 
     this.mod.modifiers = {
-      skew: e.modifiers.command,
-      // Skew when Ctrl/Cmd pressed
+      skew: this._skewMode === !e.modifiers.command,
       center: !e.modifiers.alt,
-      // Always scale from center unless Alt pressed
-      freescale: !e.modifiers.shift // Never retain proportions unless Shift pressed
-
+      freescale: this._freescaleMode === !e.modifiers.shift,
+      skewscale: this._skewscaleMode === !e.modifiers.shift
     };
 
     if (this.mod.action === 'translate') {
@@ -62197,7 +62222,7 @@ class SelectionWidget {
       var currentPointRelative = e.point.rotate(-this.boxRotation, this.pivot);
       var initialPointRelative = this.mod.initialPoint.rotate(-this.boxRotation, this.pivot);
 
-      if (!this.mod.modifiers.skew || this.mod.modifiers.skew && e.modifiers.shift) {
+      if (!this.mod.modifiers.skew || this.mod.modifiers.skew && this.mod.modifiers.skewscale) {
         var scaleFactor = currentPointRelative.subtract(this.mod.truePivot).divide(initialPointRelative.subtract(this.mod.truePivot));
 
         if (this.mod.vertical) {
