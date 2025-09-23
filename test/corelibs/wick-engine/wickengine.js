@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.19.20.21.25";
+var WICK_ENGINE_BUILD_VERSION = "2025.9.22.19.32.35";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -46875,6 +46875,11 @@ Wick.ToolSettings = class {
       type: "boolean",
       name: 'outsideClipShowBorder',
       default: false
+    }, {
+      type: "choice",
+      name: 'cursorTransformMode',
+      default: 'freescale',
+      options: ['freescale', 'uniform', 'skew', 'skewscale']
     }];
   }
   /**
@@ -59327,16 +59332,38 @@ Wick.Tools.Brush = class extends Wick.Tool {
     if (mode === 'merge') {
       var merged = path.clone({
         insert: false
-      }); // Should iterate backwards through layer.children, where the last element is the front
+      });
+      var mergedStrokeColor = undefined;
+
+      function colorsAreEqual(color1, color2) {
+        if (color1 === null || color2 === null) {
+          // Return true if both are null
+          return color1 === color2;
+        } else {
+          // Bugfix: return true if their values in rgba are equal
+          // This prevents errors where two colors of different float precisions describe the same color
+          return color1.toCSS() === color2.toCSS();
+        }
+      } // Should iterate backwards through layer.children, where the last element is the front
+
 
       layer.children.findLast(otherPath => {
         if (otherPath.className !== "Path" && otherPath.className !== "CompoundPath" || // Object is not path
-        !otherPath.intersects(merged) || // Object is separate from merge group
-        !otherPath.fillColor.equals(path.fillColor) // Object has different style
+        !merged.intersects(otherPath) || // Object is separate from merge group
+        !colorsAreEqual(merged.fillColor, otherPath.fillColor) // Object has different fill color
         ) {
             // Stops findLast from iterating
             return true;
-          }
+          } else if (mergedStrokeColor === undefined) {
+          // Brush strokes don't have stroke colors, so use the stroke style of the first path it encounters
+          mergedStrokeColor = otherPath.strokeColor;
+          merged.strokeColor = mergedStrokeColor;
+          merged.strokeWidth = otherPath.strokeWidth;
+        } else if (!colorsAreEqual(mergedStrokeColor, otherPath.strokeColor) || merged.strokeWidth !== otherPath.strokeWidth) {
+          // Object has different stroke style
+          // Stops findLast from iterating
+          return true;
+        }
 
         merged = merged.unite(otherPath);
         merged.remove(); // Since we're merging the two paths, remove otherPath
@@ -59460,6 +59487,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     super.onMouseDown(e);
     if (!e.modifiers) e.modifiers = {};
     this.hitResult = this._updateHitResult(e);
+    this._widget.transformMode = this.getSetting('cursorTransformMode');
 
     if (this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {// Clicked the selection box GUI, do nothing
     } else if (this.hitResult.item && this._isItemSelected(this.hitResult.item)) {
@@ -61824,6 +61852,7 @@ class SelectionWidget {
     this._item = new paper.Group({
       insert: false
     });
+    this.transformMode = 'freescale';
   }
   /**
    * The item containing the widget GUI
@@ -61856,6 +61885,21 @@ class SelectionWidget {
 
   set boxRotation(boxRotation) {
     this._boxRotation = boxRotation;
+  }
+  /**
+   * The transformation mode of the widget.
+   */
+
+
+  get transformMode() {
+    return this._transformMode;
+  }
+
+  set transformMode(transformMode) {
+    this._transformMode = transformMode;
+    this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
+    this._freescaleMode = this._transformMode === 'freescale';
+    this._skewscaleMode = this._transformMode === 'skewscale';
   }
   /**
    * The items currently inside the selection widget
@@ -62059,15 +62103,18 @@ class SelectionWidget {
         this.mod.action = 'move-corner';
         this.mod.scaleFactor = this.mod.onePoint;
       }
-    }
+    } // A === !B is XOR
+    // Skew when either the mode is 'skew' or Ctrl/Cmd is pressed. If both are true, don't skew
+    // Always scale from center unless Alt is pressed
+    // Scale freely when either the mode is 'freescale' or Shift is pressed. If both are true, scale uniformly
+    // Skew and scale perpendicularly when either the mode is 'skew-scale' or Shift is pressed. If both are true, do not scale
+
 
     this.mod.modifiers = {
-      skew: e.modifiers.command,
-      // Skew when Ctrl/Cmd pressed
+      skew: this._skewMode === !e.modifiers.command,
       center: !e.modifiers.alt,
-      // Always scale from center unless Alt pressed
-      freescale: !e.modifiers.shift // Never retain proportions unless Shift pressed
-
+      freescale: this._freescaleMode === !e.modifiers.shift,
+      skewscale: this._skewscaleMode === !e.modifiers.shift
     };
 
     if (this.mod.action === 'translate') {
@@ -62160,7 +62207,7 @@ class SelectionWidget {
       var currentPointRelative = e.point.rotate(-this.boxRotation, this.pivot);
       var initialPointRelative = this.mod.initialPoint.rotate(-this.boxRotation, this.pivot);
 
-      if (!this.mod.modifiers.skew || this.mod.modifiers.skew && e.modifiers.shift) {
+      if (!this.mod.modifiers.skew || this.mod.modifiers.skew && this.mod.modifiers.skewscale) {
         var scaleFactor = currentPointRelative.subtract(this.mod.truePivot).divide(initialPointRelative.subtract(this.mod.truePivot));
 
         if (this.mod.vertical) {
