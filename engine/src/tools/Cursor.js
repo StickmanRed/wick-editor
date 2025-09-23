@@ -83,6 +83,8 @@ Wick.Tools.Cursor = class extends Wick.Tool {
 
         this.hitResult = this._updateHitResult(e);
 
+        this._widget.transformMode = this.getSetting('cursorTransformMode');
+
         if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Clicked the selection box GUI, do nothing
         } else if(this.hitResult.item && this._isItemSelected(this.hitResult.item)) {

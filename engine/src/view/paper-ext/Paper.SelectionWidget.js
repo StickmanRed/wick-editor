@@ -27,6 +27,7 @@ class SelectionWidget {
 
         this._layer = args.layer;
         this._item = new paper.Group({ insert:false });
+        this.transformMode = 'freescale';
     }
 
     /**
@@ -56,6 +57,19 @@ class SelectionWidget {
 
     set boxRotation (boxRotation) {
         this._boxRotation = boxRotation;
+    }
+
+    /**
+     * The transformation mode of the widget.
+     */
+    get transformMode () {
+        return this._transformMode;
+    }
+    set transformMode (transformMode) {
+        this._transformMode = transformMode;
+        this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
+        this._freescaleMode = this._transformMode === 'freescale';
+        this._skewscaleMode = this._transformMode === 'skewscale';
     }
 
     /**
@@ -251,10 +265,16 @@ class SelectionWidget {
             }
         }
     
+        // A === !B is XOR
+        // Skew when either the mode is 'skew' or Ctrl/Cmd is pressed. If both are true, don't skew
+        // Always scale from center unless Alt is pressed
+        // Scale freely when either the mode is 'freescale' or Shift is pressed. If both are true, scale uniformly
+        // Skew and scale perpendicularly when either the mode is 'skew-scale' or Shift is pressed. If both are true, do not scale
         this.mod.modifiers = {
-            skew: e.modifiers.command, // Skew when Ctrl/Cmd pressed
-            center: !e.modifiers.alt, // Always scale from center unless Alt pressed
-            freescale: !e.modifiers.shift // Never retain proportions unless Shift pressed
+            skew: this._skewMode === !e.modifiers.command,
+            center: !e.modifiers.alt,
+            freescale: this._freescaleMode === !e.modifiers.shift,
+            skewscale: this._skewscaleMode === !e.modifiers.shift
         }
     
         if (this.mod.action === 'translate') {
@@ -336,7 +356,7 @@ class SelectionWidget {
             var currentPointRelative = e.point.rotate(-this.boxRotation, this.pivot);
             var initialPointRelative = this.mod.initialPoint.rotate(-this.boxRotation, this.pivot);
     
-            if (!this.mod.modifiers.skew || (this.mod.modifiers.skew && e.modifiers.shift)) {
+            if (!this.mod.modifiers.skew || (this.mod.modifiers.skew && this.mod.modifiers.skewscale)) {
                 var scaleFactor = currentPointRelative.subtract(this.mod.truePivot).divide(initialPointRelative.subtract(this.mod.truePivot));
                 if (this.mod.vertical) {
                     scaleFactor.x = 1;

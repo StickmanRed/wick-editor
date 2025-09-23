@@ -129,6 +129,11 @@ Wick.ToolSettings = class {
             type: "boolean",
             name: 'outsideClipShowBorder',
             default: false
+        }, {
+            type: "choice",
+            name: 'cursorTransformMode',
+            default: 'freescale',
+            options: ['freescale', 'uniform', 'skew', 'skewscale']
         }];
     }
 
