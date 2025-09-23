@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.22.19.32.35";
+var WICK_ENGINE_BUILD_VERSION = "2025.9.23.12.52.10";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -61898,7 +61898,7 @@ class SelectionWidget {
   set transformMode(transformMode) {
     this._transformMode = transformMode;
     this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
-    this._freescaleMode = this._transformMode === 'freescale';
+    this._freescaleMode = this._transformMode !== 'uniform';
     this._skewscaleMode = this._transformMode === 'skewscale';
   }
   /**
