@@ -400,13 +400,37 @@ Wick.Tools.Brush = class extends Wick.Tool {
 
         if(mode === 'merge') {
             var merged = path.clone({insert:false});
+            var mergedStrokeColor = undefined;
+
+            function colorsAreEqual(color1, color2) {
+                if (color1 === null || color2 === null) {
+                    // Return true if both are null
+                    return color1 === color2;
+                }
+                else {
+                    // Bugfix: return true if their values in rgba are equal
+                    // This prevents errors where two colors of different float precisions describe the same color
+                    return color1.toCSS() === color2.toCSS();
+                }
+            }
             
             // Should iterate backwards through layer.children, where the last element is the front
             layer.children.findLast(otherPath => {
                 if ((otherPath.className !== "Path") && (otherPath.className !== "CompoundPath") || // Object is not path
-                    !otherPath.intersects(merged) || // Object is separate from merge group
-                    !otherPath.fillColor.equals(path.fillColor) // Object has different style
+                    !merged.intersects(otherPath) || // Object is separate from merge group
+                    (!colorsAreEqual(merged.fillColor, otherPath.fillColor)) // Object has different fill color
                 ) {
+                    // Stops findLast from iterating
+                    return true;
+                }
+                else if (mergedStrokeColor === undefined) {
+                    // Brush strokes don't have stroke colors, so use the stroke style of the first path it encounters
+                    mergedStrokeColor = otherPath.strokeColor;
+                    merged.strokeColor = mergedStrokeColor;
+                    merged.strokeWidth = otherPath.strokeWidth;
+                }
+                else if (!colorsAreEqual(mergedStrokeColor, otherPath.strokeColor) || (merged.strokeWidth !== otherPath.strokeWidth)) {
+                    // Object has different stroke style
                     // Stops findLast from iterating
                     return true;
                 }
