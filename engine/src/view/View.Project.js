@@ -273,6 +273,10 @@ Wick.View.Project = class extends Wick.View {
             tool.on('eyedropperPickedColor', (e) => {
                 this.fireEvent('eyedropperPickedColor', e);
             });
+            tool.on('canvasRequestRender', (e, actionName) => {
+                this.applyChanges();
+                this.fireEvent('canvasRequestRender', e, actionName);
+            });
         }
 
         this.model.tools.none.activate();
@@ -442,6 +446,12 @@ Wick.View.Project = class extends Wick.View {
         // Render selection
         this.model.selection.view.render();
         this.paper.project.addLayer(this.model.selection.view.layer);
+
+        // Render gradient GUI if active
+        if (this.model.activeTool === this.model.tools.gradienttool) {
+            this.model.tools.gradienttool._updateZoom(this.zoom);
+            this.paper.project.addLayer(this.model.tools.gradienttool.layer);
+        }
 
         // Render GUI Layer
         this._svgGUILayer.removeChildren();

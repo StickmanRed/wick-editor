@@ -102,6 +102,7 @@ gulp.task("default", function() {
       'src/tools/Eraser.js',
       'src/tools/Eyedropper.js',
       'src/tools/FillBucket.js',
+      'src/tools/GradientTool.js',
       'src/tools/Interact.js',
       'src/tools/Line.js',
       'src/tools/None.js',
