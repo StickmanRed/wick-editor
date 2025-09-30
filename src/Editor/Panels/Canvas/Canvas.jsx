@@ -58,6 +58,10 @@ class Canvas extends Component {
     project.view.on('eyedropperPickedColor', (e) => {
       this.props.onEyedropperPickedColor(e);
     });
+
+    project.view.on('canvasRequestRender', (e, actionName) => {
+      this.props.projectDidChange({ actionName: `Canvas Request Render ${actionName}`, skipHistory: true });
+    });
   }
 
   updateCanvas = (project) => {

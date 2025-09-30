@@ -1171,6 +1171,7 @@ class Editor extends EditorCore {
                       <Inspector
                         getToolSetting={this.getToolSetting}
                         setToolSetting={this.setToolSetting}
+                        getActiveTool={this.getActiveTool}
                         getSelectionType={this.getSelectionType}
                         getAllSoundAssets={this.getAllSoundAssets}
                         getAllSelectionAttributes={this.getAllSelectionAttributes}

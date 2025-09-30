@@ -54,7 +54,7 @@ class Toolbox extends Component {
       brushes: {active: 'brush', options: ['brush', 'pencil']},
       eraser: 'eraser',
       shapes: {active: 'rectangle', options: ['rectangle', 'ellipse', 'line', 'text']},
-      tools: {active: 'fillbucket', options: ['fillbucket', 'eyedropper']}
+      tools: {active: 'fillbucket', options: ['fillbucket', 'eyedropper', 'gradienttool']}
     }
   }
 
@@ -101,6 +101,7 @@ class Toolbox extends Component {
         <ToolButton {...this.toolButtonProps} keyMap={this.props.keyMap} name='text' tooltip="Text" />
         <ToolButton {...this.toolButtonProps} keyMap={this.props.keyMap} name='fillbucket' tooltip="Fill Bucket" />
         <ToolButton {...this.toolButtonProps} keyMap={this.props.keyMap} name='eyedropper' tooltip="Eyedropper" />
+        <ToolButton {...this.toolButtonProps} keyMap={this.props.keyMap} name='gradienttool' tooltip="Gradient Tool" />
       </div>
     )
   }

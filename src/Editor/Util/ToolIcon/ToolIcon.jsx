@@ -34,6 +34,7 @@ import iconFillBucket from 'resources/toolbar-icons/fillbucket.svg';
 import iconPathCursor from 'resources/toolbar-icons/pathcursor.svg';
 import iconSpectrum from 'resources/toolbar-icons/spectrum.svg';
 import iconSwatches from 'resources/toolbar-icons/swatches.svg';
+import iconGradientTool from 'resources/toolbar-icons/gradienttool.svg';
 
 import iconDelete from 'resources/toolbar-icons/delete.svg';
 import iconUndo from 'resources/toolbar-icons/undo.svg';
@@ -86,6 +87,7 @@ import iconIntersect from 'resources/tool-icons/intersect.svg';
 import iconUnite from 'resources/tool-icons/unite.svg';
 import iconAddDark from 'resources/asset-library-icons/add-icon-dark.svg';
 import iconUploadDark from 'resources/asset-library-icons/upload-icon-dark.svg';
+import iconReverseGradient from 'resources/asset-library-icons/reverse-gradient.svg';
 
 // Assets
 import iconImage from 'resources/tool-icons/image.svg';
@@ -206,6 +208,7 @@ const icons = {
   "zoomout":iconZoomOut,
   "fillbucket": iconFillBucket,
   "pathcursor": iconPathCursor,
+  "gradienttool": iconGradientTool,
   "copy": iconCopy,
   "paste": iconPaste,
   "text": iconText,
@@ -337,7 +340,8 @@ const icons = {
   "codeBack": iconCodeBack,
   "redheart": iconRedHeart,
   "add-dark": iconAddDark,
-  "upload-dark": iconUploadDark
+  "upload-dark": iconUploadDark,
+  "reverse-gradient": iconReverseGradient
 }
 
 var classNames = require('classnames');

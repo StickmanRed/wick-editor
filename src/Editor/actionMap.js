@@ -190,6 +190,20 @@ class ActionMapInterface extends Object {
         id: 'action-distribute-selection-to-layers',
         color: 'active-blue'
       },
+      reverseGradient: {
+        icon: 'reverse-gradient',
+        tooltip: 'Reverse Gradient',
+        action: this.editor.reverseGradient,
+        id: 'action-reverse-gradient',
+        color: 'active-blue'
+      },
+      deleteGradientStop: {
+        icon: 'delete',
+        tooltip: 'Delete Stop',
+        action: this.editor.deleteGradientStop,
+        id: 'action-delete-gradient-stop',
+        color: 'red'
+      },
     }
   }
 }
