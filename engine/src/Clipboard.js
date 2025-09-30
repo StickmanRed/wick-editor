@@ -155,6 +155,11 @@ Wick.Clipboard = class {
         var objectsToSelect = [];
 
         this.clipboardData.map(data => {
+            // (Credit: H.A.) Copy-pasting a gradient-filled path creates two paths with the same UUID. Assign new UUIDs to all objects
+			let newUUIDforObj = uuidv4();
+			let oldUUID = data.object.uuid;
+			data.object = JSON.parse(JSON.stringify(data.object).replaceAll(oldUUID, newUUIDforObj));
+
             return Wick.Base.import(data, project).copy();
         }).forEach(object => {
             // Paste frames at the position of the playhead
