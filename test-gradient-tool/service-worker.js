@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/wick-editor/test-gradient-tool/precache-manifest.9d2b45b5b6cf24aecaba2faf540edc0e.js"
+  "/wick-editor/test-gradient-tool/precache-manifest.8e10443d0fb3eed430e0ab6071329634.js"
 );
 
 workbox.clientsClaim();

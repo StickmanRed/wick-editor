@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "414a5ede91a003eca8b4",
+    "revision": "87b07d7d748c90fcb308",
     "url": "/wick-editor/test-gradient-tool/static/css/main.b5fd4967.chunk.css"
   },
   {
-    "revision": "414a5ede91a003eca8b4",
-    "url": "/wick-editor/test-gradient-tool/static/js/main.414a5ede.chunk.js"
+    "revision": "87b07d7d748c90fcb308",
+    "url": "/wick-editor/test-gradient-tool/static/js/main.87b07d7d.chunk.js"
   },
   {
     "revision": "1e6988742e3b47ca9f97",
@@ -112,8 +112,8 @@ self.__precacheManifest = [
     "url": "/wick-editor/test-gradient-tool/static/media/swatches.2f1c23e9.svg"
   },
   {
-    "revision": "0a1650233d2340d862a665ad37bccc9a",
-    "url": "/wick-editor/test-gradient-tool/static/media/gradienttool.0a165023.svg"
+    "revision": "2f03b033777850f1e7782f4d6b921fc9",
+    "url": "/wick-editor/test-gradient-tool/static/media/gradienttool.2f03b033.svg"
   },
   {
     "revision": "599d3aaa9ad0fbbc7e94b50a505c753c",
@@ -268,8 +268,8 @@ self.__precacheManifest = [
     "url": "/wick-editor/test-gradient-tool/static/media/upload-icon-dark.bc201a21.svg"
   },
   {
-    "revision": "3e18e49fb2e4928fa8a6642b95cc7a2c",
-    "url": "/wick-editor/test-gradient-tool/static/media/reverse-gradient.3e18e49f.svg"
+    "revision": "d74a1a82e2ddc5a2e017e370d78b260d",
+    "url": "/wick-editor/test-gradient-tool/static/media/reverse-gradient.d74a1a82.svg"
   },
   {
     "revision": "35c8ded661f6bb463c5ecccdf1e04612",
@@ -740,7 +740,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test-gradient-tool/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "5bcd581f34113cf48c5a5670914e0f0c",
+    "revision": "a94eef1a5a38b0ee073cd3cd4dfa99ee",
     "url": "/wick-editor/test-gradient-tool/index.html"
   }
 ];
