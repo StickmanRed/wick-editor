@@ -14,7 +14,7 @@
         <!-- The Wick Engine build is injected here during the engine build step (see gulpfile.js) -->
         <script>
             /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.30.13.45.40";
+var WICK_ENGINE_BUILD_VERSION = "2025.10.3.19.15.54";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -60340,7 +60340,7 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
           // Hacky way to make sure color stop is selectable
           stop.data.isTransparent = true;
           stop.fillColor.alpha = 0.001;
-        }
+        } else stop.data.isTransparent = false;
       };
 
       stopGroup.data.selectStop = (select = true) => {

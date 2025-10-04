@@ -106,6 +106,7 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
                     stop.data.isTransparent = true;
                     stop.fillColor.alpha = 0.001;
                 }
+                else stop.data.isTransparent = false;
             }
             stopGroup.data.selectStop = (select=true) => {
                 stop.scaling = select ? this.STOP_SELECTED_SCALING : 1;
