@@ -56,6 +56,11 @@ import rotateIcon from 'resources/mobile-inspector-icons/rotate-icon.svg';
 import strokeIcon from 'resources/mobile-inspector-icons/strokewidth-icon.svg';
 import opacityIcon from 'resources/mobile-inspector-icons/opacity-icon.svg';
 import fillOpacityIcon from 'resources/mobile-inspector-icons/fillopacity-icon.svg';
+import gradientStartXIcon from 'resources/mobile-inspector-icons/gradient-startX-icon.svg';
+import gradientStartYIcon from 'resources/mobile-inspector-icons/gradient-startY-icon.svg';
+import gradientEndXIcon from 'resources/mobile-inspector-icons/gradient-endX-icon.svg';
+import gradientEndYIcon from 'resources/mobile-inspector-icons/gradient-endY-icon.svg';
+import gradientStopOffsetIcon from 'resources/mobile-inspector-icons/gradient-stopoffset-icon.svg';
 
 class MobileInspector extends Component {
   constructor(props) {
@@ -70,6 +75,10 @@ class MobileInspector extends Component {
       'convertSelectionToClip': ["path", "text", "image", "multipath", "multiclip", "multicanvas"],
       'editTimeline': ["clip", "button"],
       'addAssetToCanvas': ["imageasset"],
+      'convertLayersToClip': ["layer", "multilayer"],
+      'distributeSelectionToLayers': ["path", "text", "image", "multipath", "multiclip", "multicanvas"],
+      'reverseGradient': ["gradientfill", "gradientstroke"],
+      'deleteGradientStop': ["gradientstop"],
     }
 
     /**
@@ -80,6 +89,8 @@ class MobileInspector extends Component {
       "multiframe": "Multi-Frame",
       "tween": "Tween",
       "multitween": "Multi-Tween",
+      "layer": "Layer",
+      "multilayer": "Multi-Layer",
       "clip": "Clip",
       "button": "Button",
       "path": "Path",
@@ -94,6 +105,9 @@ class MobileInspector extends Component {
       "multiassetmixed": "Multi-Asset",
       "multisoundasset": "Multi-Asset Sound",
       "multiimageasset": "Multi-Asset Image",
+      "gradientfill": "Fill",
+      "gradientstroke": "Stroke",
+      "gradientstop": "Gradient Stop",
       "unknown": "",
     }
 
@@ -105,13 +119,16 @@ class MobileInspector extends Component {
       tweenSettings: { label: 'tweenSsettings', icon: settingsIcon, iconActive: settingsIconActive, iconAlt: "setting icon" },
       animationSettings: { label: 'animationSettings', icon: settingsIcon, iconActive: settingsIconActive, iconAlt: "setting icon" },
       assetSettings: { label: 'assetSettings', icon: settingsIcon, iconActive: settingsIconActive, iconAlt: "setting icon" }, 
-      actions: {label: 'actions', icon: actionIcon, iconActive: actionIconActive, iconAlt: "action icon"}
+      actions: {label: 'actions', icon: actionIcon, iconActive: actionIconActive, iconAlt: "action icon"},
+      gradientTarget: { label: 'gradientTarget', icon: styleIcon, iconActive: styleIconActive, iconAlt: "style icon" },
+      gradientStop: { label: 'gradientStop', icon: styleIcon, iconActive: styleIconActive, iconAlt: "style icon" }
     }
     
     this.inspectorTabs = {
       "frame": ['frameSettings', 'identifier'],
       "layer": ['identifier'],
       "multiframe": [], // just name
+      "multilayer": [],
       "tween": ['tweenSettings'],
       "multitween": ['tweenSettings'],
       "clip": ['transform', 'animationSettings', 'identifier'],
@@ -129,6 +146,9 @@ class MobileInspector extends Component {
       "multiassetmixed": ['assetSettings'],
       "multisoundasset": ['assetSettings'],
       "multiimageasset": ['assetSettings'],
+      "gradientfill": ['gradientTarget'],
+      "gradientstroke": ['gradientTarget'],
+      "gradientstop": ['gradientStop'],
       "unknown": [],
     }
 
@@ -156,6 +176,21 @@ class MobileInspector extends Component {
   }
 
   /**
+   * Returns the value of a requested gradient tool attribute.
+   * @param {string} attribute Gradient tool attribute to retrieve.
+   * @return {string|number|undefined} Value of the attribute to retrieve. Returns undefined if attribute does not exist or gradient tool is inactive.
+   */
+  getGradientToolAttribute = (attribute) => {
+    var activeTool = this.props.getActiveTool();
+    if (activeTool.name === 'gradienttool') {
+      return activeTool[attribute];
+    }
+    else {
+      return undefined;
+    }
+  }
+
+  /**
    * Sets the value of the selection fillColor opacity.
    * @param  {string} attribute Selection attribute to retrieve.
    */
@@ -175,6 +210,18 @@ class MobileInspector extends Component {
       return this.setSelectionFillColorOpacity(newValue);
     }
     this.props.setSelectionAttribute(attribute, newValue);
+  }
+
+  /**
+   * Updates the value of a gradient tool attribute.
+   * @param {string} attribute Name of the gradient tool attribute to update.
+   * @param {string|number} newValue New value of the attribute to update.
+   */
+  setGradientToolAttribute = (attribute, newValue) => {
+    var activeTool = this.props.getActiveTool();
+    if (activeTool.name === 'gradienttool') {
+      activeTool[attribute] = newValue;
+    }
   }
 
   // Inspector Row Types
@@ -663,6 +710,90 @@ class MobileInspector extends Component {
     );
   }
 
+  renderGradientEndpointProperties = () => {
+    return (
+      <div className="inspector-item">
+        <MobileInspectorSelector
+          tooltip="Type"
+          type="select"
+          isSearchable={true}
+          value={this.getGradientToolAttribute('gradientType')}
+          options={[{label: 'linear', value: 'linear'}, {label: 'radial', value: 'radial'}]}
+          onChange={(val) => {
+            this.setGradientToolAttribute('gradientType', val.value)
+          }} />
+        <MobileInspectorDualNumericInput
+          tooltip1="Start X"
+          tooltip2="Start Y"
+          icon1={gradientStartXIcon}
+          iconAlt1="Gradient Start X Icon"
+          icon2={gradientStartYIcon}
+          iconAlt2="Gradient Start Y Icon"
+          val1={this.getGradientToolAttribute('originX')}
+          val2={this.getGradientToolAttribute('originY')}
+          onChange1={(val) => this.setGradientToolAttribute('originX', val)}
+          onChange2={(val) => this.setGradientToolAttribute('originY', val)}
+          id="inspector-gradient-tool-origin" />
+        <MobileInspectorDualNumericInput
+          tooltip1="End X"
+          tooltip2="End Y"
+          icon1={gradientEndXIcon}
+          iconAlt1="Gradient End X Icon"
+          icon2={gradientEndYIcon}
+          iconAlt2="Gradient End Y Icon"
+          val1={this.getGradientToolAttribute('destinationX')}
+          val2={this.getGradientToolAttribute('destinationY')}
+          onChange1={(val) => this.setGradientToolAttribute('destinationX', val)}
+          onChange2={(val) => this.setGradientToolAttribute('destinationY', val)}
+          id="inspector-gradient-tool-destination" />
+        <MobileInspectorNumericInput
+          tooltip="Angle"
+          val={this.getGradientToolAttribute('lineAngle')}
+          onChange={(val) => this.setGradientToolAttribute('lineAngle', val)}
+          id="inspector-gradient-tool-line-angle" />
+      </div>
+    )
+  }
+
+  renderGradientStopProperties = () => {
+    return (
+      <div className="mobile-inspector-item mobile-inspector-item-style">
+        <div className="mobile-inspector-col-left">
+          <MobileInspectorColor
+            tooltip="Color"
+            val={this.getGradientToolAttribute('stopColor').toCSS()}
+            onChange={(col) => this.setGradientToolAttribute('stopColor', col)}
+            id={"mobile-inspector-gradient-stop-color"}
+            divider={false}
+            colorPickerType={this.props.colorPickerType}
+            changeColorPickerType={this.props.changeColorPickerType}
+            updateLastColors={this.props.updateLastColors}
+            lastColorsUsed={this.props.lastColorsUsed}
+          />
+        </div>
+
+        <div className="mobile-inspector-col-right">
+          <MobileInspectorNumericSlider
+            tooltip="Opacity"
+            icon={fillOpacityIcon}
+            val={this.getGradientToolAttribute('stopOpacity')}
+            onChange={(val) => this.setGradientToolAttribute('stopOpacity', val)}
+            divider={false}
+            inputProps={{ min: 0, max: 1, step: 0.01 }}
+          />
+          <MobileInspectorNumericSlider
+            tooltip="Stop Offset"
+            icon={gradientStopOffsetIcon}
+            val={this.getGradientToolAttribute('stopOffset')}
+            onChange={(val) => this.setGradientToolAttribute('stopOffset', val)}
+            divider={false}
+            inputProps={{ min: 0, max: 1, step: 0.01 }}
+          />
+        </div>
+      </div>
+    )
+  }
+
   // Selection contents and properties
 
   /**
@@ -774,7 +905,8 @@ class MobileInspector extends Component {
 
   getAllActions = () => {
     let actions = [];
-    let selectionType = this.props.getSelectionType();
+    var activeTool = this.props.getActiveTool();
+    let selectionType = (activeTool.name === 'gradienttool') ? activeTool.selectionType : this.props.getSelectionType();
 
     Object.keys(this.actionRules).forEach(action => {
       let actionList = this.actionRules[action];
@@ -800,7 +932,8 @@ class MobileInspector extends Component {
   }
 
   render() {
-    let selectionType = this.props.getSelectionType();
+    var activeTool = this.props.getActiveTool();
+    let selectionType = (activeTool.name === 'gradienttool') ? activeTool.selectionType : this.props.getSelectionType();
     if (!Object.keys(this.inspectorTabs).includes(selectionType)) selectionType = "unknown";
 
     let tabNames = this.inspectorTabs[selectionType].concat([]);
@@ -833,6 +966,8 @@ class MobileInspector extends Component {
             {tabNames.includes('tweenSettings') && <Fragment>{this.renderTween()}</Fragment>}
             {tabNames.includes('animationSettings') && <Fragment>{this.renderAnimationSetting()}</Fragment>}
             {tabNames.includes('assetSettings') && <Fragment>{this.renderAsset()}</Fragment>}
+            {tabNames.includes('gradientTarget') && <Fragment>{this.renderGradientEndpointProperties()}</Fragment>}
+            {tabNames.includes('gradientStop') && <Fragment>{this.renderGradientStopProperties()}</Fragment>}
             {tabNames.includes('actions') && <Fragment>{this.renderActions()}</Fragment>}
           </MobileInspectorTabbedInterface>}
       </div>

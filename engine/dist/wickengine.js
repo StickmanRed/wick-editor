@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.10.3.19.15.54";
+var WICK_ENGINE_BUILD_VERSION = "2025.10.6.19.50.15";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -60401,6 +60401,7 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
   get targetOnScreen() {
     if (!this.target || !this.target.data.wickUUID) return false;
     if (!this.targetWick || !this.targetWick.parent) return false;
+    if (!this.targetWick.parentClip || this.targetWick.parentClip !== this.project.focus) return false;
     return this.targetWick.onScreen;
   }
 
@@ -60703,14 +60704,21 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
     if (this.target && hitObject && hitObject.data.gradientGUI && hitObject !== this._endpointLine && hitObject !== this._previewStop) {
       // If the gradient tool has a target path and mouse clicked the GUI, and the endpoint line was not clicked
       if (hitObject.data.gradientGUI === 'stop') {
-        // If a color stop was clicked, select the color stop
-        this.selectedStop = hitObject; //this._updateGUISelectedStops();
-        // Request a render from the project, but don't add to undo/redo stack
+        // A color stop was clicked
+        if (e.modifiers.shift) {
+          // Delete the color stop
+          this.selectedStop = hitObject;
+          this.deleteSelectedColorStop();
+        } else {
+          // Select the color stop
+          this.selectedStop = hitObject; //this._updateGUISelectedStops();
+          // Request a render from the project, but don't add to undo/redo stack
 
-        this.fireEvent({
-          eventName: 'canvasRequestRender',
-          actionName: 'gradientToolSelectStop'
-        });
+          this.fireEvent({
+            eventName: 'canvasRequestRender',
+            actionName: 'gradientToolSelectStop'
+          });
+        }
       } else if (hitObject === this._origin || hitObject === this._destination) {
         // Request a render from the project, but don't add to undo/redo stack
         // Switch inspector to gradient
@@ -60950,7 +60958,9 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
   }
 
   _stopSetOffset(stop, offset) {
-    // Set offset in data
+    // Clamp offset
+    offset = Math.max(Math.min(offset, 1), 0); // Set offset in data
+
     stop.data.stopOffset = offset; // Update position accordingly
 
     stop.position = this._positionOffsetEndpointLine(offset);
