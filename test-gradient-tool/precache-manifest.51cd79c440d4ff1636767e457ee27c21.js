@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "311a5b6bc4796d44e9b4",
-    "url": "/wick-editor/test-gradient-tool/static/css/main.e5adcb3d.chunk.css"
+    "revision": "f9fb627b418ce1310676",
+    "url": "/wick-editor/test-gradient-tool/static/css/main.66bd78d0.chunk.css"
   },
   {
-    "revision": "311a5b6bc4796d44e9b4",
-    "url": "/wick-editor/test-gradient-tool/static/js/main.311a5b6b.chunk.js"
+    "revision": "f9fb627b418ce1310676",
+    "url": "/wick-editor/test-gradient-tool/static/js/main.f9fb627b.chunk.js"
   },
   {
-    "revision": "a5c2032a31c54c616c9b",
-    "url": "/wick-editor/test-gradient-tool/static/css/1.85ebf892.chunk.css"
+    "revision": "a42a8ceb825384eaa99d",
+    "url": "/wick-editor/test-gradient-tool/static/css/1.5e08d9ce.chunk.css"
   },
   {
-    "revision": "a5c2032a31c54c616c9b",
-    "url": "/wick-editor/test-gradient-tool/static/js/1.a5c2032a.chunk.js"
+    "revision": "a42a8ceb825384eaa99d",
+    "url": "/wick-editor/test-gradient-tool/static/js/1.a42a8ceb.chunk.js"
   },
   {
     "revision": "738843ec3e9fd3fcd2da",
@@ -178,6 +178,14 @@ self.__precacheManifest = [
   {
     "revision": "5c9dd1b1e8aab988facdaa4783783f6c",
     "url": "/wick-editor/test-gradient-tool/static/media/relativebrush.5c9dd1b1.png"
+  },
+  {
+    "revision": "21f4b82b2cdba33aa3f7e0f835728709",
+    "url": "/wick-editor/test-gradient-tool/static/media/gradient-mode-none.21f4b82b.svg"
+  },
+  {
+    "revision": "8f9e7c91bec38361eaae99485ce40b63",
+    "url": "/wick-editor/test-gradient-tool/static/media/gradient-mode-uniform.8f9e7c91.svg"
   },
   {
     "revision": "755e2c136b8e1db91199b4cfd888b94d",
@@ -760,7 +768,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test-gradient-tool/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "8c05dfcf3e118d6dcfcbdd880e0e33c9",
+    "revision": "1807657857b72bb49e921910123a6c34",
     "url": "/wick-editor/test-gradient-tool/index.html"
   }
 ];
