@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.10.8.12.10.21";
+var WICK_ENGINE_BUILD_VERSION = "2025.10.9.13.21.33";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -60320,7 +60320,12 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
       });
 
       stopGroup.data.getColor = () => {
-        if (stop.data.isTransparent) return new this.paper.Color(0, 0, 0, 0);
+        if (stop.data.isTransparent) {
+          var color = stop.fillColor.clone();
+          color.alpha = 0;
+          return color;
+        }
+
         return stop.fillColor;
       };
 
