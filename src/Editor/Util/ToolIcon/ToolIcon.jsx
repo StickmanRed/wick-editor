@@ -56,6 +56,8 @@ import iconCursorTransformModeUniform from 'resources/tool-icons/cursor-transfor
 import iconCursorTransformModeFreescale from 'resources/tool-icons/cursor-transform-mode-freescale.png';
 import iconCursorTransformModeSkew from 'resources/tool-icons/cursor-transform-mode-skew.png';
 import iconCursorTransformModeSkewscale from 'resources/tool-icons/cursor-transform-mode-skewscale.png';
+import iconGradientToolModeNone from 'resources/tool-icons/gradient-mode-none.svg';
+import iconGradientToolModeUniform from 'resources/tool-icons/gradient-mode-uniform.svg';
 
 import iconBrushModeNone from 'resources/tool-icons/brush-mode-none.png';
 import iconBrushModeInside from 'resources/tool-icons/brush-mode-inside.png';
@@ -302,6 +304,8 @@ const icons = {
   "cursortransformmodefreescale": iconCursorTransformModeFreescale,
   "cursortransformmodeskew": iconCursorTransformModeSkew,
   "cursortransformmodeskewscale": iconCursorTransformModeSkewscale,
+  "gradienttoolmodenone": iconGradientToolModeNone,
+  "gradienttoolmodeuniform": iconGradientToolModeUniform,
   "brushmodenone": iconBrushModeNone,
   "brushmodeinside": iconBrushModeInside,
   "brushmodeoutside": iconBrushModeOutside,

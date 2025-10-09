@@ -82,6 +82,7 @@ class Editor extends EditorCore {
       showCanvasActions: false,
       showBrushModes: false,
       showCursorTransformModes: false,
+      showGradientToolModes: false,
       showCodeErrors: false,
       codeError: null,
       popoutOutlinerSize: 250,
@@ -615,7 +616,8 @@ class Editor extends EditorCore {
 
     this.setState({
       showBrushModes: state,
-      showCursorTransformModes: false
+      showCursorTransformModes: false,
+      showGradientToolModes: false
     });
   }
 
@@ -630,7 +632,24 @@ class Editor extends EditorCore {
 
     this.setState({
       showBrushModes: false,
-      showCursorTransformModes: state
+      showCursorTransformModes: state,
+      showGradientToolModes: false
+    });
+  }
+
+  /**
+   * Opens and closes the gradient modes popover.
+   * @param {boolean} state - Optional. True will open the gradient modes menu, false will close.
+   */
+  toggleGradientToolModes = (state) => {
+    if (state === undefined || (typeof state !== "boolean")) {
+      state = !this.state.showGradientToolModes;
+    }
+
+    this.setState({
+      showBrushModes: false,
+      showCursorTransformModes: false,
+      showGradientToolModes: state
     });
   }
 
@@ -990,9 +1009,11 @@ class Editor extends EditorCore {
                       showCanvasActions={this.state.showCanvasActions}
                       showBrushModes={this.state.showBrushModes}
                       showCursorTransformModes={this.state.showCursorTransformModes}
+                      showGradientToolModes={this.state.showGradientToolModes}
                       toggleCanvasActions={this.toggleCanvasActions}
                       toggleBrushModes={this.toggleBrushModes}
                       toggleCursorTransformModes={this.toggleCursorTransformModes}
+                      toggleGradientToolModes={this.toggleGradientToolModes}
                       colorPickerType={this.state.colorPickerType}
                       changeColorPickerType={this.changeColorPickerType}
                       updateLastColors={this.updateLastColors}

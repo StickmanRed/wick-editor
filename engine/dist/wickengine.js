@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.10.6.19.50.15";
+var WICK_ENGINE_BUILD_VERSION = "2025.10.8.12.10.21";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -46884,6 +46884,11 @@ Wick.ToolSettings = class {
       name: 'cursorTransformMode',
       default: 'freescale',
       options: ['freescale', 'uniform', 'skew', 'skewscale']
+    }, {
+      type: "choice",
+      name: 'gradientToolMode',
+      default: 'none',
+      options: ['none', 'uniform']
     }];
   }
   /**
@@ -60229,6 +60234,7 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
     this.CURSOR_CREATE_STOP = 'url("cursors/gradMove.png") 32 32, auto';
     this.CURSOR_MOVE = 'url("cursors/move.png") 32 32, auto';
     this.currentCursorIcon = this.CURSOR_DEFAULT;
+    this.transformMode = 'none';
     this.hitResult = new this.paper.HitResult();
     this.targetResult = new this.paper.HitResult();
     this.selectedStop = null;
@@ -60657,6 +60663,14 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
       this.targetResult = new this.paper.HitResult();
 
       this._destroyGUI();
+    } else {
+      // Check if target's color changed
+      if (!this.lastColor || !this.lastColor.equals(this.target.fillColor)) {
+        // Reset GUI
+        this.lastColor = this.target.fillColor;
+
+        this._setupGUI();
+      }
     }
   }
 
@@ -60700,6 +60714,7 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
     this.hitResult = this._updateHitResult(e);
     var hitObject = this.hitObject;
     this.selectedStop = null;
+    this.transformMode = this.getSetting('gradientToolMode');
 
     if (this.target && hitObject && hitObject.data.gradientGUI && hitObject !== this._endpointLine && hitObject !== this._previewStop) {
       // If the gradient tool has a target path and mouse clicked the GUI, and the endpoint line was not clicked
@@ -60725,7 +60740,12 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
         this.fireEvent({
           eventName: 'canvasRequestRender',
           actionName: 'gradientToolSelectEndpoint'
-        });
+        }); // Save this endpoint data
+
+        this.lastOrigin = this.endpoints.origin;
+        this.lastDestination = this.endpoints.destination;
+        this.lastEndpointVector = this.lineVector.clone();
+        this.lastEndpointVector.length += 2 * this.SCALED_ENDPOINT_OFFSET_LENGTH;
       }
 
       this.cursor = this.CURSOR_MOVE;
@@ -60806,7 +60826,29 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
         this._stopSetOffset(this.selectedStop, offset);
       } else {
         // Else, an endpoint is being dragged, move it to the mouse cursor
-        if (this.hitObject === this._origin) this._origin.position = e.point;else if (this.hitObject === this._destination) this._destination.position = e.point; // Update the rest of the GUI
+        // (Mode is uniform) XOR (Shift is pressed)
+        var moveBothEndpoints = this.transformMode === 'uniform' === !e.modifiers.shift;
+
+        if (this.hitObject === this._origin) {
+          this._origin.position = e.point;
+
+          if (moveBothEndpoints) {
+            this._destination.position = e.point.add(this.lastEndpointVector);
+          } else {
+            var endpointOffset = this.lastDestination.subtract(e.point).normalize(this.SCALED_ENDPOINT_OFFSET_LENGTH);
+            this._destination.position = this.lastDestination.add(endpointOffset);
+          }
+        } else if (this.hitObject === this._destination) {
+          this._destination.position = e.point;
+
+          if (moveBothEndpoints) {
+            this._origin.position = e.point.subtract(this.lastEndpointVector);
+          } else {
+            var endpointOffset = e.point.subtract(this.lastOrigin).normalize(this.SCALED_ENDPOINT_OFFSET_LENGTH);
+            this._origin.position = this.lastOrigin.subtract(endpointOffset);
+          }
+        } // Update the rest of the GUI
+
 
         this._updateGUIFromEndpoints();
       } // Push changes to the tool's target

@@ -53,6 +53,7 @@ class EditorCore extends Component {
       // See: https://github.com/reactstrap/reactstrap/issues/894
       this.toggleBrushModes(false);
       this.toggleCursorTransformModes(false);
+      this.toggleGradientToolModes(false);
 
       this.projectDidChange({ actionName: "Set Active Tool: " + newTool });
     }

@@ -181,9 +181,11 @@ class Toolbox extends Component {
           getToolSettingRestrictions={this.props.getToolSettingRestrictions}
           toggleBrushModes={this.props.toggleBrushModes}
           toggleCursorTransformModes={this.props.toggleCursorTransformModes}
+          toggleGradientToolModes={this.props.toggleGradientToolModes}
           showCanvasActions={this.props.showCanvasActions}
           showBrushModes={this.props.showBrushModes}
           showCursorTransformModes={this.props.showCursorTransformModes}
+          showGradientToolModes={this.props.showGradientToolModes}
         />
 
         {this.renderCanvasActions()}
@@ -209,9 +211,11 @@ class Toolbox extends Component {
             getToolSettingRestrictions={this.props.getToolSettingRestrictions}
             toggleBrushModes={this.props.toggleBrushModes}
             toggleCursorTransformModes={this.props.toggleCursorTransformModes}
+            toggleGradientToolModes={this.props.toggleGradientToolModes}
             showCanvasActions={this.props.showCanvasActions}
             showBrushModes={this.props.showBrushModes}
-            showCursorTransformModes={this.props.showCursorTransformModes}/>
+            showCursorTransformModes={this.props.showCursorTransformModes}
+            showGradientToolModes={this.props.showGradientToolModes}/>
             {this.renderCanvasActions()}
         </div>
 
@@ -238,9 +242,11 @@ class Toolbox extends Component {
             getToolSettingRestrictions={this.props.getToolSettingRestrictions}
             toggleBrushModes={this.props.toggleBrushModes}
             toggleCursorTransformModes={this.props.toggleCursorTransformModes}
+            toggleGradientToolModes={this.props.toggleGradientToolModes}
             showCanvasActions={this.props.showCanvasActions}
             showBrushModes={this.props.showBrushModes}
-            showCursorTransformModes={this.props.showCursorTransformModes}/>
+            showCursorTransformModes={this.props.showCursorTransformModes}
+            showGradientToolModes={this.props.showGradientToolModes}/>
         </div>
 
       </div>

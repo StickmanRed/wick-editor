@@ -38,6 +38,7 @@ class ToolSettings extends Component {
       "line": this.renderLineSettings,
       "text": this.renderTextSettings,
       "fillbucket": this.renderFillbucketSettings,
+      "gradienttool": this.renderGradientToolSettings,
     }
   }
 
@@ -137,6 +138,14 @@ class ToolSettings extends Component {
     );
   }
 
+  renderGradientToolSettings = () => {
+    return (
+      <div className='settings-input-container'>
+        {this.renderGradientToolTransformMode()}
+      </div>
+    )
+  }
+
   renderCursorTransformMode = () => {
     let transformModeIcon = 'cursortransformmodefreescale';
     let transformMode = this.props.getToolSetting('cursorTransformMode');
@@ -189,6 +198,49 @@ class ToolSettings extends Component {
                   type='checkbox'
                   value={this.props.getToolSetting('cursorTransformMode') === 'skewscale'}
                   onChange={() => this.props.setToolSetting('cursorTransformMode', 'skewscale')}/>
+              </div>
+            </div>
+          </PopupMenu>
+        </div>
+    )
+  }
+
+  renderGradientToolTransformMode = () => {
+    let transformModeIcon = 'gradienttoolmodenone';
+    let transformMode = this.props.getToolSetting('gradientToolMode');
+
+    if (transformMode === 'uniform') {
+      transformModeIcon = 'gradienttoolmodeuniform';
+    }
+
+    return (
+        <div id="gradient-tool-modes-popover-button">
+          <ToolSettingsInput renderSize={this.props.renderSize}
+            name='Transform Modes'
+            icon={transformModeIcon}
+            type='checkbox'
+            value={this.props.showGradientToolModes}
+            onChange={this.props.toggleGradientToolModes}/>
+          <PopupMenu
+            mobile={this.props.isMobile}
+            isOpen={this.props.showGradientToolModes && !this.props.previewPlaying}
+            toggle={this.props.toggleGradientToolModes}
+            target="gradient-tool-modes-popover-button"
+            className={"more-canvas-actions-popover"}>
+            <div className="gradient-tool-modes-widget">
+              <div className='actions-container'>
+                <ToolSettingsInput renderSize={this.props.renderSize}
+                  name='None'
+                  icon='gradienttoolmodenone'
+                  type='checkbox'
+                  value={this.props.getToolSetting('gradientToolMode') === 'none'}
+                  onChange={() => this.props.setToolSetting('gradientToolMode', 'none')}/>
+                <ToolSettingsInput renderSize={this.props.renderSize}
+                  name='Uniform'
+                  icon='gradienttoolmodeuniform'
+                  type='checkbox'
+                  value={this.props.getToolSetting('gradientToolMode') === 'uniform'}
+                  onChange={() => this.props.setToolSetting('gradientToolMode', 'uniform')}/>
               </div>
             </div>
           </PopupMenu>
