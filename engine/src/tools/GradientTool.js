@@ -97,7 +97,11 @@ Wick.Tools.GradientTool = class extends Wick.Tool {
             });
 
             stopGroup.data.getColor = () => {
-                if (stop.data.isTransparent) return new this.paper.Color(0, 0, 0, 0);
+                if (stop.data.isTransparent) {
+                    var color = stop.fillColor.clone();
+                    color.alpha = 0;
+                    return color;
+                }
                 return stop.fillColor;
             }
             stopGroup.data.setColor = color => {
