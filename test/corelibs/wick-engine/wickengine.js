@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.9.23.12.52.10";
+var WICK_ENGINE_BUILD_VERSION = "2021.1.18.12.6.20";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -46854,32 +46854,6 @@ Wick.ToolSettings = class {
       name: 'brushMode',
       default: 'none',
       options: ['none', 'behind', 'inside']
-    }, {
-      /**
-       * The render style of the outside-clip viewer.
-       * "none": Don't show the objects outside the current clip
-       * "standard": Show the outside objects at a certain opacity
-       */
-      type: "choice",
-      name: 'outsideClipStyle',
-      default: 'none',
-      options: ['none', 'standard']
-    }, {
-      type: "number",
-      name: 'outsideClipStandardOpacity',
-      default: 0.5,
-      min: 0,
-      max: 1,
-      step: 0.01
-    }, {
-      type: "boolean",
-      name: 'outsideClipShowBorder',
-      default: false
-    }, {
-      type: "choice",
-      name: 'cursorTransformMode',
-      default: 'freescale',
-      options: ['freescale', 'uniform', 'skew', 'skewscale']
     }];
   }
   /**
@@ -51185,55 +51159,6 @@ Wick.Project = class extends Wick.Base {
     this.selection.select(clip);
   }
   /**
-   * Creates a symbol from the layers currently selected.
-   */
-
-
-  createClipFromLayers() {
-    // Order the selected layers front-to-back
-    let selectedLayers = this.selection.getSelectedObjects('Layer');
-    selectedLayers.sort((layer1, layer2) => layer1.index - layer2.index);
-    let newLayer = new Wick.Layer();
-    let thisTimeline = selectedLayers[0].parentTimeline;
-    thisTimeline.addLayer(newLayer);
-    let maxLayerLength = selectedLayers.reduce((maxEnd, layer) => Math.max(maxEnd, layer.length), 0);
-    let blankFrame = newLayer.insertBlankFrame(1);
-    blankFrame.length = maxLayerLength;
-    let clip = new Wick.Clip({
-      project: this
-    });
-    let clipTimeline = clip.timeline;
-    let firstClipLayer = clipTimeline.layers[0];
-    selectedLayers.forEach(layer => {
-      layer.remove();
-      clipTimeline.addLayer(layer);
-    });
-    firstClipLayer.remove();
-    blankFrame.addClip(clip);
-    clip.isSynced = true; // TODO add to asset library
-
-    this.selection.clear();
-    this.selection.select(clip);
-  }
-  /**
-   * Moves the selected paths and clips to their own layers.
-   */
-
-
-  distributeSelectionToLayers() {
-    let thisSelected = this.selection.getSelectedObjects("Canvas");
-    let thisTimeline = thisSelected[0].parentTimeline;
-    let thisPlayheadPosition = thisTimeline.playheadPosition;
-    thisSelected.forEach(object => {
-      let newLayer = new Wick.Layer();
-      thisTimeline.insertChild(newLayer, 0);
-      newLayer.name = `Layer ${thisTimeline.layers.length}`;
-      let newFrame = newLayer.insertBlankFrame(thisPlayheadPosition);
-      object.remove();
-      newFrame.addChild(object);
-    });
-  }
-  /**
    * Breaks selected clips into their children clips and paths.
    */
 
@@ -53713,7 +53638,7 @@ Wick.Timeline = class extends Wick.Base {
  */
 Wick.Tween = class extends Wick.Base {
   static get VALID_EASING_TYPES() {
-    return ['none', 'in', 'out', 'in-out', 'in-cubic', 'out-cubic', 'in-out-cubic', 'in-quartic', 'out-quartic', 'in-out-quartic', 'in-quintic', 'out-quintic', 'in-out-quintic', 'in-sine', 'out-sine', 'in-out-sine', 'in-exp', 'out-exp', 'in-out-exp', 'in-circle', 'out-circle', 'in-out-circle', 'in-back', 'out-back', 'in-out-back', 'in-bounce', 'out-bounce', 'in-out-bounce'];
+    return ['none', 'in', 'out', 'in-out'];
   }
 
   static _calculateTimeValue(tweenA, tweenB, playheadPosition) {
@@ -53914,31 +53839,7 @@ Wick.Tween = class extends Wick.Base {
       'none': TWEEN.Easing.Linear.None,
       'in': TWEEN.Easing.Quadratic.In,
       'out': TWEEN.Easing.Quadratic.Out,
-      'in-out': TWEEN.Easing.Quadratic.InOut,
-      'in-cubic': TWEEN.Easing.Cubic.In,
-      'out-cubic': TWEEN.Easing.Cubic.Out,
-      'in-out-cubic': TWEEN.Easing.Cubic.InOut,
-      'in-quartic': TWEEN.Easing.Quartic.In,
-      'out-quartic': TWEEN.Easing.Quartic.Out,
-      'in-out-quartic': TWEEN.Easing.Quartic.InOut,
-      'in-quintic': TWEEN.Easing.Quintic.In,
-      'out-quintic': TWEEN.Easing.Quintic.Out,
-      'in-out-quintic': TWEEN.Easing.Quintic.InOut,
-      'in-sine': TWEEN.Easing.Sinusoidal.In,
-      'out-sine': TWEEN.Easing.Sinusoidal.Out,
-      'in-out-sine': TWEEN.Easing.Sinusoidal.InOut,
-      'in-exp': TWEEN.Easing.Exponential.In,
-      'out-exp': TWEEN.Easing.Exponential.Out,
-      'in-out-exp': TWEEN.Easing.Exponential.InOut,
-      'in-circle': TWEEN.Easing.Circular.In,
-      'out-circle': TWEEN.Easing.Circular.Out,
-      'in-out-circle': TWEEN.Easing.Circular.InOut,
-      'in-back': TWEEN.Easing.Back.In,
-      'out-back': TWEEN.Easing.Back.Out,
-      'in-out-back': TWEEN.Easing.Back.InOut,
-      'in-bounce': TWEEN.Easing.Bounce.In,
-      'out-bounce': TWEEN.Easing.Bounce.Out,
-      'in-out-bounce': TWEEN.Easing.Bounce.InOut
+      'in-out': TWEEN.Easing.Quadratic.InOut
     }[this.easingType];
   }
 
@@ -58196,7 +58097,7 @@ Wick.Clip = class extends Wick.Tickable {
         let y = point[1] - center.y;
         max_r = Math.max(max_r, x*x + y*y);
     }
-      return Math.sqrt(max_r);
+     return Math.sqrt(max_r);
     */
   } // Gives clockwise in screen space, which is ccw in regular axes
 
@@ -59329,55 +59230,6 @@ Wick.Tools.Brush = class extends Wick.Tool {
       return path;
     }
 
-    if (mode === 'merge') {
-      var merged = path.clone({
-        insert: false
-      });
-      var mergedStrokeColor = undefined;
-
-      function colorsAreEqual(color1, color2) {
-        if (color1 === null || color2 === null) {
-          // Return true if both are null
-          return color1 === color2;
-        } else {
-          // Bugfix: return true if their values in rgba are equal
-          // This prevents errors where two colors of different float precisions describe the same color
-          return color1.toCSS() === color2.toCSS();
-        }
-      } // Should iterate backwards through layer.children, where the last element is the front
-
-
-      layer.children.findLast(otherPath => {
-        if (otherPath.className !== "Path" && otherPath.className !== "CompoundPath" || // Object is not path
-        !merged.intersects(otherPath) || // Object is separate from merge group
-        !colorsAreEqual(merged.fillColor, otherPath.fillColor) // Object has different fill color
-        ) {
-            // Stops findLast from iterating
-            return true;
-          } else if (mergedStrokeColor === undefined) {
-          // Brush strokes don't have stroke colors, so use the stroke style of the first path it encounters
-          mergedStrokeColor = otherPath.strokeColor;
-          merged.strokeColor = mergedStrokeColor;
-          merged.strokeWidth = otherPath.strokeWidth;
-        } else if (!colorsAreEqual(mergedStrokeColor, otherPath.strokeColor) || merged.strokeWidth !== otherPath.strokeWidth) {
-          // Object has different stroke style
-          // Stops findLast from iterating
-          return true;
-        }
-
-        merged = merged.unite(otherPath);
-        merged.remove(); // Since we're merging the two paths, remove otherPath
-
-        if (otherPath.data.wickUUID) {
-          var otherWickPath = this.project.getObjectByUUID(otherPath.data.wickUUID);
-          otherWickPath.remove();
-        }
-
-        otherPath.remove();
-      });
-      return merged;
-    }
-
     var booleanOpName = {
       'inside': 'intersect',
       'outside': 'subtract'
@@ -59487,7 +59339,6 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     super.onMouseDown(e);
     if (!e.modifiers) e.modifiers = {};
     this.hitResult = this._updateHitResult(e);
-    this._widget.transformMode = this.getSetting('cursorTransformMode');
 
     if (this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {// Clicked the selection box GUI, do nothing
     } else if (this.hitResult.item && this._isItemSelected(this.hitResult.item)) {
@@ -61852,7 +61703,6 @@ class SelectionWidget {
     this._item = new paper.Group({
       insert: false
     });
-    this.transformMode = 'freescale';
   }
   /**
    * The item containing the widget GUI
@@ -61885,21 +61735,6 @@ class SelectionWidget {
 
   set boxRotation(boxRotation) {
     this._boxRotation = boxRotation;
-  }
-  /**
-   * The transformation mode of the widget.
-   */
-
-
-  get transformMode() {
-    return this._transformMode;
-  }
-
-  set transformMode(transformMode) {
-    this._transformMode = transformMode;
-    this._skewMode = this._transformMode === 'skew' || this._transformMode === 'skewscale';
-    this._freescaleMode = this._transformMode !== 'uniform';
-    this._skewscaleMode = this._transformMode === 'skewscale';
   }
   /**
    * The items currently inside the selection widget
@@ -62069,6 +61904,9 @@ class SelectionWidget {
     } else {
       this.currentTransformation = 'translate';
     }
+
+    this._ghost.data.initialPosition = this._ghost.position;
+    this._ghost.data.scale = new paper.Point(1, 1);
   }
   /**
    *
@@ -62076,174 +61914,50 @@ class SelectionWidget {
 
 
   updateTransformation(item, e) {
-    // Wick. What is wrong with you. It would be nice if I could place the initiation in this function. But why in the world do I get a
-    // Uncaught TypeError: Cannot read properties of undefined (reading 'includes')
-    if (!this.mod?.initiated) {
-      this.mod = {
-        initiated: true
-      };
-      this.mod.onePoint = new paper.Point(1, 1);
-      this.mod.initialPoint = e.point;
-      this.mod.truePivot = this.pivot;
+    if (this.currentTransformation === 'translate') {
+      this._ghost.position = this._ghost.position.add(e.delta);
+    } else if (this.currentTransformation === 'scale') {
+      var lastPoint = e.point.subtract(e.delta);
+      var currentPoint = e.point;
+      lastPoint = lastPoint.rotate(-this.boxRotation, this.pivot);
+      currentPoint = currentPoint.rotate(-this.boxRotation, this.pivot);
+      var pivotToLastPointVector = lastPoint.subtract(this.pivot);
+      var pivotToCurrentPointVector = currentPoint.subtract(this.pivot);
+      var scaleAmt = pivotToCurrentPointVector.divide(pivotToLastPointVector); // Lock scaling in a direction if the side handles are being dragged.
 
-      if (this.currentTransformation === 'translate') {
-        this.mod.action = 'translate';
-        this.mod.initialPosition = this._ghost.position;
-      } else if (this.currentTransformation === 'rotate') {
-        this.mod.action = 'rotate';
-        this.mod.rotateDelta = 0;
-        this.mod.initialAngle = this.mod.initialPoint.subtract(this.pivot).angle;
-        this.mod.initialBoxRotation = this.boxRotation ?? 0;
-      } else if (item.data.handleEdge.includes('Center')) {
-        this.mod.action = 'move-edge';
-        this.mod.topLeft = item.data.handleEdge === 'topCenter' || item.data.handleEdge === 'leftCenter';
-        this.mod.vertical = item.data.handleEdge === 'topCenter' || item.data.handleEdge === 'bottomCenter';
-        this.mod.transformMatrix = new paper.Matrix();
-      } else {
-        this.mod.action = 'move-corner';
-        this.mod.scaleFactor = this.mod.onePoint;
-      }
-    } // A === !B is XOR
-    // Skew when either the mode is 'skew' or Ctrl/Cmd is pressed. If both are true, don't skew
-    // Always scale from center unless Alt is pressed
-    // Scale freely when either the mode is 'freescale' or Shift is pressed. If both are true, scale uniformly
-    // Skew and scale perpendicularly when either the mode is 'skew-scale' or Shift is pressed. If both are true, do not scale
-
-
-    this.mod.modifiers = {
-      skew: this._skewMode === !e.modifiers.command,
-      center: !e.modifiers.alt,
-      freescale: this._freescaleMode === !e.modifiers.shift,
-      skewscale: this._skewscaleMode === !e.modifiers.shift
-    };
-
-    if (this.mod.action === 'translate') {
-      var initialDelta = e.point.subtract(this.mod.initialPoint);
-
-      if (!this.mod.modifiers.freescale) {
-        var angle = initialDelta.angle;
-        angle = Math.round(Math.round(angle / 45) * 45) * Math.PI / 180;
-        var angleVector = new paper.Point(Math.cos(angle), Math.sin(angle));
-        initialDelta = initialDelta.project(angleVector);
+      if (item.data.handleEdge === 'topCenter' || item.data.handleEdge === 'bottomCenter') {
+        scaleAmt.x = 1.0;
       }
 
-      this.mod.offset = initialDelta;
-      this._ghost.position = this.mod.initialPosition.add(initialDelta);
-    } else if (this.mod.action === 'rotate') {
-      this._ghost.rotate(-this.mod.rotateDelta, this.pivot);
+      if (item.data.handleEdge === 'leftCenter' || item.data.handleEdge === 'rightCenter') {
+        scaleAmt.y = 1.0;
+      } // Holding shift locks aspect ratio
 
-      var rotateDelta = e.point.subtract(this.pivot).angle - this.mod.initialAngle;
 
-      if (!this.mod.modifiers.freescale) {
-        rotateDelta = Math.round(Math.round(rotateDelta / 45) * 45);
+      if (e.modifiers.shift) {
+        scaleAmt.y = scaleAmt.x;
       }
 
-      this.mod.rotateDelta = rotateDelta;
-      this.boxRotation = this.mod.initialBoxRotation + rotateDelta;
+      this._ghost.data.scale = this._ghost.data.scale.multiply(scaleAmt);
+      this._ghost.matrix = new paper.Matrix();
 
-      this._ghost.rotate(this.mod.rotateDelta, this.pivot);
-    } else if (this.mod.action === 'move-corner') {
-      this._ghost.rotate(-this.boxRotation, this.pivot);
+      this._ghost.rotate(-this.boxRotation);
 
-      this._ghost.scale(this.mod.onePoint.divide(this.mod.scaleFactor), this.mod.truePivot);
+      this._ghost.scale(this._ghost.data.scale.x, this._ghost.data.scale.y, this.pivot);
 
-      if (this.mod.modifiers.center) {
-        this.mod.truePivot = this.pivot;
-      } else {
-        let bounds = this._ghost.bounds;
+      this._ghost.rotate(this.boxRotation);
+    } else if (this.currentTransformation === 'rotate') {
+      var lastPoint = e.point.subtract(e.delta);
+      var currentPoint = e.point;
+      var pivotToLastPointVector = lastPoint.subtract(this.pivot);
+      var pivotToCurrentPointVector = currentPoint.subtract(this.pivot);
+      var pivotToLastPointAngle = pivotToLastPointVector.angle;
+      var pivotToCurrentPointAngle = pivotToCurrentPointVector.angle;
+      var rotation = pivotToCurrentPointAngle - pivotToLastPointAngle;
 
-        switch (item.data.handleEdge) {
-          case 'topRight':
-            this.mod.truePivot = bounds.bottomLeft;
-            break;
+      this._ghost.rotate(rotation, this.pivot);
 
-          case 'topLeft':
-            this.mod.truePivot = bounds.bottomRight;
-            break;
-
-          case 'bottomRight':
-            this.mod.truePivot = bounds.topLeft;
-            break;
-
-          case 'bottomLeft':
-            this.mod.truePivot = bounds.topRight;
-            break;
-        }
-      }
-
-      var currentPointRelative = e.point.rotate(-this.boxRotation, this.pivot).subtract(this.mod.truePivot);
-      var initialPointRelative = this.mod.initialPoint.rotate(-this.boxRotation, this.pivot).subtract(this.mod.truePivot);
-      var scaleFactor = currentPointRelative.divide(initialPointRelative);
-
-      if (!this.mod.modifiers.freescale) {
-        if (Math.abs(scaleFactor.x) < Math.abs(scaleFactor.y)) {
-          scaleFactor.x = Math.sign(scaleFactor.x) * Math.abs(scaleFactor.y);
-        } else {
-          scaleFactor.y = Math.sign(scaleFactor.y) * Math.abs(scaleFactor.x);
-        }
-      }
-
-      this.mod.scaleFactor = scaleFactor;
-
-      this._ghost.scale(this.mod.scaleFactor, this.mod.truePivot);
-
-      this._ghost.rotate(this.boxRotation, this.pivot);
-    } else {
-      this._ghost.rotate(-this.boxRotation, this.pivot);
-
-      this._ghost.translate(this.mod.truePivot.multiply(-1)).transform(this.mod.transformMatrix.inverted()).translate(this.mod.truePivot);
-
-      if (this.mod.modifiers.center) {
-        this.mod.truePivot = this.pivot;
-      } else {
-        if (this.mod.topLeft) {
-          this.mod.truePivot = this._ghost.bounds.bottomRight;
-        } else {
-          this.mod.truePivot = this._ghost.bounds.topLeft;
-        }
-      }
-
-      this.mod.transformMatrix.reset();
-      var currentPointRelative = e.point.rotate(-this.boxRotation, this.pivot);
-      var initialPointRelative = this.mod.initialPoint.rotate(-this.boxRotation, this.pivot);
-
-      if (!this.mod.modifiers.skew || this.mod.modifiers.skew && this.mod.modifiers.skewscale) {
-        var scaleFactor = currentPointRelative.subtract(this.mod.truePivot).divide(initialPointRelative.subtract(this.mod.truePivot));
-
-        if (this.mod.vertical) {
-          scaleFactor.x = 1;
-        } else {
-          scaleFactor.y = 1;
-        }
-
-        this.mod.transformMatrix.scale(scaleFactor);
-      }
-
-      if (this.mod.modifiers.skew) {
-        // Shear is still a factor. Apply shear after scale to transform properly
-        var shearFactor = currentPointRelative.subtract(initialPointRelative).divide(this._ghost.bounds.height, this._ghost.bounds.width);
-
-        if (this.mod.vertical) {
-          shearFactor.y = 0;
-        } else {
-          shearFactor.x = 0;
-        }
-
-        if (this.mod.modifiers.center) {
-          shearFactor = shearFactor.multiply(2);
-        }
-
-        if (this.mod.topLeft) {
-          shearFactor = shearFactor.multiply(-1);
-        }
-
-        ;
-        this.mod.transformMatrix.shear(shearFactor.transform(this.mod.transformMatrix.inverted()));
-      }
-
-      this._ghost.translate(this.mod.truePivot.multiply(-1)).transform(this.mod.transformMatrix).translate(this.mod.truePivot);
-
-      this._ghost.rotate(this.boxRotation, this.pivot);
+      this.boxRotation += rotation;
     }
   }
   /**
@@ -62256,18 +61970,17 @@ class SelectionWidget {
 
     this._ghost.remove();
 
-    if (this.mod.action === 'translate') {
-      this.translateSelection(this.mod.offset);
-    } else if (this.mod.action === 'rotate') {
+    if (this.currentTransformation === 'translate') {
+      var d = this._ghost.position.subtract(this._ghost.data.initialPosition);
+
+      this.translateSelection(d);
+    } else if (this.currentTransformation === 'scale') {
+      this.scaleSelection(this._ghost.data.scale);
+    } else if (this.currentTransformation === 'rotate') {
       this.rotateSelection(this._ghost.rotation);
-    } else if (this.mod.action === 'move-corner') {
-      this.scaleSelection(this.mod.scaleFactor, this.mod.truePivot);
-    } else {
-      this.transformSelection(this.mod.transformMatrix, this.mod.truePivot);
     }
 
     this._currentTransformation = null;
-    this.mod.initiated = false;
   }
   /**
    *
@@ -62286,44 +61999,22 @@ class SelectionWidget {
    */
 
 
+  scaleSelection(scale) {
+    this._itemsInSelection.forEach(item => {
+      item.rotate(-this.boxRotation, this.pivot);
+      item.scale(scale, this.pivot);
+      item.rotate(this.boxRotation, this.pivot);
+    });
+  }
+  /**
+   *
+   */
+
+
   rotateSelection(angle) {
     this._itemsInSelection.forEach(item => {
       item.rotate(angle, this.pivot);
     });
-  }
-  /**
-   *
-   */
-
-
-  scaleSelection(scale, pivot) {
-    if (!pivot) pivot = this.pivot;
-
-    this._itemsInSelection.forEach(item => {
-      item.rotate(-this.boxRotation, this.pivot);
-      item.scale(scale, pivot);
-      item.rotate(this.boxRotation, this.pivot);
-    });
-
-    var newPivot = pivot.add(this.pivot.subtract(pivot).multiply(scale));
-    this.pivot = newPivot.rotate(this.boxRotation, this.pivot);
-  }
-  /**
-   *
-   */
-
-
-  transformSelection(matrix, pivot) {
-    this._itemsInSelection.forEach(item => {
-      item.rotate(-this.boxRotation, this.pivot);
-      item.translate(pivot.multiply(-1)).transform(matrix).translate(pivot);
-      item.rotate(this.boxRotation, this.pivot);
-    }); // Note that the GUI won't show this pivot as the center because it doesn't account for skew.
-    // The pivot point after the skew will look a bit off.
-
-
-    var newPivot = pivot.add(this.pivot.subtract(pivot).transform(matrix));
-    this.pivot = newPivot.rotate(this.boxRotation, this.pivot);
   }
 
   _buildGUI() {
@@ -63344,14 +63035,8 @@ Wick.View.Project = class extends Wick.View {
       // We're in the root timeline, use the color given to us from the user (or use a default)
       this.canvas.style.backgroundColor = this.canvasBGColor || Wick.View.Project.DEFAULT_CANVAS_BG_COLOR;
     } else {
-      // We're inside a clip
-      if (this.model.toolSettings.getSetting('outsideClipShowBorder')) {
-        // Use the same color as the root
-        this.canvas.style.backgroundColor = this.canvasBGColor || Wick.View.Project.DEFAULT_CANVAS_BG_COLOR;
-      } else {
-        // Use the project background color as the container background color
-        this.canvas.style.backgroundColor = this.model.backgroundColor.hex;
-      }
+      // We're inside a clip, so use the project background color as the container background color
+      this.canvas.style.backgroundColor = this.model.backgroundColor.hex;
     }
   }
 
@@ -63371,12 +63056,6 @@ Wick.View.Project = class extends Wick.View {
     this._svgBackgroundLayer.name = 'wick_project_bg';
 
     this._svgBackgroundLayer.remove();
-
-    this._svgOuterLayer = new paper.Layer();
-    this._svgOuterLayer.name = 'wick_project_outer';
-    this._svgOuterLayer.applyMatrix = false;
-
-    this._svgOuterLayer.remove();
 
     this._svgBordersLayer = new paper.Layer();
     this._svgBordersLayer.name = 'wick_project_borders';
@@ -63422,15 +63101,7 @@ Wick.View.Project = class extends Wick.View {
 
     var pan = this._pan;
     this.paper.view.center = new paper.Point(-pan.x, -pan.y);
-    this.paper.view.rotation = this.model.rotation; // Add transformed objects layer before background
-
-    this._svgOuterLayer.removeChildren();
-
-    this._svgOuterLayer.matrix.set(new paper.Matrix());
-
-    this._svgOuterLayer.locked = true;
-    this._svgOuterLayer.opacity = 1;
-    this.paper.project.addLayer(this._svgOuterLayer); // Generate background layer
+    this.paper.view.rotation = this.model.rotation; // Generate background layer
 
     this._svgBackgroundLayer.removeChildren();
 
@@ -63443,45 +63114,10 @@ Wick.View.Project = class extends Wick.View {
 
       this._svgBackgroundLayer.addChild(stage);
     } else {
-      // We're inside a clip, don't render the canvas BG directly, instead render a crosshair at (0,0)
+      // We're inside a clip, don't render the canvas BG, instead render a crosshair at (0,0)
       var originCrosshair = this._generateSVGOriginCrosshair();
 
       this._svgBackgroundLayer.addChild(originCrosshair);
-
-      if (this.model.toolSettings.getSetting('outsideClipStyle') !== 'none') {
-        if (this.model.toolSettings.getSetting('outsideClipShowBorder')) {
-          this._svgOuterLayer.addChild(this._generateSVGCanvasStage());
-        }
-
-        var rootTimeline = this.model.root.timeline;
-        var objectsGroup = new paper.Group();
-
-        this._svgOuterLayer.addChild(objectsGroup);
-
-        rootTimeline.view.render();
-        this.model.focus.view.group.remove();
-        rootTimeline.view.frameLayers.forEach(layer => {
-          objectsGroup.addChild(layer);
-        }); // Apply visual effects
-
-        var transformations = [];
-        var clipIteration = this.model.focus;
-
-        while (!clipIteration.isRoot) {
-          transformations.push(clipIteration.transformation);
-          clipIteration = clipIteration.parentClip;
-        }
-
-        transformations.reverse();
-        transformations.forEach(transform => {
-          this._svgOuterLayer.translate(-transform.x, -transform.y);
-
-          this._svgOuterLayer.rotate(-transform.rotation, new paper.Point());
-
-          this._svgOuterLayer.scale(1 / transform.scaleX, 1 / transform.scaleY, new paper.Point());
-        });
-        objectsGroup.opacity = this.model.toolSettings.getSetting('outsideClipStandardOpacity');
-      }
     } // Generate frame layers
 
 
@@ -64340,7 +63976,7 @@ Wick.View.Frame = class extends Wick.View {
     var originalWickPath = child.data.wickUUID ? Wick.ObjectCache.getObjectByUUID(child.data.wickUUID) : null;
     var pathJSON = Wick.View.Path.exportJSON(child);
     var wickPath = new Wick.Path({json:pathJSON});
-      this.model.addPath(wickPath);
+     this.model.addPath(wickPath);
     wickPath.fontWeight = originalWickPath ? originalWickPath.fontWeight : 400;
     wickPath.fontStyle = originalWickPath ? originalWickPath.fontStyle : 'normal';
     wickPath.identifier = originalWickPath ? originalWickPath.identifier : null;
@@ -66227,19 +65863,8 @@ Wick.GUIElement.Layer = class extends Wick.GUIElement {
 
   onMouseDown(e) {
     this.model.activate();
-
-    if (!e.shiftKey) {
-      this.model.project.selection.clear();
-    }
-
-    if (this.model.isSelected) {
-      if (e.shiftKey) {
-        this.model.project.selection.deselect(this.model);
-      }
-    } else {
-      this.model.project.selection.select(this.model);
-    }
-
+    this.model.project.selection.clear();
+    this.model.project.selection.select(this.model);
     this.projectWasModified();
   }
 
