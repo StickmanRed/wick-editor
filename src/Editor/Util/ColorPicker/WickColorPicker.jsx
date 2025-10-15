@@ -9,6 +9,25 @@ import WickSwatch from 'Editor/Util/ColorPicker/WickSwatch/WickSwatch'
 var { Saturation, Hue, Alpha, Checkboard, Swatch } = require('react-color/lib/components/common');
 var { SketchFields } = require('react-color/lib/components/sketch/SketchFields');
 
+function WickControlPointer (props) {
+    let color;
+    if (props.pointerType === "saturation") {
+        color = `rgb(${props.rgb.r},${props.rgb.g},${props.rgb.b})`;
+    }
+    else if (props.pointerType === "hue") {
+        color = `hsl(${props.hsl.h},100%,50%)`;
+    }
+    else if (props.pointerType === "alpha") {
+        // Mimic transparent against a white background
+        let newLight = 1 + props.hsl.a * (props.hsl.l - 1);
+        color = `hsl(${props.hsl.h},${props.hsl.s*100}%,${newLight*100}%)`;
+    }
+    else {
+        color = props.color;
+    }
+    return (<div className="wick-color-picker-control-pointer" style={{backgroundColor: color}}/>);
+}
+
 class WickColorPicker extends Component {
     renderSwatchColumn = (colorList, i) => {
         return (
@@ -131,7 +150,7 @@ class WickColorPicker extends Component {
             <div className="wick-color-picker">
                 {this.renderHeader()}
                 <div className="wick-color-picker-saturation">
-                    <Saturation {...this.props}/>
+                    <Saturation pointer={WickControlPointer} pointerType="saturation" {...this.props} />
                 </div>
                 <div className="wick-color-picker-control-body">
                     <div id="btn-color-picker-dropper">
@@ -140,14 +159,21 @@ class WickColorPicker extends Component {
                             id="color-picker-eyedropper"
                             tooltip="Eyedropper"
                             color="tool"
-                            action={this.openEyedropper}/>
+                            action={this.openEyedropper} />
                     </div>
                     <div id="wick-color-picker-bar-container">
-                        <div className="wick-color-picker-control-bar">
-                            <Hue {...this.props} height={11}/>
+                        <div className="wick-color-picker-control-bar wick-color-picker-hue-bar">
+                            <Hue pointer={WickControlPointer} pointerType="hue" {...this.props} height={11} />
                         </div>
-                        <div className="wick-color-picker-control-bar">
-                            <Alpha {...this.props} />
+                        <div className="wick-color-picker-control-bar wick-color-picker-alpha-bar">
+                            <Alpha pointer={WickControlPointer} pointerType="alpha" {...this.props} style={
+                                {
+                                    container: {margin: "0 8px"}, // $color-picker-pointer-radius
+                                    gradient: {
+                                        background: `linear-gradient(to right, rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 0) 8px,
+                                        rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 1) calc(100% - 8px))`
+                                    },
+                                }} />
                         </div>
                     </div>
                     <div className="wick-color-picker-color-block-container">

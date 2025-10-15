@@ -19,18 +19,22 @@
 
  @import 'Editor/_wickbrand.scss';
 
- $color-picker-width: 220px;
+ $color-picker-width: 240px;
  $color-picker-height: 300px;
  $color-picker-padding: 10px;
  $color-picker-bar-height: 25px;
  $color-picker-block-margin: 5px;
+ $color-picker-pointer-radius: 8px;
 
  .wick-color-picker {
      background-color: $editor-primary;
      width: $color-picker-width;
-     height: $color-picker-height;
-     padding: 10px 10px 0px;
+     height: fit-content; // $color-picker-height
+     display: flex;
+     flex-direction: column;
+     padding: 10px;
      border-radius: 4px;
+     font-family: 'Nunito Sans';
  }
 
  .wick-color-picker-header {
@@ -44,8 +48,19 @@
     position: relative;
     margin-top: $color-picker-block-margin;
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
  }
+ .wick-color-picker-control-pointer {
+  width: $color-picker-pointer-radius * 2;
+  height: $color-picker-pointer-radius * 2;
+  translate: -$color-picker-pointer-radius;
+  background-color: black;
+  border-radius: $color-picker-pointer-radius;
+  border: 4px solid white;
+}
+  .wick-color-picker-saturation .wick-color-picker-control-pointer {
+  translate: -8px -8px;//-$color-picker-pointer-radius -$color-picker-pointer-radius;
+}
 
 #btn-color-picker-close {
     margin-left: auto;
@@ -56,7 +71,8 @@
 #btn-color-picker-dropper {
     width:$color-picker-bar-height;
     height:$color-picker-bar-height;
-    margin-right: $color-picker-block-margin;
+    //margin-right: $color-picker-block-margin;
+    margin: auto;
 }
 
 .wick-color-picker-action-button {
@@ -72,36 +88,56 @@
 .wick-color-picker-control-body {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
     width: 100%;
     margin-top: $color-picker-block-margin;
+    gap: $color-picker-block-margin;
+}
+
+#wick-color-picker-bar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    flex-grow: 1;
+    gap: $color-picker-block-margin;
 }
 
 .wick-color-picker-control-bar {
-    width: calc(#{$color-picker-width} - 2 * #{$color-picker-padding} - 2 * #{$color-picker-bar-height} - 2 * #{$color-picker-block-margin});
-    height: 45%;
+    //width: calc(#{$color-picker-width} - 2 * #{$color-picker-padding} - 2 * #{$color-picker-bar-height} - 2 * #{$color-picker-block-margin});
+    height: $color-picker-pointer-radius * 2; //45%
     position: relative;
-    margin-bottom: 2.5%;
+    //margin-bottom: 2.5%;
     background-color: white;
+    border-radius: $color-picker-pointer-radius;
+    overflow: hidden;
+}
+.wick-color-picker-hue-bar {
+    background-color: #f00;
+}
+.hue-horizontal {
+    padding: 0 !important;
+    margin: 0 8px;
 }
 
 .wick-color-picker-color-block-container {
     position: relative;
     width: $color-picker-bar-height;
     height: $color-picker-bar-height;
-    margin-left: $color-picker-block-margin;
+    //margin-left: $color-picker-block-margin;
     background-color: white;
     border-radius: 2px;
+    margin: auto;
 }
 
 .wick-color-picker-swatches-container {
-    height: 25px;
+    height: fit-content;
     display: flex;
-    margin-top: $color-picker-block-margin;
+    justify-content: space-between;
     flex-wrap: wrap;
     border-top: 1px solid rgba(0,0,0,.1);
-    padding-top: 8px;
-    margin: $color-picker-block-margin -10px;
-    padding: 5px 0px 0px 10px;
+    padding: $color-picker-block-margin 0;
 }
 
 .wick-color-picker-small-swatch {
@@ -111,7 +147,6 @@
     border-radius: 4px;
     overflow: hidden;
     border: 1px solid #222;
-    margin: 0px 10px 10px 0px;
     background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==");
     background-size: 15px 15px;
 }
@@ -129,7 +164,7 @@
 .wick-swatch-picker-column {
     display: flex;
     flex-direction: column;
-    margin: 0px 4px 4px 0px;
+    //margin: 0px 4px 4px 0px;
     border-radius: 2px;
     overflow: hidden;
 }
@@ -138,8 +173,9 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: $color-picker-block-margin -10px;
-    padding: 5px 0px 0px 10px;
+    justify-content: space-between;
+    margin: $color-picker-block-margin 0;
+    gap: 8px;
 }
 
 .wick-swatch-color-picker-body {
@@ -149,18 +185,29 @@
 
 // Fix the styling for the Sketch Inputs.
 .wick-color-picker .flexbox-fix {
-    margin-top: calc(#{$color-picker-block-margin} + 4px) !important;
+    margin-top: $color-picker-block-margin;
     padding-top: 0px !important;
 }
 
+// Style color picker input like .wick-input.
 .wick-color-picker input {
     width: 100% !important;
-    border-radius: 4px;
-    background-color: $editor-primary !important;
-    border: $editor-input-border-width solid $editor-primary-outline !important;
+    height: 100%;
+    border-radius: 5px;
+    background-color: $editor-text-input-background !important;
+    border: none !important;
+    border-radius: $interface-input-roundness;
     color: $editor-primary-property-text !important;
     box-shadow: none !important;
-    padding: 0px 0px 0px 2px !important;
+    padding: 2px !important;
+    padding-left: 4px;
+    font-size: 1rem !important;
+}
+.wick-color-picker label {
+    color: $editor-primary-property-text !important;
+    font-size: 14px !important;
+    font-weight: bold;
+    margin: 0;
 }
 
 .wick-color-picker span {
