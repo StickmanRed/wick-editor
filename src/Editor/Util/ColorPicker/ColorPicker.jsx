@@ -19,7 +19,7 @@
 
 import React, { useState } from 'react';
 import { Popover } from 'reactstrap';
-import WickColorPicker  from 'Editor/Util/ColorPicker/WickColorPicker';
+import WickGradientColorPicker  from 'Editor/Util/ColorPicker/WickGradientColorPicker';
 
 import './_colorpicker.scss';
 
@@ -27,6 +27,10 @@ export default function ColorPicker (props) {
   const [open, setOpen] = useState(false);
 
   let color = props.color ? props.color : new window.Wick.Color("#FFFFFF")
+  let colorCSS = color;
+  if (color instanceof window.paper.Color) {
+    colorCSS = color.toCSS();
+  }
   let itemID = props.id;
   let popoverID = itemID+'-popover';
 
@@ -51,7 +55,7 @@ export default function ColorPicker (props) {
         aria-label="color picker button"
         id={itemID}
         onClick={toggle}
-        style={props.stroke ? {borderColor: color} : {backgroundColor: color}}
+        style={props.stroke ? {borderColor: colorCSS} : {backgroundColor: colorCSS}}
         >
           <Popover
             tabIndex={-1}
@@ -61,7 +65,7 @@ export default function ColorPicker (props) {
             toggle={toggle}
             target={itemID}
             boundariesElement={'viewport'}>
-            <WickColorPicker
+            <WickGradientColorPicker
               toggle={toggle}
               colorPickerType={props.colorPickerType}
               changeColorPickerType={props.changeColorPickerType}

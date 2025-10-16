@@ -72,47 +72,11 @@ class WickColorPicker extends Component {
         ]
 
         return (
-            <div className="wick-color-picker">
-                {this.renderHeader()}
-                <div className="wick-swatch-color-picker-body">
-                    {this.renderSwatchbook(colors)}
-                </div>
+            <div className="wick-swatch-color-picker-body">
+                {this.renderSwatchbook(colors)}
             </div>
         );
     }
-
-
-
-    renderHeader () {
-        return (
-            <div className="wick-color-picker-header">
-                <div className="wick-color-picker-action-button">
-                    <ActionButton
-                        color="tool"
-                        id="color-picker-swatches-button"
-                        tooltip="Swatches"
-                        action={() => {this.props.changeColorPickerType("swatches")}}
-                        isActive={ () => this.props.colorPickerType === "swatches" }
-                        icon="swatches" />
-                </div>
-                <div className="wick-color-picker-action-button spacer">
-                    <ActionButton
-                        color="tool"
-                        id="color-picker-spectrum-button"
-                        tooltip="Spectrum"
-                        action={() => {this.props.changeColorPickerType("spectrum")}}
-                        isActive={ () => this.props.colorPickerType === "spectrum" }
-                        icon="spectrum" />
-                </div>
-                <div className="color-picker-control-div">
-                    <div id="btn-color-picker-close">
-                        <ActionButton color="tool" icon="closemodal" action={this.props.toggle}/>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
 
     renderSwatchContainer = (colors) => {
         return (
@@ -134,12 +98,13 @@ class WickColorPicker extends Component {
     }
 
     renderSpectrum = () => {
+        let activeColor = this.props.color;
         let styles = {
             activeColor: {
                 position:'absolute',
                 width: "100%",
                 height: "100%",
-                backgroundColor: this.props.color,
+                backgroundColor: activeColor,
             }
         }
         
@@ -147,10 +112,12 @@ class WickColorPicker extends Component {
         let lastUsedColorsDefaults = ["#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000"]
         let lastColors = this.props.lastColorsUsed || lastUsedColorsDefaults;
         return (
-            <div className="wick-color-picker">
-                {this.renderHeader()}
+            <div className="wick-color-picker-spectrum">
                 <div className="wick-color-picker-saturation">
-                    <Saturation pointer={WickControlPointer} pointerType="saturation" {...this.props} />
+                    <Saturation {...this.props}
+                        color={activeColor}
+                        pointer={WickControlPointer}
+                        pointerType="saturation" />
                 </div>
                 <div className="wick-color-picker-control-body">
                     <div id="btn-color-picker-dropper">
@@ -163,17 +130,26 @@ class WickColorPicker extends Component {
                     </div>
                     <div id="wick-color-picker-bar-container">
                         <div className="wick-color-picker-control-bar wick-color-picker-hue-bar">
-                            <Hue pointer={WickControlPointer} pointerType="hue" {...this.props} height={11} />
+                            <Hue {...this.props}
+                                height={11}
+                                color={activeColor}
+                                pointer={WickControlPointer}
+                                pointerType="hue" />
                         </div>
                         <div className="wick-color-picker-control-bar wick-color-picker-alpha-bar">
-                            <Alpha pointer={WickControlPointer} pointerType="alpha" {...this.props} style={
-                                {
-                                    container: {margin: "0 8px"}, // $color-picker-pointer-radius
-                                    gradient: {
-                                        background: `linear-gradient(to right, rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 0) 8px,
-                                        rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 1) calc(100% - 8px))`
-                                    },
-                                }} />
+                            <Alpha {...this.props}
+                                color={activeColor}
+                                pointer={WickControlPointer}
+                                pointerType="alpha"
+                                style={
+                                    {
+                                        container: {margin: "0 8px"}, // $color-picker-pointer-radius
+                                        gradient: {
+                                            background: `linear-gradient(to right, rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 0) 8px,
+                                            rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 1) calc(100% - 8px))`
+                                        },
+                                    }
+                                } />
                         </div>
                     </div>
                     <div className="wick-color-picker-color-block-container">
@@ -181,7 +157,9 @@ class WickColorPicker extends Component {
                         <div style={styles.activeColor} />
                     </div>
                 </div>
-                <SketchFields {...this.props} aria-label="color options"/>
+                <SketchFields {...this.props}
+                    color={activeColor}
+                    aria-label="color options" />
                 {this.renderSwatchContainer(colors)}
                 {this.renderSwatchContainer(lastColors)}
             </div>
