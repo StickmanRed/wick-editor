@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "c02379f72575c37bfa4b",
-    "url": "/wick-editor/test/static/css/main.a4dc829d.chunk.css"
+    "revision": "956e258c576f0fc4fb41",
+    "url": "/wick-editor/test/static/css/main.a910f37a.chunk.css"
   },
   {
-    "revision": "c02379f72575c37bfa4b",
-    "url": "/wick-editor/test/static/js/main.c02379f7.chunk.js"
+    "revision": "956e258c576f0fc4fb41",
+    "url": "/wick-editor/test/static/js/main.956e258c.chunk.js"
   },
   {
-    "revision": "ccca21baa6a5cf2d9e2d",
-    "url": "/wick-editor/test/static/css/1.173ee02e.chunk.css"
+    "revision": "1106ae84e0c1ac7799d1",
+    "url": "/wick-editor/test/static/css/1.2998a08b.chunk.css"
   },
   {
-    "revision": "ccca21baa6a5cf2d9e2d",
-    "url": "/wick-editor/test/static/js/1.ccca21ba.chunk.js"
+    "revision": "1106ae84e0c1ac7799d1",
+    "url": "/wick-editor/test/static/js/1.1106ae84.chunk.js"
   },
   {
     "revision": "7f30652f952f9205efcd",
@@ -728,7 +728,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "f7457fc959109914bb33d1474ce2d5cd",
+    "revision": "1b7a67ba7e3d8abdafc0329d31c24b1f",
     "url": "/wick-editor/test/index.html"
   }
 ];
