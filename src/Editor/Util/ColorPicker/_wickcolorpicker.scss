@@ -23,30 +23,6 @@
  $color-picker-block-margin: 5px;
  $color-picker-pointer-radius: 8px;
 
- .wick-color-picker-saturation {
-    width: 100%;
-    height: 115px;
-    position: relative;
-    margin-top: $color-picker-block-margin;
-    border-radius: 2px;
-    overflow: visible;
- }
- .wick-color-picker-control-pointer {
-  width: $color-picker-pointer-radius * 2;
-  height: $color-picker-pointer-radius * 2;
-  translate: -$color-picker-pointer-radius;
-  background-color: black;
-  border-radius: $color-picker-pointer-radius;
-  border: 4px solid white;
-}
-  .wick-color-picker-saturation .wick-color-picker-control-pointer {
-  translate: -8px -8px;//-$color-picker-pointer-radius -$color-picker-pointer-radius;
-}
-
-#btn-color-picker-close {
-    margin-left: auto;
-}
-
 #btn-color-picker-dropper {
     width: 25px;
     height: 25px;
@@ -81,19 +57,11 @@
     gap: $color-picker-block-margin;
 }
 
-.wick-color-picker-control-bar {
-    height: $color-picker-pointer-radius * 2;
-    position: relative;
-    background-color: white;
-    border-radius: $color-picker-pointer-radius;
-    overflow: hidden;
-}
-.wick-color-picker-hue-bar {
-    background-color: #f00;
-}
-.hue-horizontal {
-    padding: 0 !important;
-    margin: 0 8px;
+.wick-color-picker-fields {
+    display: flex;
+    flex-direction: row;
+    margin-top: $color-picker-block-margin;
+    gap: $color-picker-block-margin;
 }
 
 .wick-color-picker-color-block-container {
@@ -154,10 +122,4 @@
 .wick-swatch-color-picker-body {
     display: flex;
     flex-direction: column;
-}
-
-// Fix the styling for the Sketch Inputs.
-.wick-color-picker-spectrum .flexbox-fix {
-    margin-top: $color-picker-block-margin;
-    padding-top: 0px !important;
 }

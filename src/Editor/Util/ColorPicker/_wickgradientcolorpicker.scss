@@ -4,9 +4,10 @@
 
 @import 'Editor/_wickbrand.scss';
 
-$color-picker-width: 240px;
+$color-picker-width: 250px;
 // $color-picker-height: 300px;
- $color-picker-bar-height: 25px;
+$color-picker-bar-height: 25px;
+$color-picker-block-margin: 5px;
 
 .wick-color-picker {
     background-color: $editor-primary;
@@ -14,30 +15,19 @@ $color-picker-width: 240px;
     height: fit-content;
     display: flex;
     flex-direction: column;
+    gap: $color-picker-block-margin;
     padding: 10px;
     border-radius: 4px;
     font-family: 'Nunito Sans';
 }
 
+#btn-color-picker-close {
+    margin-left: auto;
+}
+
 // Style color picker inputs like the inspector.
 .wick-color-picker input {
-    width: 100% !important;
-    height: 100%;
-    border-radius: 5px;
-    background-color: $editor-text-input-background !important;
-    border: none !important;
-    border-radius: $interface-input-roundness;
-    color: $editor-primary-property-text !important;
-    box-shadow: none !important;
-    padding: 2px !important;
-    padding-left: 4px;
-    font-size: 1rem !important;
-}
-.wick-color-picker label {
-    color: $editor-primary-property-text !important;
-    font-size: 14px !important;
-    font-weight: bold;
-    margin: 0;
+    font-size: 1rem;
 }
 
 .wick-color-picker span {

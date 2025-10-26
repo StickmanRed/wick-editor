@@ -145,6 +145,20 @@ class Inspector extends Component {
     this.props.setSelectionAttribute(attribute, newValue);
   }
 
+  /**
+   * Updates the value of a selection attribute without adding to the undo stack.
+   * @param {string} attribute Name of the attribute to update.
+   * @param {string|number} newValue  New value of the attribute to update.
+   */
+  setSelectionAttributeIntermediate = (attribute, newValue) => {
+    if (attribute === 'fillColorOpacity') {
+      return this.setSelectionFillColorOpacity(newValue);
+    }
+    this.props.project.selection[attribute] = newValue;
+    this.props.project.view.render();
+    this.props.project.guiElement.draw();
+  }
+
   // Inspector Row Types
 
   /**
@@ -173,6 +187,7 @@ class Inspector extends Component {
           tooltip2="Opacity"
           val1={this.getSelectionAttribute('fillColor')}
           onChange1={(col) => this.setSelectionAttribute('fillColor', col)}
+          onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
           id={"inspector-selection-fill-color"}
           val2={this.getSelectionAttribute('fillColorOpacity')}
           onChange2={(val) => this.setSelectionAttribute('fillColorOpacity', val)}
@@ -188,6 +203,7 @@ class Inspector extends Component {
 
           val1={this.getSelectionAttribute('strokeColor')}
           onChange1={(col) => this.setSelectionAttribute('strokeColor', col)}
+          onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
           id={"inspector-selection-stroke-color"}
           stroke={true}
 

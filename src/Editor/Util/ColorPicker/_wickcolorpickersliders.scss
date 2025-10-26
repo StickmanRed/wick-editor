@@ -1,0 +1,63 @@
+/*
+ * Copyright I don't know
+ */
+
+@import 'Editor/_wickbrand.scss';
+
+$color-picker-pointer-radius: 8px;
+
+.wick-color-picker-saturation.wick-custom-slider {
+    width: 100%;
+    height: 115px;
+    border-radius: 2px;
+    overflow: visible;
+}
+.wick-color-picker-bar.wick-custom-slider {
+    height: $color-picker-pointer-radius * 2;
+    border-radius: $color-picker-pointer-radius;
+    padding: 0 $color-picker-pointer-radius;
+    overflow: hidden;
+}
+.wick-color-picker-hue.wick-custom-slider {
+    background-color: #f00;
+}
+
+.wick-color-picker-slider .wick-custom-slider-background {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.wick-color-picker-hue .wick-custom-slider-background {
+    background-image: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+}
+
+.wick-color-picker-pointer {
+    width: $color-picker-pointer-radius * 2;
+    height: $color-picker-pointer-radius * 2;
+    translate: -$color-picker-pointer-radius;
+    border-radius: $color-picker-pointer-radius;
+    border: 4px solid white;
+    background-color: black;
+}
+.wick-color-picker-saturation .wick-color-picker-pointer {
+    translate: -8px -8px; //-$color-picker-pointer-radius -$color-picker-pointer-radius;
+}
+.wick-color-picker-bar .wick-color-picker-pointer {
+    top: 0;
+}
+
+.wick-color-picker-input-label {
+    color: $editor-primary-property-text;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+.wick-color-picker-input-label.wick-color-picker-field-hex {
+    flex: 2;
+}
+.wick-color-picker-input-field.wick-color-picker-field-hex {
+    text-transform: uppercase;
+}

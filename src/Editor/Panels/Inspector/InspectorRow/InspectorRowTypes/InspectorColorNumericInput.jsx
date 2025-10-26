@@ -43,6 +43,7 @@ class InspectorColorNumericInput extends Component {
               type: "color",
               color: this.props.val1,
               onChange: this.props.onChange1,
+              onChangeIntermediate: this.props.onChangeIntermediate1,
               id: this.props.id,
               stroke: !this.props.stroke ? false : this.props.stroke,
               placement: "left",

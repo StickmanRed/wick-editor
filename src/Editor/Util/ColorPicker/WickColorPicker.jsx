@@ -3,32 +3,48 @@ import React, { Component } from 'react'
 import  ActionButton  from 'Editor/Util/ActionButton/ActionButton';
 
 import './_wickcolorpicker.scss';
-import { CustomPicker } from 'react-color';
-import WickSwatch from 'Editor/Util/ColorPicker/WickSwatch/WickSwatch'
+import WickSwatch from 'Editor/Util/ColorPicker/WickSwatch/WickSwatch';
+import { Saturation, Hue, Alpha, Fields } from 'Editor/Util/ColorPicker/WickColorPickerSliders';
+import tinycolor from 'tinycolor2';
 
-var { Saturation, Hue, Alpha, Checkboard, Swatch } = require('react-color/lib/components/common');
-var { SketchFields } = require('react-color/lib/components/sketch/SketchFields');
-
-function WickControlPointer (props) {
-    let color;
-    if (props.pointerType === "saturation") {
-        color = `rgb(${props.rgb.r},${props.rgb.g},${props.rgb.b})`;
-    }
-    else if (props.pointerType === "hue") {
-        color = `hsl(${props.hsl.h},100%,50%)`;
-    }
-    else if (props.pointerType === "alpha") {
-        // Mimic transparent against a white background
-        let newLight = 1 + props.hsl.a * (props.hsl.l - 1);
-        color = `hsl(${props.hsl.h},${props.hsl.s*100}%,${newLight*100}%)`;
-    }
-    else {
-        color = props.color;
-    }
-    return (<div className="wick-color-picker-control-pointer" style={{backgroundColor: color}}/>);
-}
+var { Checkboard, Swatch } = require('react-color/lib/components/common');
 
 class WickColorPicker extends Component {
+    constructor () {
+        super();
+
+        this.values = {
+            h: 0,
+            s: 0,
+            v: 0,
+            a: 1
+        }
+        this.color = tinycolor(this.values);
+    }
+    onChangeIntermediate = (values) => {
+        this.values = values;
+        this.color = tinycolor(values);
+        this.props.onChangeIntermediate(this.color.toRgbString());
+    }
+    onChangeComplete = (values) => {
+        this.values = values;
+        this.color = tinycolor(values);
+        this.props.onChangeComplete(this.color.toRgbString());
+    }
+    onChangeFields = (input) => {
+        let newInput;
+        if (input.hex) {
+            newInput = input.hex;
+        }
+        else {
+            // Input is of the form { r, g, b, a }
+            newInput = Object.assign(this.color.toRgb(), input);
+        }
+        this.color = tinycolor(newInput);
+        this.values = this.color.toHsv();
+        this.props.onChangeComplete(this.color.toRgbString());
+    }
+
     renderSwatchColumn = (colorList, i) => {
         return (
             <div key={"swatch-color-column-" + i} className="wick-swatch-picker-column">
@@ -98,7 +114,7 @@ class WickColorPicker extends Component {
     }
 
     renderSpectrum = () => {
-        let activeColor = this.props.color;
+        let activeColor = this.color.toRgbString();
         let styles = {
             activeColor: {
                 position:'absolute',
@@ -113,12 +129,10 @@ class WickColorPicker extends Component {
         let lastColors = this.props.lastColorsUsed || lastUsedColorsDefaults;
         return (
             <div className="wick-color-picker-spectrum">
-                <div className="wick-color-picker-saturation">
-                    <Saturation {...this.props}
-                        color={activeColor}
-                        pointer={WickControlPointer}
-                        pointerType="saturation" />
-                </div>
+                <Saturation {...this.values}
+                    onChangeIntermediate={this.onChangeIntermediate}
+                    onChangeComplete={this.onChangeComplete}
+                    colorObject={this.color} />
                 <div className="wick-color-picker-control-body">
                     <div id="btn-color-picker-dropper">
                         <ActionButton
@@ -129,36 +143,24 @@ class WickColorPicker extends Component {
                             action={this.openEyedropper} />
                     </div>
                     <div id="wick-color-picker-bar-container">
-                        <div className="wick-color-picker-control-bar wick-color-picker-hue-bar">
-                            <Hue {...this.props}
-                                height={11}
-                                color={activeColor}
-                                pointer={WickControlPointer}
-                                pointerType="hue" />
-                        </div>
-                        <div className="wick-color-picker-control-bar wick-color-picker-alpha-bar">
-                            <Alpha {...this.props}
-                                color={activeColor}
-                                pointer={WickControlPointer}
-                                pointerType="alpha"
-                                style={
-                                    {
-                                        container: {margin: "0 8px"}, // $color-picker-pointer-radius
-                                        gradient: {
-                                            background: `linear-gradient(to right, rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 0) 8px,
-                                            rgba(${ this.props.rgb.r },${ this.props.rgb.g },${ this.props.rgb.b }, 1) calc(100% - 8px))`
-                                        },
-                                    }
-                                } />
-                        </div>
+                        <Hue {...this.values}
+                            onChangeIntermediate={this.onChangeIntermediate}
+                            onChangeComplete={this.onChangeComplete}
+                            colorObject={this.color} />
+                        <Alpha {...this.values}
+                            onChangeIntermediate={this.onChangeIntermediate}
+                            onChangeComplete={this.onChangeComplete}
+                            colorObject={this.color} />
                     </div>
                     <div className="wick-color-picker-color-block-container">
                         <Checkboard />
                         <div style={styles.activeColor} />
                     </div>
                 </div>
-                <SketchFields {...this.props}
-                    color={activeColor}
+                <Fields
+                    onChange={this.onChangeFields}
+                    colorObject={this.color}
+                    disableAlpha={this.props.disableAlpha}
                     aria-label="color options" />
                 {this.renderSwatchContainer(colors)}
                 {this.renderSwatchContainer(lastColors)}
@@ -167,17 +169,21 @@ class WickColorPicker extends Component {
     }
 
     render () {
-        if (this.props.colorPickerType === "swatches" || !this.props.colorPickerType) {
-            return this.renderSwatches();
-        } else if (this.props.colorPickerType === "spectrum") {
-            return this.renderSpectrum();
-        };
+        let inputColor = tinycolor(this.props.color);
+        if (!tinycolor.equals(inputColor, this.color)) {
+            this.values = inputColor.toHsv();
+            this.color = inputColor;
+        }
+
+        if (this.props.colorPickerType === "spectrum") return this.renderSpectrum();
+        else return this.renderSwatches();
+        // this.props.colorPickerType === "swatches"
     }
 
     openEyedropper = () => {
         window.editor.setActiveTool('eyedropper');
-        window.editor._onEyedropperPickedColor = this.props.onChange;
+        window.editor._onEyedropperPickedColor = this.props.onChangeComplete;
     }
 }
 
-export default CustomPicker(WickColorPicker);
+export default WickColorPicker;

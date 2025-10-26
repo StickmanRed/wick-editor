@@ -1,0 +1,22 @@
+/*
+ * Copyright I don't know
+ */
+
+@import 'Editor/_wickbrand.scss';
+
+.wick-color-picker-gradient.wick-custom-slider {
+    position: relative;
+    height: fit-content;
+}
+.wick-color-picker-gradient.wick-custom-slider-background {
+    height: 25px;
+}
+.wick-color-picker-gradient.wick-custom-slider-pointer {
+    position: absolute;
+    top: 0;
+    translate: -12.5px;
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    border-radius: 12.5px;
+}

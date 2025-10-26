@@ -29,7 +29,18 @@ export default function ColorPicker (props) {
   let color = props.color ? props.color : new window.Wick.Color("#FFFFFF")
   let colorCSS = color;
   if (color instanceof window.paper.Color) {
-    colorCSS = color.toCSS();
+    if (color.gradient) {
+      const sortedControlStops = color.gradient.stops.toSorted((objectA, objectB) => objectA.offset - objectB.offset);
+
+      colorCSS = 'linear-gradient(to right';
+      sortedControlStops.forEach(paperControlStop => {
+          colorCSS += `, ${paperControlStop.color.toCSS()} ${paperControlStop.offset * 100}%`
+      });
+      colorCSS += ')';
+    }
+    else {
+      colorCSS = color.toCSS();
+    }
   }
   let itemID = props.id;
   let popoverID = itemID+'-popover';
@@ -55,7 +66,7 @@ export default function ColorPicker (props) {
         aria-label="color picker button"
         id={itemID}
         onClick={toggle}
-        style={props.stroke ? {borderColor: colorCSS} : {backgroundColor: colorCSS}}
+        style={props.stroke ? {borderColor: colorCSS} : color.gradient ? {backgroundImage: colorCSS} : {backgroundColor: colorCSS}}
         >
           <Popover
             tabIndex={-1}
@@ -72,7 +83,9 @@ export default function ColorPicker (props) {
               disableAlpha={props.disableAlpha}
               color={color}
               onChangeComplete={props.onChangeComplete}
+              onChangeIntermediate={props.onChangeIntermediate}
               lastColorsUsed={props.lastColorsUsed}
+              updateLastColors={props.updateLastColors}
             />
           </Popover>
       </button>
