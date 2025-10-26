@@ -1,10 +1,10 @@
 {
-  "main.css": "/wick-editor/test/static/css/main.a910f37a.chunk.css",
-  "main.js": "/wick-editor/test/static/js/main.956e258c.chunk.js",
-  "main.js.map": "/wick-editor/test/static/js/main.956e258c.chunk.js.map",
+  "main.css": "/wick-editor/test/static/css/main.80b3fda0.chunk.css",
+  "main.js": "/wick-editor/test/static/js/main.e931d4aa.chunk.js",
+  "main.js.map": "/wick-editor/test/static/js/main.e931d4aa.chunk.js.map",
   "static/css/1.2998a08b.chunk.css": "/wick-editor/test/static/css/1.2998a08b.chunk.css",
-  "static/js/1.1106ae84.chunk.js": "/wick-editor/test/static/js/1.1106ae84.chunk.js",
-  "static/js/1.1106ae84.chunk.js.map": "/wick-editor/test/static/js/1.1106ae84.chunk.js.map",
+  "static/js/1.f0b42a9a.chunk.js": "/wick-editor/test/static/js/1.f0b42a9a.chunk.js",
+  "static/js/1.f0b42a9a.chunk.js.map": "/wick-editor/test/static/js/1.f0b42a9a.chunk.js.map",
   "runtime~main.js": "/wick-editor/test/static/js/runtime~main.7f30652f.js",
   "runtime~main.js.map": "/wick-editor/test/static/js/runtime~main.7f30652f.js.map",
   "static/media/settings-icon.svg": "/wick-editor/test/static/media/settings-icon.93aa9a3b.svg",
@@ -176,9 +176,9 @@
   "static/media/instagram.svg": "/wick-editor/test/static/media/instagram.fc1f37f8.svg",
   "static/media/twitter.svg": "/wick-editor/test/static/media/twitter.ec9aec3f.svg",
   "static/media/white-heart.svg": "/wick-editor/test/static/media/white-heart.14b06d09.svg",
-  "static/css/main.a910f37a.chunk.css.map": "/wick-editor/test/static/css/main.a910f37a.chunk.css.map",
   "static/css/1.2998a08b.chunk.css.map": "/wick-editor/test/static/css/1.2998a08b.chunk.css.map",
+  "static/css/main.80b3fda0.chunk.css.map": "/wick-editor/test/static/css/main.80b3fda0.chunk.css.map",
   "index.html": "/wick-editor/test/index.html",
-  "precache-manifest.8c123cc265576027fd430535d7416fda.js": "/wick-editor/test/precache-manifest.8c123cc265576027fd430535d7416fda.js",
+  "precache-manifest.06bf073dee2da631e3784a134b5877ea.js": "/wick-editor/test/precache-manifest.06bf073dee2da631e3784a134b5877ea.js",
   "service-worker.js": "/wick-editor/test/service-worker.js"
 }
