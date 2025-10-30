@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "e53292e2f449ef39898e",
+    "revision": "6b644f38ac8dfe249500",
     "url": "/wick-editor/test-import/static/css/main.66bd78d0.chunk.css"
   },
   {
-    "revision": "e53292e2f449ef39898e",
-    "url": "/wick-editor/test-import/static/js/main.e53292e2.chunk.js"
+    "revision": "6b644f38ac8dfe249500",
+    "url": "/wick-editor/test-import/static/js/main.6b644f38.chunk.js"
   },
   {
     "revision": "30a4c34e452b4a21e9e4",
@@ -768,7 +768,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test-import/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "d35b61a977f06c820540d7e1d6119c9d",
+    "revision": "35218858e2c04bc908592dac7fd19c10",
     "url": "/wick-editor/test-import/index.html"
   }
 ];
