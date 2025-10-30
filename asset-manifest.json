@@ -1,7 +1,7 @@
 {
-  "main.css": "/wick-editor/static/css/main.66bd78d0.chunk.css",
-  "main.js": "/wick-editor/static/js/main.dc7ee55d.chunk.js",
-  "main.js.map": "/wick-editor/static/js/main.dc7ee55d.chunk.js.map",
+  "main.css": "/wick-editor/static/css/main.ef1f16e8.chunk.css",
+  "main.js": "/wick-editor/static/js/main.35201018.chunk.js",
+  "main.js.map": "/wick-editor/static/js/main.35201018.chunk.js.map",
   "static/css/1.5e08d9ce.chunk.css": "/wick-editor/static/css/1.5e08d9ce.chunk.css",
   "static/js/1.7b4747de.chunk.js": "/wick-editor/static/js/1.7b4747de.chunk.js",
   "static/js/1.7b4747de.chunk.js.map": "/wick-editor/static/js/1.7b4747de.chunk.js.map",
@@ -186,9 +186,9 @@
   "static/media/instagram.svg": "/wick-editor/static/media/instagram.fc1f37f8.svg",
   "static/media/twitter.svg": "/wick-editor/static/media/twitter.ec9aec3f.svg",
   "static/media/white-heart.svg": "/wick-editor/static/media/white-heart.14b06d09.svg",
-  "static/css/main.66bd78d0.chunk.css.map": "/wick-editor/static/css/main.66bd78d0.chunk.css.map",
+  "static/css/main.ef1f16e8.chunk.css.map": "/wick-editor/static/css/main.ef1f16e8.chunk.css.map",
   "static/css/1.5e08d9ce.chunk.css.map": "/wick-editor/static/css/1.5e08d9ce.chunk.css.map",
   "index.html": "/wick-editor/index.html",
-  "precache-manifest.2ec5a2131f0e25dc0bc5dd6b930dd8e6.js": "/wick-editor/precache-manifest.2ec5a2131f0e25dc0bc5dd6b930dd8e6.js",
+  "precache-manifest.eb243a6db4e30f42c6b3c6e0a5d0a548.js": "/wick-editor/precache-manifest.eb243a6db4e30f42c6b3c6e0a5d0a548.js",
   "service-worker.js": "/wick-editor/service-worker.js"
 }
