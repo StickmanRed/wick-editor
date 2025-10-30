@@ -1,10 +1,10 @@
 {
   "main.css": "/wick-editor/test-import/static/css/main.ef1f16e8.chunk.css",
-  "main.js": "/wick-editor/test-import/static/js/main.e6f444fe.chunk.js",
-  "main.js.map": "/wick-editor/test-import/static/js/main.e6f444fe.chunk.js.map",
+  "main.js": "/wick-editor/test-import/static/js/main.a75ecbaf.chunk.js",
+  "main.js.map": "/wick-editor/test-import/static/js/main.a75ecbaf.chunk.js.map",
   "static/css/1.5e08d9ce.chunk.css": "/wick-editor/test-import/static/css/1.5e08d9ce.chunk.css",
-  "static/js/1.698297d4.chunk.js": "/wick-editor/test-import/static/js/1.698297d4.chunk.js",
-  "static/js/1.698297d4.chunk.js.map": "/wick-editor/test-import/static/js/1.698297d4.chunk.js.map",
+  "static/js/1.30a4c34e.chunk.js": "/wick-editor/test-import/static/js/1.30a4c34e.chunk.js",
+  "static/js/1.30a4c34e.chunk.js.map": "/wick-editor/test-import/static/js/1.30a4c34e.chunk.js.map",
   "runtime~main.js": "/wick-editor/test-import/static/js/runtime~main.a1ed8a7e.js",
   "runtime~main.js.map": "/wick-editor/test-import/static/js/runtime~main.a1ed8a7e.js.map",
   "static/media/settings-icon.svg": "/wick-editor/test-import/static/media/settings-icon.93aa9a3b.svg",
@@ -189,6 +189,6 @@
   "static/css/main.ef1f16e8.chunk.css.map": "/wick-editor/test-import/static/css/main.ef1f16e8.chunk.css.map",
   "static/css/1.5e08d9ce.chunk.css.map": "/wick-editor/test-import/static/css/1.5e08d9ce.chunk.css.map",
   "index.html": "/wick-editor/test-import/index.html",
-  "precache-manifest.584bf39dc48e0fec0d72b0e43e917bc1.js": "/wick-editor/test-import/precache-manifest.584bf39dc48e0fec0d72b0e43e917bc1.js",
+  "precache-manifest.f6ae7aadf36fc6420cabc7bbc2266afe.js": "/wick-editor/test-import/precache-manifest.f6ae7aadf36fc6420cabc7bbc2266afe.js",
   "service-worker.js": "/wick-editor/test-import/service-worker.js"
 }
