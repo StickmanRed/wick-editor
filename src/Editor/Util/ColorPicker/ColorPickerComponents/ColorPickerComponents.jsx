@@ -1,29 +1,52 @@
 import React, { Component } from "react";
 
-import './_wickcolorpickersliders.scss';
+import './_colorpickercomponents.scss';
 import WickCustomSlider from 'Editor/Util/ColorPicker/WickCustomSlider/WickCustomSlider';
-import WickInput from "../WickInput/WickInput";
+import WickInput from "../../WickInput/WickInput";
 
-class ColorSlider extends Component {
-    onMouseMove = offset => this.props.onChangeIntermediate(this.props.calculateColor(offset));
-    onMouseUp = offset => this.props.onChangeComplete(this.props.calculateColor(offset));
-    render () {
-        return (
-            <WickCustomSlider className={`wick-color-picker-slider ${this.props.className}`}
-                onMouseDownContainer={this.onMouseMove}
-                onMouseMove={this.onMouseMove}
-                onMouseUp={this.onMouseUp}
-                pointerComponent={WickControlPointer}
-                pointers={this.props.pointers}
-                pointersDirection={this.props.pointersDirection}
-                style={this.props.style} />
-        );
-    }
+function GradientControlStop (props) {
+    return (
+        <div className={props.className}
+            onMouseDown={props.onMouseDown}
+            style={props.style}
+            data-wick-pointer-index={props.stopIndex} />
+    );
 }
-function ColorInput (props) {
-    let { label, ...otherProps } = props;
+export function GradientSlider (props) {
+    return (
+        <WickCustomSlider className={props.className}
+            onMouseDownContainer={props.containerDown}
+            onMouseDownPointer={props.controlStopDown}
+            onMouseMove={props.onMouseMove}
+            onMouseUp={props.onMouseUp}
+            pointerComponent={GradientControlStop}
+            pointers={props.stops}
+            pointersDirection={'x'}
+            style={{
+                container: { backgroundImage: props.background }
+            }} />
+    );
+}
+
+function ColorSlider (props) {
+    let onMouseMove = offset => props.onChangeIntermediate(props.calculateColor(offset));
+    let onMouseUp = offset => props.onChangeComplete(props.calculateColor(offset));
+    return (
+        <WickCustomSlider className={`wick-color-picker-slider ${props.className}`}
+            onMouseDownContainer={onMouseMove}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            pointerComponent={WickControlPointer}
+            pointers={props.pointers}
+            pointersDirection={props.pointersDirection}
+            style={props.style} />
+    );
+}
+export function ColorPickerInput (props) {
+    let { label, labelBefore, ...otherProps } = props;
     return (
         <label className={`wick-color-picker-input-label ${props.className}`}>
+            {labelBefore}
             <WickInput {...otherProps}
                 className={`wick-color-picker-input-field ${props.className}`}
                 name="wick-color-picker-input-field" />
@@ -128,37 +151,37 @@ export class Fields extends Component {
         const rgba = this.props.colorObject.toRgb();
         return (
             <div className="wick-color-picker-fields">
-                <ColorInput className="wick-color-picker-field-hex"
+                <ColorPickerInput className="wick-color-picker-field-hex"
                     label="Hex"
                     type="text"
                     value={this.props.colorObject.toHex()}
                     isValidRegex={/#?[\dA-F]{6}/i}
                     cleanUp={this.cleanUpHex}
                     onChange={hex => this.props.onChange({ hex })} />
-                <ColorInput className="wick-color-picker-field-r"
+                <ColorPickerInput className="wick-color-picker-field-r"
                     label="R"
                     type="text"
                     value={rgba.r.toString()}
                     isValid={this.isValidRGB}
                     onChange={r => this.props.onChange({ r })} />
-                <ColorInput className="wick-color-picker-field-g"
+                <ColorPickerInput className="wick-color-picker-field-g"
                     label="G"
                     type="text"
                     value={rgba.g.toString()}
                     isValid={this.isValidRGB}
                     onChange={g => this.props.onChange({ g })} />
-                <ColorInput className="wick-color-picker-field-b"
+                <ColorPickerInput className="wick-color-picker-field-b"
                     label="B"
                     type="text"
                     value={rgba.b.toString()}
                     isValid={this.isValidRGB}
                     onChange={b => this.props.onChange({ b })} />
-                {!this.props.disableAlpha && <ColorInput className="wick-color-picker-field-a"
+                {!this.props.disableAlpha && <ColorPickerInput className="wick-color-picker-field-a"
                     label="A"
                     type="numeric"
-                    value={rgba.a}
+                    value={rgba.a * 100}
                     min={0}
-                    max={1}
+                    max={100}
                     onChange={a => this.props.onChange({ a })} />}
             </div>
         );

@@ -23,6 +23,53 @@ import WickGradientColorPicker  from 'Editor/Util/ColorPicker/WickGradientColorP
 
 import './_colorpicker.scss';
 
+console.log(Popover.prototype);
+//Popover.prototype.handleDocumentClick = function () {(console.feed ? console.feed.pointers : console).log('eat cheese', this)}
+// Modify popover to attach 
+/*Popover.prototype.componentDidMount = function () {
+  this.downPopover = null;
+  this.handleDocumentMouseDown = (e) => { this.downTarget = e.target };
+
+  this._target = getTarget(this.props.target);
+  this.handleProps();
+}
+Popover.prototype.addTargetEvents = function () {
+  ['click', 'touchstart'].forEach(event =>
+    document.addEventListener(event, this.handleDocumentClick, true)
+  );
+  document.addEventListener('mousedown', this.handleDocumentMouseDown)
+}
+
+Popover.prototype.removeTargetEvents = function () {
+  ['click', 'touchstart'].forEach(event =>
+    document.removeEventListener(event, this.handleDocumentClick, true)
+  );
+  document.removeEventListener('mousedown', this.handleDocumentMouseDown)
+}
+Popover.prototype.handleDocumentClick = function (e) {
+  if (this._target) {
+    if (e.target !== this._target && !this._target.contains(e.target) && e.target !== this._popover && !(this._popover && this._popover.contains(e.target))
+    && (this.downTarget && this.downTarget === e.target)) {
+      if (this._hideTimeout) {
+        this.clearHideTimeout();
+      }
+
+      if (this.props.isOpen) {
+        //console.feed.pointers.log('eggggggggggggg');
+        this.toggle(e);
+      }
+    }
+  }
+}
+Popover.prototype.toggle = function (e) {
+  console.feed.pointers.log('log');
+  if (this.props.disabled) {
+    return e && e.preventDefault();
+  }
+
+  return this.props.toggle(e, this);
+}*/
+
 export default function ColorPicker (props) {
   const [open, setOpen] = useState(false);
 
@@ -45,7 +92,7 @@ export default function ColorPicker (props) {
   let itemID = props.id;
   let popoverID = itemID+'-popover';
 
-  function toggle () {
+  function toggle (e, pop) {
     if (!open) {
       setTimeout(selectPopover, 200);
     }
@@ -81,6 +128,7 @@ export default function ColorPicker (props) {
               colorPickerType={props.colorPickerType}
               changeColorPickerType={props.changeColorPickerType}
               disableAlpha={props.disableAlpha}
+              enableGradient={props.enableGradient}
               color={color}
               onChangeComplete={props.onChangeComplete}
               onChangeIntermediate={props.onChangeIntermediate}

@@ -4,19 +4,24 @@
 
 @import 'Editor/_wickbrand.scss';
 
-.wick-color-picker-gradient.wick-custom-slider {
-    position: relative;
-    height: fit-content;
-}
-.wick-color-picker-gradient.wick-custom-slider-background {
-    height: 25px;
-}
-.wick-color-picker-gradient.wick-custom-slider-pointer {
-    position: absolute;
-    top: 0;
-    translate: -12.5px;
-    width: 25px;
-    height: 25px;
-    background-color: white;
-    border-radius: 12.5px;
+.wick-color-picker-gradient-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .wick-color-picker-gradient-fields-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+
+        input {
+            width: 50%;
+        }
+    }
+    label {
+        justify-content: flex-end;
+        white-space: nowrap;
+        gap: 5px;
+        margin: 0;
+    }
 }

@@ -5,6 +5,9 @@ class WickCustomSlider extends Component {
         super();
         this.container = createRef(null);
     }
+    componentWillUnmount () {
+        this.unbindEvents();
+    }
     calculateOffset = (e) => {
         if (!this.container.current) return;
         const container = this.container.current;

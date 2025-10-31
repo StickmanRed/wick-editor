@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 
-import  ActionButton  from 'Editor/Util/ActionButton/ActionButton';
+import tinycolor from 'tinycolor2';
 
 import './_wickcolorpicker.scss';
+import  ActionButton  from 'Editor/Util/ActionButton/ActionButton';
 import WickSwatch from 'Editor/Util/ColorPicker/WickSwatch/WickSwatch';
-import { Saturation, Hue, Alpha, Fields } from 'Editor/Util/ColorPicker/WickColorPickerSliders';
-import tinycolor from 'tinycolor2';
+import { Saturation, Hue, Alpha, Fields } from 'Editor/Util/ColorPicker/ColorPickerComponents/ColorPickerComponents';
 
 var { Checkboard, Swatch } = require('react-color/lib/components/common');
 
@@ -43,6 +43,31 @@ class WickColorPicker extends Component {
         this.color = tinycolor(newInput);
         this.values = this.color.toHsv();
         this.props.onChangeComplete(this.color.toRgbString());
+    }
+
+    renderHeader = () => {
+        return (
+            <div className="wick-color-picker-header">
+                <div className="wick-color-picker-action-button">
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-swatches-button"
+                        tooltip="Swatches"
+                        action={() => {this.props.changeColorPickerType("swatches")}}
+                        isActive={ () => this.props.colorPickerType === "swatches" }
+                        icon="swatches" />
+                </div>
+                <div className="wick-color-picker-action-button spacer">
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-spectrum-button"
+                        tooltip="Spectrum"
+                        action={() => {this.props.changeColorPickerType("spectrum")}}
+                        isActive={ () => this.props.colorPickerType === "spectrum" }
+                        icon="spectrum" />
+                </div>
+            </div>
+        );
     }
 
     renderSwatchColumn = (colorList, i) => {
@@ -175,9 +200,12 @@ class WickColorPicker extends Component {
             this.color = inputColor;
         }
 
-        if (this.props.colorPickerType === "spectrum") return this.renderSpectrum();
-        else return this.renderSwatches();
-        // this.props.colorPickerType === "swatches"
+        return (
+            <>
+                {this.renderHeader()}
+                {this.props.colorPickerType === "spectrum" ? this.renderSpectrum() : this.renderSwatches()}
+            </>
+        );
     }
 
     openEyedropper = () => {
