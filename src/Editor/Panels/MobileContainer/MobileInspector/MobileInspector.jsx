@@ -177,6 +177,20 @@ class MobileInspector extends Component {
     this.props.setSelectionAttribute(attribute, newValue);
   }
 
+  /**
+   * Updates the value of a selection attribute without adding to the undo stack.
+   * @param {string} attribute Name of the attribute to update.
+   * @param {string|number} newValue  New value of the attribute to update.
+   */
+  setSelectionAttributeIntermediate = (attribute, newValue) => {
+    if (attribute === 'fillColorOpacity') {
+      return this.setSelectionFillColorOpacity(newValue);
+    }
+    this.props.project.selection[attribute] = newValue;
+    this.props.project.view.render();
+    this.props.project.guiElement.draw();
+  }
+
   // Inspector Row Types
 
   /**
@@ -188,8 +202,10 @@ class MobileInspector extends Component {
         <div className="mobile-inspector-col-left">
           <MobileInspectorColor
             tooltip="Stroke"
-            val={this.getSelectionAttribute('strokeColor').toCSS()}
+            val={this.getSelectionAttribute('strokeColor')}
             onChange={(col) => this.setSelectionAttribute('strokeColor', col)}
+            onChangeIntermediate={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
+            enableGradient={true}
             id={"mobile-inspector-selection-stroke-color"}
             stroke={true}
             divider={false}
@@ -201,8 +217,10 @@ class MobileInspector extends Component {
 
           <MobileInspectorColor
             tooltip="Fill"
-            val={this.getSelectionAttribute('fillColor').toCSS()}
+            val={this.getSelectionAttribute('fillColor')}
             onChange={(col) => this.setSelectionAttribute('fillColor', col)}
+            onChangeIntermediate={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
+            enableGradient={true}
             id={"mobile-inspector-selection-fill-color"}
             divider={false}
             colorPickerType={this.props.colorPickerType}

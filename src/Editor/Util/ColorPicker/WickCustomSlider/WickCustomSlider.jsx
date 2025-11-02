@@ -31,23 +31,27 @@ class WickCustomSlider extends Component {
         window.removeEventListener('mousemove', this.handleMouseMove);
         window.removeEventListener('mouseup', this.handleMouseUp);
     }
-    handleMouseDownPointer = (e) => {
-        if (!this.props.onMouseDownPointer) return this.handleMouseDownContainer(e);
+    handlePointer = (e) => {
+        if (!this.props.onMouseDownPointer) return this.handleContainer(e);
         this.props.onMouseDownPointer(e.target.dataset.wickPointerIndex);
-        this.bindEvents();
     }
-    handleMouseDownContainer = (e) => {
+    handleContainer = (e) => {
         // Check if one of the pointers were clicked
         if (e.target !== e.currentTarget) return;
         this.props.onMouseDownContainer(this.calculateOffset(e));
-        this.bindEvents();
     }
-    handleMouseMove = (e) => {
-        this.props.onMouseMove(this.calculateOffset(e));
-    }
+    handleMouseMove = (e) => this.props.onMouseMove(this.calculateOffset(e));
     handleMouseUp = (e) => {
         this.unbindEvents();
         this.props.onMouseUp(this.calculateOffset(e));
+    }
+    handleTouchEnd = (e) => {
+        if (e.touches.length > 0) {
+            return this.props.onMouseUp(this.calculateOffset(e));
+        }
+        else {
+            return this.props.onMouseUp(this.calculateOffset(e.changedTouches[0]));
+        }
     }
 
     renderPointers () {
@@ -67,7 +71,8 @@ class WickCustomSlider extends Component {
                         <this.props.pointerComponent className={`wick-custom-slider-pointer ${this.props.className}`}
                             key={index}
                             stopIndex={index}
-                            onMouseDown={this.handleMouseDownPointer}
+                            onMouseDown={e => {this.handlePointer(e); this.bindEvents();}}
+                            onTouchStart={this.handlePointer}
                             color={pointerItem.color}
                             pointerType={this.props.pointerType}
                             style={style} />
@@ -82,7 +87,11 @@ class WickCustomSlider extends Component {
                 style={this.props.style && this.props.style.container} >
                 <div className={`wick-custom-slider-background ${this.props.className}`}
                     ref={this.container}
-                    onMouseDown={this.handleMouseDownContainer}
+                    onMouseDown={e => {this.handleContainer(e); this.bindEvents();}}
+                    onTouchStart={this.handleContainer}
+                    onTouchMove={this.handleMouseMove}
+                    onTouchEnd={this.handleTouchEnd}
+                    onTouchCancel={this.handleTouchCancel}
                     style={this.props.style && this.props.style.background}>
                     {this.renderPointers()}
                 </div>

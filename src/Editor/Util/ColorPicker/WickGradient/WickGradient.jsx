@@ -126,7 +126,7 @@ class WickGradient extends Component {
                     containerDown={this.containerMouseDown}
                     controlStopDown={this.controlStopMouseDown}
                     onMouseMove={offset => { this.offsetSelectedStop(offset.x); this.onChangeIntermediate(); }}
-                    onMouseUp={this.onChangeComplete}
+                    onMouseUp={() => this.onChangeComplete()}
                     stops={this.controlStops}
                     background={this.renderGradientBackground()} />
                 {this.renderGradientInfo()}

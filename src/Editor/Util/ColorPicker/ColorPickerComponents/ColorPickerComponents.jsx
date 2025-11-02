@@ -8,6 +8,7 @@ function GradientControlStop (props) {
     return (
         <div className={props.className}
             onMouseDown={props.onMouseDown}
+            onTouchStart={props.onTouchStart}
             style={props.style}
             data-wick-pointer-index={props.stopIndex} />
     );
