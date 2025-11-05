@@ -32,10 +32,16 @@ class WickCustomSlider extends Component {
         window.removeEventListener('mouseup', this.handleMouseUp);
     }
     handlePointer = (e) => {
+        // Don't select text when dragging pointer
+        e.preventDefault();
+
         if (!this.props.onMouseDownPointer) return this.handleContainer(e);
         this.props.onMouseDownPointer(e.target.dataset.wickPointerIndex);
     }
     handleContainer = (e) => {
+        // Don't select text when dragging container
+        e.preventDefault();
+
         // Check if one of the pointers were clicked
         if (e.target !== e.currentTarget) return;
         this.props.onMouseDownContainer(this.calculateOffset(e));

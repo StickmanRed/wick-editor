@@ -48,6 +48,12 @@ class WickGradientColorPicker extends Component {
         this.switchGradient = (color) => {
             // Exit if color is a gradient
             if (color.stops) return;
+            if (this.props.color.stops || (this.props.color.gradient && this.props.color.gradient.stops)) {
+                // If props.color is already a gradient, use that color
+                this.outOfSync = false;
+                this.setState({ outOfSyncColor: this.props.color });
+                return;
+            }
             // Figma's default behavior
             let colorObject = tinycolor(color);
             let firstStop = colorObject.toRgbString();
