@@ -4,18 +4,23 @@ import './_colorpickercomponents.scss';
 import WickCustomSlider from 'Editor/Util/ColorPicker/WickCustomSlider/WickCustomSlider';
 import WickInput from "../../WickInput/WickInput";
 
+const CHECKERBOARD_URL = `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAPUlEQVR4AeySywkAMAhDH52h+0/YIRoH8IMnD0JyCgSe5gA3sWJfVuCnhWQLYMYNnr4VOdzJDAQR9LUI8AEAAP//ViLpiAAAAAZJREFUAwBk7gjBheCOvgAAAABJRU5ErkJggg==")`;
+
 function GradientControlStop (props) {
     return (
-        <div className={props.className}
+        <div className={`wick-color-picker-gradient-stop ${props.className}`}
             onMouseDown={props.onMouseDown}
             onTouchStart={props.onTouchStart}
             style={props.style}
-            data-wick-pointer-index={props.stopIndex} />
+            data-wick-pointer-index={props.stopIndex}>
+                <Checkerboard className="wick-color-picker-gradient-checker"
+                    color={props.color} />
+        </div>
     );
 }
 export function GradientSlider (props) {
     return (
-        <WickCustomSlider className={props.className}
+        <WickCustomSlider className="wick-color-picker-gradient-slider"
             onMouseDownContainer={props.containerDown}
             onMouseDownPointer={props.controlStopDown}
             onMouseMove={props.onMouseMove}
@@ -29,6 +34,16 @@ export function GradientSlider (props) {
     );
 }
 
+function WickControlPointer (props) {
+    return (
+        <div className="wick-color-picker-pointer"
+            onMouseDown={props.onMouseDown}
+            style={{
+                backgroundColor: props.color,
+                ...props.style
+            }} />
+    );
+}
 function ColorSlider (props) {
     let onMouseMove = offset => props.onChangeIntermediate(props.calculateColor(offset));
     let onMouseUp = offset => props.onChangeComplete(props.calculateColor(offset));
@@ -49,7 +64,7 @@ export function ColorPickerInput (props) {
         <label className={`wick-color-picker-input-label ${props.className}`}>
             {labelBefore}
             <WickInput {...otherProps}
-                className={`wick-color-picker-input-field ${props.className}`}
+                className={`wick-color-picker-input-field`}
                 name="wick-color-picker-input-field" />
             {label}
         </label>
@@ -74,7 +89,7 @@ export class Saturation extends Component {
         let color = this.props.colorObject.toRgb();
         color = `rgb(${color.r}, ${color.g}, ${color.b})`;
         return (
-            <ColorSlider className="wick-color-picker-slider wick-color-picker-saturation"
+            <ColorSlider className="wick-color-picker-saturation"
                 calculateColor={this.calculateColor}
                 pointers={[{ color, x: this.props.s, y: 1 - this.props.v }]}
                 style={this.renderStyle()}
@@ -90,7 +105,7 @@ export class Hue extends Component {
     render () {
         let color = `hsl(${this.props.h}, 100%, 50%)`;
         return (
-            <ColorSlider className="wick-color-picker-slider wick-color-picker-bar wick-color-picker-hue"
+            <ColorSlider className="wick-color-picker-bar wick-color-picker-hue"
                 calculateColor={this.calculateColor}
                 pointers={[{ color, offset: this.props.h / 360 }]}
                 pointersDirection='x'
@@ -111,7 +126,7 @@ export class Alpha extends Component {
             container: {
                 backgroundColor: '#fff',
                 backgroundImage: `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0) 8px, rgb(${r}, ${g}, ${b}) calc(100% - 8px)),
-                    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAPUlEQVR4AeySywkAMAhDH52h+0/YIRoH8IMnD0JyCgSe5gA3sWJfVuCnhWQLYMYNnr4VOdzJDAQR9LUI8AEAAP//ViLpiAAAAAZJREFUAwBk7gjBheCOvgAAAABJRU5ErkJggg==")`
+                    ${CHECKERBOARD_URL}`
             }
         }
     }
@@ -121,7 +136,7 @@ export class Alpha extends Component {
         let newLight = 1 + color.a * (color.l - 1);
         color = `hsl(${color.h}, ${color.s * 100}%, ${newLight * 100}%)`;
         return (
-            <ColorSlider className="wick-color-picker-slider wick-color-picker-bar wick-color-picker-alpha"
+            <ColorSlider className="wick-color-picker-bar wick-color-picker-alpha"
                 calculateColor={this.calculateColor}
                 pointers={[{ color, offset: this.props.a }]}
                 pointersDirection='x'
@@ -183,19 +198,29 @@ export class Fields extends Component {
                     value={rgba.a * 100}
                     min={0}
                     max={100}
-                    onChange={a => this.props.onChange({ a })} />}
+                    onChange={a => this.props.onChange({ a: a / 100 })} />}
             </div>
         );
     }
 }
 
-function WickControlPointer (props) {
+export function Checkerboard (props) {
+    let { className, style, color, ...otherProps } = props;
     return (
-        <div className="wick-color-picker-pointer"
-            onMouseDown={props.onMouseDown}
-            style={{
-                backgroundColor: props.color,
-                ...props.style
-            }} />
+        <div {...otherProps}
+            className={`wick-color-picker-checkerboard ${className}`}
+            style={{ backgroundImage: CHECKERBOARD_URL, ...style }}>
+            <div style={{ backgroundColor: color }} />
+        </div>
+    );
+}
+export function Swatch (props) {
+    return (
+        <Checkerboard className="wick-color-picker-swatch-checker"
+            title={props.color}
+            tabIndex="0"
+            onClick={props.onClick}
+            onKeyDown={e => (e.key === "Enter" && props.onClick())}
+            color={props.color} />
     );
 }

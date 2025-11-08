@@ -122,7 +122,7 @@ class WickGradient extends Component {
         return (
             <>
                 {this.renderHeader()}
-                <GradientSlider className="wick-color-picker-gradient"
+                <GradientSlider
                     containerDown={this.containerMouseDown}
                     controlStopDown={this.controlStopMouseDown}
                     onMouseMove={offset => { this.offsetSelectedStop(offset.x); this.onChangeIntermediate(); }}

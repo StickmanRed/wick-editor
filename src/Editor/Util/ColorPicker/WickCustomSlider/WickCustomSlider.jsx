@@ -36,7 +36,7 @@ class WickCustomSlider extends Component {
         e.preventDefault();
 
         if (!this.props.onMouseDownPointer) return this.handleContainer(e);
-        this.props.onMouseDownPointer(e.target.dataset.wickPointerIndex);
+        this.props.onMouseDownPointer(e.currentTarget.dataset.wickPointerIndex);
     }
     handleContainer = (e) => {
         // Don't select text when dragging container
@@ -74,7 +74,7 @@ class WickCustomSlider extends Component {
                     style.position = 'absolute';
 
                     return (
-                        <this.props.pointerComponent className={`wick-custom-slider-pointer ${this.props.className}`}
+                        <this.props.pointerComponent className="wick-custom-slider-pointer"
                             key={index}
                             stopIndex={index}
                             onMouseDown={e => {this.handlePointer(e); this.bindEvents();}}
@@ -91,13 +91,13 @@ class WickCustomSlider extends Component {
         return (
             <div className={`wick-custom-slider ${this.props.className}`}
                 style={this.props.style && this.props.style.container} >
-                <div className={`wick-custom-slider-background ${this.props.className}`}
+                <div className="wick-custom-slider-background"
                     ref={this.container}
                     onMouseDown={e => {this.handleContainer(e); this.bindEvents();}}
                     onTouchStart={this.handleContainer}
                     onTouchMove={this.handleMouseMove}
                     onTouchEnd={this.handleTouchEnd}
-                    onTouchCancel={this.handleTouchCancel}
+                    onTouchCancel={this.handleTouchEnd}
                     style={this.props.style && this.props.style.background}>
                     {this.renderPointers()}
                 </div>

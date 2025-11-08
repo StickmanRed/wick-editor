@@ -3,11 +3,9 @@ import React, { Component } from 'react'
 import tinycolor from 'tinycolor2';
 
 import './_wickcolorpicker.scss';
-import  ActionButton  from 'Editor/Util/ActionButton/ActionButton';
+import ActionButton from 'Editor/Util/ActionButton/ActionButton';
 import WickSwatch from 'Editor/Util/ColorPicker/WickSwatch/WickSwatch';
-import { Saturation, Hue, Alpha, Fields } from 'Editor/Util/ColorPicker/ColorPickerComponents/ColorPickerComponents';
-
-var { Checkboard, Swatch } = require('react-color/lib/components/common');
+import { Saturation, Hue, Alpha, Fields, Checkerboard, Swatch } from 'Editor/Util/ColorPicker/ColorPickerComponents/ColorPickerComponents';
 
 class WickColorPicker extends Component {
     constructor () {
@@ -130,7 +128,7 @@ class WickColorPicker extends Component {
                             <Swatch
                                 color={color}
                                 style={{default: {}, ":focus": {outline: "2px solid white"}}}
-                                onClick={(color) => {this.props.onChangeComplete(color)}}  />
+                                onClick={() => {this.props.onChangeComplete(color)}}  />
                         </div>
                     );
                 })}
@@ -139,17 +137,7 @@ class WickColorPicker extends Component {
     }
 
     renderSpectrum = () => {
-        let activeColor = this.color.toRgbString();
-        let styles = {
-            activeColor: {
-                position:'absolute',
-                width: "100%",
-                height: "100%",
-                backgroundColor: activeColor,
-            }
-        }
-        
-        let colors = ['#D0021B', '#F8E71C', '#7ED321', '#4A90E2', '#000000', '#4A4A4A', '#FFFFFF', '#FFFFFF00']
+        //let colors = ['#D0021B', '#F8E71C', '#7ED321', '#4A90E2', '#000000', '#4A4A4A', '#FFFFFF', '#FFFFFF00']
         let lastUsedColorsDefaults = ["#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000"]
         let lastColors = this.props.lastColorsUsed || lastUsedColorsDefaults;
         return (
@@ -177,17 +165,15 @@ class WickColorPicker extends Component {
                             onChangeComplete={this.onChangeComplete}
                             colorObject={this.color} />
                     </div>
-                    <div className="wick-color-picker-color-block-container">
-                        <Checkboard />
-                        <div style={styles.activeColor} />
-                    </div>
+                    <Checkerboard className="wick-color-picker-color-block-container"
+                        color={this.color.toRgbString()} />
                 </div>
                 <Fields
                     onChange={this.onChangeFields}
                     colorObject={this.color}
                     disableAlpha={this.props.disableAlpha}
                     aria-label="color options" />
-                {this.renderSwatchContainer(colors)}
+                {/*this.renderSwatchContainer(colors)*/}
                 {this.renderSwatchContainer(lastColors)}
             </div>
         );
@@ -199,7 +185,6 @@ class WickColorPicker extends Component {
             this.values = inputColor.toHsv();
             this.color = inputColor;
         }
-
         return (
             <>
                 {this.renderHeader()}

@@ -6,15 +6,15 @@
 
 $color-picker-pointer-radius: 8px;
 
-// TEMPORARY: Control stop styling
-.wick-color-picker-gradient.wick-custom-slider {
+.wick-color-picker-gradient-slider {
     position: relative;
     height: fit-content;
+    
+    .wick-custom-slider-background {
+        height: 25px;
+    }
 }
-.wick-color-picker-gradient.wick-custom-slider-background {
-    height: 25px;
-}
-.wick-color-picker-gradient.wick-custom-slider-pointer {
+.wick-color-picker-gradient-stop {
     position: absolute;
     top: 0;
     translate: -12.5px;
@@ -23,30 +23,9 @@ $color-picker-pointer-radius: 8px;
     background-color: white;
     border-radius: 12.5px;
 }
-
-.wick-color-picker-saturation.wick-custom-slider {
-    width: 100%;
-    height: 115px;
-    border-radius: 2px;
-    overflow: visible;
-}
-.wick-color-picker-bar.wick-custom-slider {
-    height: $color-picker-pointer-radius * 2;
-    border-radius: $color-picker-pointer-radius;
-    padding: 0 $color-picker-pointer-radius;
-    overflow: hidden;
-}
-.wick-color-picker-hue.wick-custom-slider {
-    background-color: #f00;
-}
-
-.wick-color-picker-slider .wick-custom-slider-background {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-.wick-color-picker-hue .wick-custom-slider-background {
-    background-image: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+.wick-color-picker-gradient-checker {
+    width: 25px;
+    height: 25px;
 }
 
 .wick-color-picker-pointer {
@@ -57,11 +36,38 @@ $color-picker-pointer-radius: 8px;
     border: 4px solid white;
     background-color: black;
 }
-.wick-color-picker-saturation .wick-color-picker-pointer {
-    translate: -8px -8px; //-$color-picker-pointer-radius -$color-picker-pointer-radius;
+
+.wick-color-picker-slider .wick-custom-slider-background {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
-.wick-color-picker-bar .wick-color-picker-pointer {
-    top: 0;
+.wick-color-picker-bar {
+    height: $color-picker-pointer-radius * 2;
+    border-radius: $color-picker-pointer-radius;
+    padding: 0 $color-picker-pointer-radius;
+    overflow: hidden;
+
+    .wick-color-picker-pointer {
+        top: 0;
+    }
+}
+.wick-color-picker-saturation {
+    width: 100%;
+    height: 115px;
+    border-radius: 2px;
+    overflow: visible;
+
+    .wick-color-picker-pointer {
+        translate: (-$color-picker-pointer-radius) (-$color-picker-pointer-radius);
+    }
+}
+.wick-color-picker-hue {
+    background-color: #f00;
+    
+    .wick-custom-slider-background {
+        background-image: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+    }
 }
 
 .wick-color-picker-input-label {
@@ -75,9 +81,26 @@ $color-picker-pointer-radius: 8px;
     flex-direction: column;
     flex: 1;
 }
-.wick-color-picker-input-label.wick-color-picker-field-hex {
+.wick-color-picker-field-hex {
     flex: 2;
+
+    .wick-color-picker-input-field {
+        text-transform: uppercase;
+    }
 }
-.wick-color-picker-input-field.wick-color-picker-field-hex {
-    text-transform: uppercase;
+
+.wick-color-picker-checkerboard {
+    overflow: hidden;
+    background-position: center left;
+
+    div {
+        width: 100%;
+        height: 100%;
+    }
+}
+.wick-color-picker-swatch-checker {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
 }
