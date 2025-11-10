@@ -43,31 +43,6 @@ class WickColorPicker extends Component {
         this.props.onChangeComplete(this.color.toRgbString());
     }
 
-    renderHeader = () => {
-        return (
-            <div className="wick-color-picker-header">
-                <div className="wick-color-picker-action-button">
-                    <ActionButton
-                        color="tool"
-                        id="color-picker-swatches-button"
-                        tooltip="Swatches"
-                        action={() => {this.props.changeColorPickerType("swatches")}}
-                        isActive={ () => this.props.colorPickerType === "swatches" }
-                        icon="swatches" />
-                </div>
-                <div className="wick-color-picker-action-button spacer">
-                    <ActionButton
-                        color="tool"
-                        id="color-picker-spectrum-button"
-                        tooltip="Spectrum"
-                        action={() => {this.props.changeColorPickerType("spectrum")}}
-                        isActive={ () => this.props.colorPickerType === "spectrum" }
-                        icon="spectrum" />
-                </div>
-            </div>
-        );
-    }
-
     renderSwatchColumn = (colorList, i) => {
         return (
             <div key={"swatch-color-column-" + i} className="wick-swatch-picker-column">
@@ -185,12 +160,7 @@ class WickColorPicker extends Component {
             this.values = inputColor.toHsv();
             this.color = inputColor;
         }
-        return (
-            <>
-                {this.renderHeader()}
-                {this.props.colorPickerType === "spectrum" ? this.renderSpectrum() : this.renderSwatches()}
-            </>
-        );
+        return (this.props.colorPickerType === "spectrum") ? this.renderSpectrum() : this.renderSwatches();
     }
 
     openEyedropper = () => {

@@ -21,7 +21,15 @@ $color-picker-block-margin: 5px;
     font-family: 'Nunito Sans';
 }
 
-#btn-color-picker-close {
+.wick-color-picker-action-button {
+    width: 30px;
+    margin-right: 4px;
+}
+
+.wick-color-picker-action-button.spacer {
+    margin-right: auto;
+}
+.color-picker-control-div {
     margin-left: auto;
 }
 

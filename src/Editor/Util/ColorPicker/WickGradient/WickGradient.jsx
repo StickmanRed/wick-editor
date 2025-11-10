@@ -33,6 +33,17 @@ class WickGradient extends Component {
         let color = this.controlStops[this.props.selectedControlStopIndex].color;
         this.controlStops[this.props.selectedControlStopIndex] = { color, offset };
     }
+    deleteSelectedStop = () => {
+        let stopIndex = this.props.selectedControlStopIndex;
+        if (this.controlStops.length <= 2) {
+            this.colorSelectedStop(this.controlStops[1 - stopIndex].color);
+            this.props.selectControlStop(1 - stopIndex);
+        }
+        else {
+            this.controlStops.splice(stopIndex, 1);
+        }
+        this.props.onChangeComplete(this.gradientObject());
+    }
     gradientObject = () => ({
         stops: this.controlStops,
         origin: this.origin,
@@ -56,7 +67,6 @@ class WickGradient extends Component {
                     <ActionButton
                         color="tool"
                         id="color-picker-gradient-linear-button"
-                        tooltip="Linear"
                         action={ () => this.onChangeRadial(false) }
                         isActive={ () => !this.radial }
                         text="Linear" />
@@ -65,7 +75,6 @@ class WickGradient extends Component {
                     <ActionButton
                         color="tool"
                         id="color-picker-gradient-radial-button"
-                        tooltip="Radial"
                         action={ () => this.onChangeRadial(true) }
                         isActive={ () => this.radial }
                         text="Radial" />
@@ -109,6 +118,14 @@ class WickGradient extends Component {
                         value={this.destination.y}
                         onChange={y => this.onChangeEndpoint(this.destination, { y })} />
                 </div>
+                <div className="wick-color-picker-gradient-fields-row">
+                    <ActionButton
+                        color="red"
+                        id="color-picker-gradient-delete-stop"
+                        action={this.deleteSelectedStop}
+                        text="Delete Color Stop"
+                        icon="delete" />
+                </div>
             </div>
         )
     }
@@ -128,8 +145,10 @@ class WickGradient extends Component {
                     onMouseMove={offset => { this.offsetSelectedStop(offset.x); this.onChangeIntermediate(); }}
                     onMouseUp={() => this.onChangeComplete()}
                     stops={this.controlStops}
+                    pointerProps={{ selectedStop: this.props.selectedControlStopIndex }}
                     background={this.renderGradientBackground()} />
                 {this.renderGradientInfo()}
+                {this.props.colorHeader}
                 <WickColorPicker {...this.props}
                     onChangeIntermediate={color => { this.colorSelectedStop(color); this.onChangeIntermediate(); }}
                     onChangeComplete={color => { this.colorSelectedStop(color); this.onChangeComplete(color); }}

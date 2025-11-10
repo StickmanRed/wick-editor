@@ -7,14 +7,27 @@ import WickInput from "../../WickInput/WickInput";
 const CHECKERBOARD_URL = `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAPUlEQVR4AeySywkAMAhDH52h+0/YIRoH8IMnD0JyCgSe5gA3sWJfVuCnhWQLYMYNnr4VOdzJDAQR9LUI8AEAAP//ViLpiAAAAAZJREFUAwBk7gjBheCOvgAAAABJRU5ErkJggg==")`;
 
 function GradientControlStop (props) {
+    let active = (props.selectedStop === props.stopIndex) ? ' wick-color-picker-gradient-active' : '';
+    let colorOpaque = props.color;
+    if (props.color.includes('rgba')) {
+        // rgba(R, G, B, A) -> rgb(R, G, B)
+        colorOpaque.replace('rgba', 'rgb');
+        colorOpaque = colorOpaque.substring(0, colorOpaque.lastIndexOf(',')) + ')';
+    }
     return (
-        <div className={`wick-color-picker-gradient-stop ${props.className}`}
+        <div className={`wick-color-picker-gradient-stop${active} ${props.className}`}
             onMouseDown={props.onMouseDown}
             onTouchStart={props.onTouchStart}
             style={props.style}
             data-wick-pointer-index={props.stopIndex}>
-                <Checkerboard className="wick-color-picker-gradient-checker"
-                    color={props.color} />
+                <div className={`wick-color-picker-gradient-arrow${active}`} />
+                <div className={`wick-color-picker-gradient-color${active}`}>
+                    <Checkerboard className="wick-color-picker-gradient-checker"
+                        style={{ borderColor: colorOpaque }}
+                        color={props.color}>
+                        <div style={{ backgroundColor: colorOpaque }} />
+                    </Checkerboard>
+                </div>
         </div>
     );
 }
@@ -26,10 +39,11 @@ export function GradientSlider (props) {
             onMouseMove={props.onMouseMove}
             onMouseUp={props.onMouseUp}
             pointerComponent={GradientControlStop}
+            pointerProps={props.pointerProps}
             pointers={props.stops}
             pointersDirection={'x'}
             style={{
-                container: { backgroundImage: props.background }
+                container: { backgroundImage: `${props.background}, ${CHECKERBOARD_URL}` }
             }} />
     );
 }
@@ -211,6 +225,7 @@ export function Checkerboard (props) {
             className={`wick-color-picker-checkerboard ${className}`}
             style={{ backgroundImage: CHECKERBOARD_URL, ...style }}>
             <div style={{ backgroundColor: color }} />
+            {props.children}
         </div>
     );
 }

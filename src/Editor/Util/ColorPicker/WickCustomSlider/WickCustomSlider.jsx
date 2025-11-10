@@ -70,18 +70,19 @@ class WickCustomSlider extends Component {
                         if (this.props.pointersDirection.includes('x')) style.left = `${offset * 100}%`;
                         else style.top = `${offset * 100}%`;
                     }
-                    else style = { left: `${offset.x * 100}%`, top: `${offset.y * 100}%`};
+                    else style = { left: `${offset.x * 100}%`, top: `${offset.y * 100}%` };
                     style.position = 'absolute';
 
                     return (
                         <this.props.pointerComponent className="wick-custom-slider-pointer"
-                            key={index}
+                            key={`color-${pointerItem.color}-index-${index}`}
                             stopIndex={index}
                             onMouseDown={e => {this.handlePointer(e); this.bindEvents();}}
                             onTouchStart={this.handlePointer}
                             color={pointerItem.color}
                             pointerType={this.props.pointerType}
-                            style={style} />
+                            style={style}
+                            {...this.props.pointerProps} />
                     );
                 })}
             </>

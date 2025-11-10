@@ -32,12 +32,21 @@ class WickGradientColorPicker extends Component {
             this.setState({ colorOnDrag: null });
         }
         this.onGradientChange = (color, stopColor) => {
+            // Sort color stops, keep the selected stop
+            let selectedStop = color.stops[this.state.selectedControlStopIndex];
+            color.stops = color.stops.toSorted((stop1, stop2) => stop1.offset - stop2.offset);
+            let newIndex = color.stops.indexOf(selectedStop);
+            if (newIndex < 0) newIndex = 0;
+
             this.props.onChangeComplete(color);
             if (stopColor) {
                 this.props.updateLastColors(stopColor, this.editLastColors);
                 this.editLastColors = true;
             }
-            this.setState({ colorOnDrag: null });
+            this.setState({
+                colorOnDrag: null,
+                selectedControlStopIndex: newIndex
+            });
         }
         this.switchSolid = (color) => {
             // Exit if color isn't a gradient
@@ -93,32 +102,57 @@ class WickGradientColorPicker extends Component {
         return { stops, origin, destination, radial: color.gradient.radial };
     }
 
+    renderGradientHeader (color) {
+        return (
+            <>
+                <div>{/* className="wick-color-picker-action-button">*/}
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-solid-button"
+                        action={() => this.switchSolid(color)}
+                        isActive={ () => !color.stops }
+                        text="Solid" />
+                </div>
+                <div>{/* className="wick-color-picker-action-button spacer">*/}
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-gradient-button"
+                        action={() => this.switchGradient(color)}
+                        isActive={ () => !!color.stops }
+                        text="Gradient" />
+                </div>
+            </>
+        );
+    }
+    renderColorHeader () {
+        return (
+            <>
+                <div className="wick-color-picker-action-button">
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-swatches-button"
+                        tooltip="Swatches"
+                        action={() => {this.props.changeColorPickerType("swatches")}}
+                        isActive={ () => this.props.colorPickerType === "swatches" }
+                        icon="swatches" />
+                </div>
+                <div className="wick-color-picker-action-button spacer">
+                    <ActionButton
+                        color="tool"
+                        id="color-picker-spectrum-button"
+                        tooltip="Spectrum"
+                        action={() => {this.props.changeColorPickerType("spectrum")}}
+                        isActive={ () => this.props.colorPickerType === "spectrum" }
+                        icon="spectrum" />
+                </div>
+            </>
+        );
+    }
     renderHeader (color) {
         return (
             <div className="wick-color-picker-header">
-                {this.props.enableGradient &&
-                <>
-                    <div>{/* className="wick-color-picker-action-button">*/}
-                        <ActionButton
-                            color="tool"
-                            id="color-picker-solid-button"
-                            tooltip="Solid"
-                            action={() => this.switchSolid(color)}
-                            isActive={ () => !color.stops }
-                            text="Solid" />
-                    </div>
-                    <div>{/* className="wick-color-picker-action-button spacer">*/}
-                        <ActionButton
-                            color="tool"
-                            id="color-picker-gradient-button"
-                            tooltip="Gradient"
-                            action={() => this.switchGradient(color)}
-                            isActive={ () => !!color.stops }
-                            text="Gradient" />
-                    </div>
-                </>
-                }
-                <div className="color-picker-control-div" style={{marginLeft: 'auto'}}>
+                {this.props.enableGradient ? this.renderGradientHeader(color) : this.renderColorHeader()}
+                <div className="color-picker-control-div">
                     <div id="btn-color-picker-close">
                         <ActionButton color="tool" icon="closemodal" action={this.props.toggle} />
                     </div>
@@ -150,15 +184,25 @@ class WickGradientColorPicker extends Component {
                 {this.renderHeader(color)}
                 {color.stops ?
                 <WickGradient {...this.props}
+                    colorHeader={
+                        <div className="wick-color-picker-header">
+                            {this.renderColorHeader()}
+                        </div>
+                    }
                     selectedControlStopIndex={index}
                     selectControlStop={index => this.setState({selectedControlStopIndex: index})}
                     onChangeIntermediate={this.onChangeIntermediate}
                     onChangeComplete={this.onGradientChange}
                     color={color} /> :
-                <WickColorPicker {...this.props}
-                    onChangeIntermediate={this.onChangeIntermediate}
-                    onChangeComplete={this.onColorChange}
-                    color={color} />
+                <>
+                    <div className="wick-color-picker-header">
+                        {this.renderColorHeader()}
+                    </div>
+                    <WickColorPicker {...this.props}
+                        onChangeIntermediate={this.onChangeIntermediate}
+                        onChangeComplete={this.onColorChange}
+                        color={color} />
+                </>
                 }
             </div>
         );
