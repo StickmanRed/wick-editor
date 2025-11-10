@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/wick-editor/test/precache-manifest.ec2babeb54df5843f257ea018342663a.js"
+  "/wick-editor/test/precache-manifest.f28c755bf4667be143745a08eb3d145b.js"
 );
 
 workbox.clientsClaim();
