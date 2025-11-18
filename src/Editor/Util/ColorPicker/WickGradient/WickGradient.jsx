@@ -53,7 +53,12 @@ class WickGradient extends Component {
     onChangeIntermediate = () => this.props.onChangeIntermediate(this.gradientObject());
     onChangeComplete = (stopColor) => this.props.onChangeComplete(this.gradientObject(), stopColor);
     onChangeEndpoint = (endpoint, override) => {
-        Object.assign(endpoint, override);
+        if (typeof override.x === 'number') {
+            endpoint.x = override.x * this.props.bounds.width + this.props.bounds.left;
+        }
+        if (typeof override.y === 'number') {
+            endpoint.y = override.y * this.props.bounds.height + this.props.bounds.top;
+        }
         this.props.onChangeComplete(this.gradientObject());
     }
     onChangeRadial = (radial) => {
@@ -92,38 +97,51 @@ class WickGradient extends Component {
         return linearGradient;
     }
     renderGradientInfo () {
+        // Normalize the gradient endpoints to the selection bounds
+        let originX = (this.origin.x - this.props.bounds.left) / this.props.bounds.width;
+        let originY = (this.origin.y - this.props.bounds.top) / this.props.bounds.height;
+        let destinationX = (this.destination.x - this.props.bounds.left) / this.props.bounds.width;
+        let destinationY = (this.destination.y - this.props.bounds.top) / this.props.bounds.height;
         return (
             <div className="wick-color-picker-gradient-fields">
                 <div className="wick-color-picker-gradient-fields-row">
                     <ColorPickerInput className="wick-color-picker-gradient-field wick-color-picker-field-start-x"
                         labelBefore="Start X"
                         type="numeric"
-                        value={this.origin.x}
+                        value={originX}
                         onChange={x => this.onChangeEndpoint(this.origin, { x })} />
                     <ColorPickerInput className="wick-color-picker-gradient-field wick-color-picker-field-start-y"
                         labelBefore="Start Y"
                         type="numeric"
-                        value={this.origin.y}
+                        value={originY}
                         onChange={y => this.onChangeEndpoint(this.origin, { y })} />
                 </div>
                 <div className="wick-color-picker-gradient-fields-row">
                     <ColorPickerInput className="wick-color-picker-gradient-field wick-color-picker-field-end-x"
                         labelBefore="End X"
                         type="numeric"
-                        value={this.destination.x}
+                        value={destinationX}
                         onChange={x => this.onChangeEndpoint(this.destination, { x })} />
                     <ColorPickerInput className="wick-color-picker-gradient-field wick-color-picker-field-end-y"
                         labelBefore="End Y"
                         type="numeric"
-                        value={this.destination.y}
+                        value={destinationY}
                         onChange={y => this.onChangeEndpoint(this.destination, { y })} />
                 </div>
                 <div className="wick-color-picker-gradient-fields-row">
+                    <ColorPickerInput className="wick-color-picker-gradient-field wick-color-picker-field-stop-offset"
+                        labelBefore="Offset"
+                        type="numeric"
+                        value={this.controlStops[this.props.selectedControlStopIndex].offset}
+                        onChange={offset => {
+                            this.offsetSelectedStop(offset);
+                            this.props.onChangeComplete(this.gradientObject());
+                        }} />
                     <ActionButton
                         color="red"
                         id="color-picker-gradient-delete-stop"
                         action={this.deleteSelectedStop}
-                        text="Delete Color Stop"
+                        text="Delete Stop"
                         icon="delete" />
                 </div>
             </div>

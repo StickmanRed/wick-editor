@@ -44,6 +44,7 @@ class MobileInspectorColor extends Component {
               onChange: this.props.onChange,
               onChangeIntermediate: this.props.onChangeIntermediate,
               enableGradient: this.props.enableGradient,
+              ...this.props.selectionProps,
               id: this.props.id,
               stroke: !this.props.stroke ? false : this.props.stroke,
               placement: "left",

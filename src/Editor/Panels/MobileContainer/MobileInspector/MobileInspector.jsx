@@ -206,6 +206,11 @@ class MobileInspector extends Component {
             onChange={(col) => this.setSelectionAttribute('strokeColor', col)}
             onChangeIntermediate={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
             enableGradient={true}
+            selectionProps={{
+              selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
+              selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
+              targetCanvas: this.props.project.view._svgCanvas
+            }}
             id={"mobile-inspector-selection-stroke-color"}
             stroke={true}
             divider={false}
@@ -221,6 +226,11 @@ class MobileInspector extends Component {
             onChange={(col) => this.setSelectionAttribute('fillColor', col)}
             onChangeIntermediate={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
             enableGradient={true}
+            selectionProps={{
+              selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
+              selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
+              targetCanvas: this.props.project.view._svgCanvas
+            }}
             id={"mobile-inspector-selection-fill-color"}
             divider={false}
             colorPickerType={this.props.colorPickerType}

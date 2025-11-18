@@ -19,7 +19,8 @@
 
 import React, { useState } from 'react';
 import { Popover } from 'reactstrap';
-import WickGradientColorPicker  from 'Editor/Util/ColorPicker/WickGradientColorPicker';
+import WickGradientColorPicker from 'Editor/Util/ColorPicker/WickGradientColorPicker';
+import { CHECKERBOARD_URL } from 'Editor/Util/ColorPicker/ColorPickerComponents/ColorPickerComponents';
 
 import './_colorpicker.scss';
 
@@ -29,6 +30,7 @@ Popover.prototype.componentDidMount = function () {
   this.downPopover = false;
   this.handleDocumentMouseDown = (e) => {
     this.downPopover = this._popover && this._popover.contains(e.target);
+    this.downTarget = e.target;
   }
 
   oldComponentDidMount.call(this);
@@ -54,7 +56,7 @@ Popover.prototype.handleDocumentClick = function (e) {
       }
 
       if (this.props.isOpen) {
-        this.toggle(e, this.downPopover);
+        this.toggle(e, { clickedPopover: this.downPopover, downTarget: this.downTarget });
       }
     }
   }
@@ -68,34 +70,68 @@ Popover.prototype.toggle = function (e, data) {
   return this.props.toggle(e, data);
 }
 
+function arraysEqual(arr1, arr2) {
+  if (arr1 === arr2) return true;
+  if (!arr1 || !arr2) return false;
+  if (arr1.length !== arr2.length) return false;
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
+}
+
 export default function ColorPicker (props) {
   const [open, setOpen] = useState(false);
+  const [lastObjects, setLastObjects] = useState(props.selectedObjects);
+  if (!arraysEqual(props.selectedObjects, lastObjects)) {
+    setLastObjects(props.selectedObjects);
+    
+    // Close pop-up if selection changed
+    if (open) toggle();
+  }
 
   let color = props.color ? props.color : new window.Wick.Color("#FFFFFF")
   let colorCSS = color;
+  let colorCSSOpaque = color;
   if (color instanceof window.paper.Color) {
     if (color.gradient) {
       const sortedControlStops = color.gradient.stops.toSorted((objectA, objectB) => objectA.offset - objectB.offset);
 
       colorCSS = 'linear-gradient(to right';
+      colorCSSOpaque = 'linear-gradient(to right';
       sortedControlStops.forEach(paperControlStop => {
-          colorCSS += `, ${paperControlStop.color.toCSS()} ${paperControlStop.offset * 100}%`
+          colorCSS += `, ${paperControlStop.color.toCSS()} ${paperControlStop.offset * 100}%`;
+          let { red, green, blue } = paperControlStop.color;
+          colorCSSOpaque += `, rgb(${red*256},${green*256},${blue*256}) ${paperControlStop.offset * 100}%`;
       });
       colorCSS += ')';
+      colorCSSOpaque += ')';
     }
     else {
-      colorCSS = color.toCSS();
+      colorCSS = `linear-gradient(${color.toCSS()})`;
+      let { red, green, blue } = color;
+      colorCSSOpaque = `linear-gradient(rgb(${red},${green},${blue}))`;
     }
   }
   let itemID = props.id;
   let popoverID = itemID+'-popover';
 
-  function toggle (e, overrideClose) {
+  function toggle (e, data) {
     if (!open) {
       setTimeout(selectPopover, 200);
     }
-
-    if (!(open && overrideClose)) setOpen(!open)
+    if (!e || !data || !open) {
+      setOpen(!open);
+      return;
+    }
+    
+    // Don't close if click started on popover
+    // Don't close if clicked on selected objects
+    let clickedCanvas = data.downTarget === props.targetCanvas;
+    let selectionUnchanged = arraysEqual(props.selectedObjects, lastObjects);
+    if (!data.clickedPopover && !(clickedCanvas && selectionUnchanged)) {
+      setOpen(false)
+    }
   }
 
   function selectPopover () {
@@ -107,12 +143,19 @@ export default function ColorPicker (props) {
 
   return (
       <button
-        className={"btn-color-picker"}
+        className="btn-color-picker"
         aria-label="color picker button"
         id={itemID}
         onClick={toggle}
-        style={props.stroke ? {borderColor: colorCSS} : color.gradient ? {backgroundImage: colorCSS} : {backgroundColor: colorCSS}}
+        style={props.stroke ?
+          { borderColor: colorCSS } :
+          { backgroundImage: `${colorCSS}, ${CHECKERBOARD_URL}`, backgroundColor: 'white' }
+        }
         >
+          {!props.stroke &&
+          <div className="btn-color-picker-background-opaque"
+            style={{ backgroundImage: colorCSSOpaque }} />
+          }
           <Popover
             tabIndex={-1}
             id={popoverID}
@@ -132,6 +175,7 @@ export default function ColorPicker (props) {
               onChangeIntermediate={props.onChangeIntermediate}
               lastColorsUsed={props.lastColorsUsed}
               updateLastColors={props.updateLastColors}
+              selectedObjectsBounds={props.selectedObjectsBounds}
             />
           </Popover>
       </button>

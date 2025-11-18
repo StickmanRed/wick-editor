@@ -211,6 +211,11 @@ class Inspector extends Component {
           onChange1={(col) => this.setSelectionAttribute('fillColor', col)}
           onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
           enableGradient={true}
+          selectionProps={{
+            selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
+            selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
+            targetCanvas: this.props.project.view._svgCanvas
+          }}
           id={"inspector-selection-fill-color"}
           val2={this.getSelectionAttribute('fillColorOpacity')}
           onChange2={(val) => this.setSelectionAttribute('fillColorOpacity', val)}
@@ -228,6 +233,11 @@ class Inspector extends Component {
           onChange1={(col) => this.setSelectionAttribute('strokeColor', col)}
           onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
           enableGradient={true}
+          selectionProps={{
+            selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
+            selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
+            targetCanvas: this.props.project.view._svgCanvas
+          }}
           id={"inspector-selection-stroke-color"}
           stroke={true}
 

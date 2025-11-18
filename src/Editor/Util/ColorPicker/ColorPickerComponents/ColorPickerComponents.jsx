@@ -4,7 +4,7 @@ import './_colorpickercomponents.scss';
 import WickCustomSlider from 'Editor/Util/ColorPicker/WickCustomSlider/WickCustomSlider';
 import WickInput from "../../WickInput/WickInput";
 
-const CHECKERBOARD_URL = `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAPUlEQVR4AeySywkAMAhDH52h+0/YIRoH8IMnD0JyCgSe5gA3sWJfVuCnhWQLYMYNnr4VOdzJDAQR9LUI8AEAAP//ViLpiAAAAAZJREFUAwBk7gjBheCOvgAAAABJRU5ErkJggg==")`;
+export const CHECKERBOARD_URL = `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAPUlEQVR4AeySywkAMAhDH52h+0/YIRoH8IMnD0JyCgSe5gA3sWJfVuCnhWQLYMYNnr4VOdzJDAQR9LUI8AEAAP//ViLpiAAAAAZJREFUAwBk7gjBheCOvgAAAABJRU5ErkJggg==")`;
 
 function GradientControlStop (props) {
     let active = (props.selectedStop === props.stopIndex) ? ' wick-color-picker-gradient-active' : '';
@@ -175,7 +175,7 @@ export class Fields extends Component {
     isValidRGB = value => {
         if (!/^\d+$/.test(value)) return false;
         let newValue = parseInt(value, 10);
-        return 0 <= newValue && newValue <= 256;
+        return 0 <= newValue && newValue < 256;
     }
     render () {
         const rgba = this.props.colorObject.toRgb();

@@ -70,10 +70,17 @@ class WickGradientColorPicker extends Component {
             secondStop.v = (secondStop.v < 50) ? (secondStop.v + 40) : (secondStop.v - 40);
             secondStop = tinycolor(secondStop).toRgbString();
 
+            let x = 0, topY = 0, bottomY = 500;
+            if (this.props.selectedObjectsBounds) {
+                x = this.props.selectedObjectsBounds.x;
+                topY = this.props.selectedObjectsBounds.top;
+                bottomY = this.props.selectedObjectsBounds.bottom;
+            }
+
             this.setState({
                 outOfSyncColor: {
-                    origin: {x:0, y:0}, // TODO: Use top/bottom center bounds as endpoints
-                    destination: {x:500, y:500},
+                    origin: {x, y: topY},
+                    destination: {x, y: bottomY},
                     stops: [{color: firstStop, offset: 0}, {color: secondStop, offset: 1}],
                     radial: false
                 }
@@ -82,10 +89,10 @@ class WickGradientColorPicker extends Component {
         }
     }
 
+    // Convert paper objects to plain objects that hold the same data
     reducePaperColor (color) {
         if (!(color instanceof window.paper.Color)) return color;
 
-        // Convert paper objects to plain objects that hold the same data
         if (!color.gradient) return color.toCSS();
         
         let stops = color.gradient.stops.map((stop, index, stops) => {
@@ -100,6 +107,12 @@ class WickGradientColorPicker extends Component {
         origin = { x: origin.x, y: origin.y };
         destination = { x: destination.x, y: destination.y };
         return { stops, origin, destination, radial: color.gradient.radial };
+    }
+    reducePaperBounds (bounds) {
+        if (!(bounds instanceof window.paper.Rectangle)) return bounds;
+        
+        let { width, height, left, right, top, bottom } = bounds;
+        return { width, height, left, right, top, bottom };
     }
 
     renderGradientHeader (color) {
@@ -178,6 +191,7 @@ class WickGradientColorPicker extends Component {
             index = this.state.selectedControlStopIndex;
             index = Math.min(index, color.stops.length - 1);
         }
+        let bounds = this.reducePaperBounds(this.props.selectedObjectsBounds);
 
         return (
             <div className="wick-color-picker">
@@ -193,11 +207,14 @@ class WickGradientColorPicker extends Component {
                     selectControlStop={index => this.setState({selectedControlStopIndex: index})}
                     onChangeIntermediate={this.onChangeIntermediate}
                     onChangeComplete={this.onGradientChange}
-                    color={color} /> :
+                    color={color}
+                    bounds={bounds} /> :
                 <>
+                    {this.props.enableGradient &&
                     <div className="wick-color-picker-header">
                         {this.renderColorHeader()}
                     </div>
+                    }
                     <WickColorPicker {...this.props}
                         onChangeIntermediate={this.onChangeIntermediate}
                         onChangeComplete={this.onColorChange}
