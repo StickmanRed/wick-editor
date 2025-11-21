@@ -20,73 +20,72 @@ class WickGradientColorPicker extends Component {
         // Used to preserve color when switching solid/gradient
         this.lastReceivedColor = null;
         this.outOfSync = false;
+    }
+    onChangeIntermediate = (color) => {
+        this.props.onChangeIntermediate && this.props.onChangeIntermediate(color);
+        this.setState({ colorOnDrag: color });
+    }
+    onColorChange = (color) => {
+        this.props.onChangeComplete(color);
+        this.props.updateLastColors(color, this.editLastColors);
+        this.editLastColors = true;
+        this.setState({ colorOnDrag: null });
+    }
+    onGradientChange = (color, stopColor) => {
+        // Sort color stops, keep the selected stop
+        let selectedStop = color.stops[this.state.selectedControlStopIndex];
+        color.stops = color.stops.toSorted((stop1, stop2) => stop1.offset - stop2.offset);
+        let newIndex = color.stops.indexOf(selectedStop);
+        if (newIndex < 0) newIndex = 0;
 
-        this.onChangeIntermediate = (color) => {
-            this.props.onChangeIntermediate && this.props.onChangeIntermediate(color);
-            this.setState({ colorOnDrag: color });
-        }
-        this.onColorChange = (color) => {
-            this.props.onChangeComplete(color);
-            this.props.updateLastColors(color, this.editLastColors);
+        this.props.onChangeComplete(color);
+        if (stopColor) {
+            this.props.updateLastColors(stopColor, this.editLastColors);
             this.editLastColors = true;
-            this.setState({ colorOnDrag: null });
         }
-        this.onGradientChange = (color, stopColor) => {
-            // Sort color stops, keep the selected stop
-            let selectedStop = color.stops[this.state.selectedControlStopIndex];
-            color.stops = color.stops.toSorted((stop1, stop2) => stop1.offset - stop2.offset);
-            let newIndex = color.stops.indexOf(selectedStop);
-            if (newIndex < 0) newIndex = 0;
+        this.setState({
+            colorOnDrag: null,
+            selectedControlStopIndex: newIndex
+        });
+    }
+    switchSolid = (color) => {
+        // Exit if color isn't a gradient
+        if (!color.stops) return;
+        this.setState({ outOfSyncColor: color.stops[0].color });
+        this.outOfSync = true;
+    }
+    switchGradient = (color) => {
+        // Exit if color is a gradient
+        if (color.stops) return;
+        if (this.props.color.stops || (this.props.color.gradient && this.props.color.gradient.stops)) {
+            // If props.color is already a gradient, use that color
+            this.outOfSync = false;
+            this.setState({ outOfSyncColor: this.props.color });
+            return;
+        }
+        // Figma's default behavior
+        let colorObject = tinycolor(color);
+        let firstStop = colorObject.toRgbString();
+        let secondStop = colorObject.toHsv();
+        secondStop.v = (secondStop.v < 50) ? (secondStop.v + 40) : (secondStop.v - 40);
+        secondStop = tinycolor(secondStop).toRgbString();
 
-            this.props.onChangeComplete(color);
-            if (stopColor) {
-                this.props.updateLastColors(stopColor, this.editLastColors);
-                this.editLastColors = true;
-            }
-            this.setState({
-                colorOnDrag: null,
-                selectedControlStopIndex: newIndex
-            });
+        let x = 0, topY = 0, bottomY = 500;
+        if (this.props.selectedObjectsBounds) {
+            x = this.props.selectedObjectsBounds.x;
+            topY = this.props.selectedObjectsBounds.top;
+            bottomY = this.props.selectedObjectsBounds.bottom;
         }
-        this.switchSolid = (color) => {
-            // Exit if color isn't a gradient
-            if (!color.stops) return;
-            this.setState({ outOfSyncColor: color.stops[0].color });
-            this.outOfSync = true;
-        }
-        this.switchGradient = (color) => {
-            // Exit if color is a gradient
-            if (color.stops) return;
-            if (this.props.color.stops || (this.props.color.gradient && this.props.color.gradient.stops)) {
-                // If props.color is already a gradient, use that color
-                this.outOfSync = false;
-                this.setState({ outOfSyncColor: this.props.color });
-                return;
-            }
-            // Figma's default behavior
-            let colorObject = tinycolor(color);
-            let firstStop = colorObject.toRgbString();
-            let secondStop = colorObject.toHsv();
-            secondStop.v = (secondStop.v < 50) ? (secondStop.v + 40) : (secondStop.v - 40);
-            secondStop = tinycolor(secondStop).toRgbString();
 
-            let x = 0, topY = 0, bottomY = 500;
-            if (this.props.selectedObjectsBounds) {
-                x = this.props.selectedObjectsBounds.x;
-                topY = this.props.selectedObjectsBounds.top;
-                bottomY = this.props.selectedObjectsBounds.bottom;
+        this.setState({
+            outOfSyncColor: {
+                origin: {x, y: topY},
+                destination: {x, y: bottomY},
+                stops: [{color: firstStop, offset: 0}, {color: secondStop, offset: 1}],
+                radial: false
             }
-
-            this.setState({
-                outOfSyncColor: {
-                    origin: {x, y: topY},
-                    destination: {x, y: bottomY},
-                    stops: [{color: firstStop, offset: 0}, {color: secondStop, offset: 1}],
-                    radial: false
-                }
-            });
-            this.outOfSync = true;
-        }
+        });
+        this.outOfSync = true;
     }
 
     // Convert paper objects to plain objects that hold the same data
@@ -205,6 +204,8 @@ class WickGradientColorPicker extends Component {
                     }
                     selectedControlStopIndex={index}
                     selectControlStop={index => this.setState({selectedControlStopIndex: index})}
+                    onMount={this.props.setGradientActive}
+                    onUnmount={this.props.setGradientInactive}
                     onChangeIntermediate={this.onChangeIntermediate}
                     onChangeComplete={this.onGradientChange}
                     color={color}

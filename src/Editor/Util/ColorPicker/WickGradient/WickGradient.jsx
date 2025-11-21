@@ -7,6 +7,14 @@ import { GradientSlider, ColorPickerInput } from 'Editor/Util/ColorPicker/ColorP
 import tinycolor from 'tinycolor2';
 
 class WickGradient extends Component {
+    componentDidMount () {
+        console.feed.pointers.log('one has open up please');
+        this.props.onMount();
+    }
+    componentWillUnmount () {
+        console.feed.pointers.log('is close now bye');
+        this.props.onUnmount();
+    }
     interpolateColor = (offset) => {
         const sortedStops = this.controlStops.toSorted((objectA, objectB) => objectA.offset - objectB.offset);
         if (offset <= sortedStops[0].offset) return sortedStops[0].color;

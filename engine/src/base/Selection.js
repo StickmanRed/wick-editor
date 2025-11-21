@@ -1046,4 +1046,11 @@ Wick.Selection = class extends Wick.Base {
             this._selectedObjectsUUIDs.push(frame.uuid);
         });
     }
+
+    get useGradientGUI () {
+        return this._useGradientGUI || false;
+    }
+    set useGradientGUI (type) {
+        this._useGradientGUI = type;
+    }
 }

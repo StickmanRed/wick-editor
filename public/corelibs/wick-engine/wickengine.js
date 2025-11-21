@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2021.1.18.12.6.20";
+var WICK_ENGINE_BUILD_VERSION = "2025.11.20.15.33.41";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -53074,6 +53074,14 @@ Wick.Selection = class extends Wick.Base {
     });
   }
 
+  get useGradientGUI() {
+    return this._useGradientGUI || false;
+  }
+
+  set useGradientGUI(type) {
+    this._useGradientGUI = type;
+  }
+
 };
 /*
  * Copyright 2020 WICKLETS LLC
@@ -58097,7 +58105,7 @@ Wick.Clip = class extends Wick.Tickable {
         let y = point[1] - center.y;
         max_r = Math.max(max_r, x*x + y*y);
     }
-     return Math.sqrt(max_r);
+      return Math.sqrt(max_r);
     */
   } // Gives clockwise in screen space, which is ccw in regular axes
 
@@ -59412,7 +59420,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     if (this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
       // Update selection drag
       if (!this._widget.currentTransformation) {
-        this._widget.startTransformation(this.hitResult.item);
+        this._widget.startTransformation(this.hitResult.item, e);
       }
 
       this._widget.updateTransformation(this.hitResult.item, e);
@@ -59422,7 +59430,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     } else if (this.hitResult.item && this.hitResult.type === 'fill') {
       // We're dragging the selection itself, so move the whole item.
       if (!this._widget.currentTransformation) {
-        this._widget.startTransformation(this.hitResult.item);
+        this._widget.startTransformation(this.hitResult.item, e);
       }
 
       this._widget.updateTransformation(this.hitResult.item, e);
@@ -61703,6 +61711,68 @@ class SelectionWidget {
     this._item = new paper.Group({
       insert: false
     });
+    /*let startPath = new paper.Path.Circle({
+        center: [0, 0],
+        radius: 5,
+        fillColor: 'lightblue',
+        applyMatrix: false,
+        data: {
+            handleType: 'gradient-point',
+            handleEdge: 'start'
+        }
+    });*/
+
+    let startPath = new paper.Raster({
+      source: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.023w1FsrkWF2BeW2NBic4gHaHa%3Fpid%3DApi&f=1&ipt=28614e2186d3d599e1a1890764d84fb6cd48e5f661cc593052c14913393dcd3e&ipo=images',
+      insert: false,
+      applyMatrix: false,
+      data: {
+        handleType: 'gradient-point',
+        handleEdge: 'start'
+      }
+    });
+
+    startPath.onLoad = () => {
+      startPath.size = [40, 40];
+    };
+
+    let endPath = new paper.Path.Circle({
+      center: [0, 0],
+      radius: 5,
+      fillColor: 'lightblue',
+      insert: false,
+      applyMatrix: false,
+      data: {
+        handleType: 'gradient-point',
+        handleEdge: 'end'
+      }
+    });
+    let linePath = new paper.Path.Line({
+      from: [0, 0],
+      to: [0, 0],
+      insert: false,
+      strokeColor: 'lightblue',
+      strokeWidth: 3,
+      applyMatrix: false
+    });
+    this._gradientGUI = {
+      container: new paper.Group({
+        applyMatrix: false,
+        data: {
+          isSelectionBoxGUI: true
+        }
+      }),
+      startPath,
+      endPath,
+      linePath,
+      stops: [],
+      selectedStop: null,
+      stroke: false,
+      radial: false,
+      startpoint: new paper.Point(0, 0),
+      endpoint: new paper.Point(0, 0),
+      lineVector: new paper.Point(0, 0)
+    };
   }
   /**
    * The item containing the widget GUI
@@ -61844,7 +61914,7 @@ class SelectionWidget {
   }
 
   set currentTransformation(currentTransformation) {
-    if (['translate', 'scale', 'rotate'].indexOf(currentTransformation) === -1) {
+    if (['translate', 'scale', 'rotate', 'gradient-stop', 'gradient-point', 'gradient-none'].indexOf(currentTransformation) === -1) {
       console.error('Paper.SelectionWidget: Invalid transformation type: ' + currentTransformation);
       currentTransformation = null;
     } else {
@@ -61856,6 +61926,7 @@ class SelectionWidget {
    * @param {number} boxRotation - the rotation of the selection GUI. Optional, defaults to 0
    * @param {paper.Item[]} items - the items to build the GUI around
    * @param {paper.Point} pivot - the pivot point that the selection rotates around. Defaults to (0,0)
+   * @param {string|boolean} useGradientGUI - whether to use a gradient editing GUI. Defaults to false
    */
 
 
@@ -61867,6 +61938,7 @@ class SelectionWidget {
     this._itemsInSelection = args.items;
     this._boxRotation = args.boxRotation;
     this._pivot = args.pivot;
+    this._useGradientGUI = args.useGradientGUI;
     this._boundingBox = this._calculateBoundingBox();
     this.item.remove();
     this.item.removeChildren();
@@ -61882,7 +61954,11 @@ class SelectionWidget {
     if (this._itemsInSelection.length > 0) {
       this._center = this._calculateBoundingBoxOfItems(this._itemsInSelection).center;
 
-      this._buildGUI();
+      if (args.useGradientGUI) {
+        this._buildGradientGUI();
+      } else {
+        this._buildGUI();
+      }
 
       this.layer.addChild(this.item);
     }
@@ -61892,7 +61968,11 @@ class SelectionWidget {
    */
 
 
-  startTransformation(item) {
+  startTransformation(item, e) {
+    if (this._useGradientGUI) {
+      return this.startGradientTransformation(item, e);
+    }
+
     this._ghost = this._buildGhost();
 
     this._layer.addChild(this._ghost);
@@ -61914,6 +61994,10 @@ class SelectionWidget {
 
 
   updateTransformation(item, e) {
+    if (this.currentTransformation.substring(0, 8) === 'gradient') {
+      return this.updateGradientTransformation(item, e);
+    }
+
     if (this.currentTransformation === 'translate') {
       this._ghost.position = this._ghost.position.add(e.delta);
     } else if (this.currentTransformation === 'scale') {
@@ -61967,6 +62051,10 @@ class SelectionWidget {
 
   finishTransformation(item) {
     if (!this._currentTransformation) return;
+
+    if (this.currentTransformation.substring(0, 8) === 'gradient') {
+      return this.finishGradientTransformation();
+    }
 
     this._ghost.remove();
 
@@ -62210,6 +62298,275 @@ class SelectionWidget {
       bounds = bounds ? bounds.unite(item.bounds) : item.bounds;
     });
     return bounds || new paper.Rectangle();
+  }
+
+  _buildGradientGUI() {
+    // this better not be a group
+    let item = this._itemsInSelection[0];
+    let color, stops, startpoint, endpoint;
+
+    if (this._useGradientGUI === 'stroke') {
+      color = item.strokeColor;
+      this._gradientGUI.stroke = true;
+    } else {
+      color = item.fillColor;
+      this._gradientGUI.stroke = false;
+    }
+
+    if (color.gradient) {
+      this._gradientGUI.radial = color.gradient.radial;
+      stops = color.gradient.stops;
+      startpoint = color.origin;
+      endpoint = color.destination;
+    } else {
+      // This is a solid color.
+      this._gradientGUI.radial = false;
+      stops = [{
+        color: color.clone(),
+        offset: 0
+      }, {
+        color: color.clone(),
+        offset: 1
+      }];
+      startpoint = item.bounds.topCenter;
+      endpoint = item.bounds.bottomCenter;
+    }
+
+    let lineVector = endpoint.subtract(startpoint);
+    this._gradientGUI.startpoint = startpoint;
+    this._gradientGUI.endpoint = endpoint;
+    this._gradientGUI.lineVector = lineVector;
+    let container = this._gradientGUI.container;
+    container.removeChildren();
+
+    this._transformContainer();
+
+    container.addChildren(this._buildGradientLine(lineVector.length));
+    container.addChildren(this._buildGradientStops(lineVector.length, stops));
+    this.item.addChild(container);
+    container.children.forEach(child => {
+      child.data.isSelectionBoxGUI = true;
+    });
+  }
+  /**
+   * Update the gradient line GUI.
+   * @param {paper.Color} color The paper.js gradient color object.
+   * @returns {paper.Path[]} The start point, end point, and connecting line paths.
+   */
+
+
+  _buildGradientLine(length) {
+    this._gradientGUI.endPath.position.x = length;
+    this._gradientGUI.linePath.segments[1].point.x = length;
+    return [this._gradientGUI.linePath, this._gradientGUI.startPath, this._gradientGUI.endPath];
+  }
+  /**
+   * Update the gradient stops GUI.
+   * @param {paper.Color} color The paper.js gradient color object.
+   * @returns {paper.Path[]} The list of color stop paths.
+   */
+
+
+  _buildGradientStops(length, paperStops) {
+    let stopList = this._gradientGUI.stops;
+    paperStops.forEach((paperStop, idx) => {
+      if (idx >= stopList.length) {
+        stopList.push(this._buildGradientStop());
+      }
+
+      let stop = stopList[idx];
+      stop.data.setColor(paperStop.color);
+      stop.data.setOffset(length, paperStop.offset);
+    });
+    stopList.length = paperStops.length;
+    return stopList;
+  }
+
+  _buildGradientStop(length = 0, color, offset = 0) {
+    let stopObj = new paper.Path.Circle({
+      center: [length * offset, 0],
+      radius: 15,
+      fillColor: color,
+      applyMatrix: false,
+      data: {
+        handleType: 'gradient-stop',
+        color,
+        offset,
+        selected: false
+      }
+    });
+
+    stopObj.data.setColor = color => {
+      stopObj.fillColor = color;
+      stopObj.data.color = color;
+    };
+
+    stopObj.data.setOffset = (length, offset) => {
+      stopObj.position.x = length * offset;
+      stopObj.data.offset = offset;
+    };
+
+    stopObj.data.setSelected = selected => {
+      // TODO: Set stop styling
+      stopObj.data.selected = selected;
+    };
+
+    return stopObj;
+  }
+
+  startGradientTransformation(item, e) {
+    if (item.data.handleType === 'gradient-stop') {
+      this.currentTransformation = 'gradient-stop';
+
+      this._selectStop(item);
+    } else if (item.data.handleType === 'gradient-point') {
+      this.currentTransformation = 'gradient-point';
+    } else {
+      let distance = this._calculateDistanceFromLine(this._gradientGUI.startpoint, this._gradientGUI.endpoint, e.point);
+
+      let offset = this._calculateOffset(this._gradientGUI.startpoint, this._gradientGUI.endpoint, e.point);
+
+      if (distance <= 15 && 0 <= offset && offset <= 1) {
+        // TODO: Replace with mouse distance constant
+        // Create and move a new color stop
+        this.currentTransformation = 'gradient-stop';
+
+        let newStop = this._interpolateStop(this._gradientGUI.lineVector.length, this._gradientGUI.stops, offset);
+
+        this._gradientGUI.stops.push(newStop);
+
+        this._gradientGUI.container.addChild(newStop);
+
+        this._selectStop(newStop);
+      } else {
+        // We have to set a currentTransformation for Cursor.js
+        this.currentTransformation = 'gradient-none';
+      }
+    }
+  }
+
+  updateGradientTransformation(item, e) {
+    if (this.currentTransformation === 'gradient-stop') {
+      let offset = this._calculateOffset(this._gradientGUI.startpoint, this._gradientGUI.endpoint, e.point);
+
+      if (offset < 0) offset = 0;
+      if (offset > 1) offset = 1;
+
+      this._gradientGUI.selectedStop.data.setOffset(this._gradientGUI.lineVector.length, offset);
+    } else if (this.currentTransformation === 'gradient-point') {
+      if (item.data.handleEdge === 'start') {
+        this._gradientGUI.startpoint = e.point;
+      } else {
+        this._gradientGUI.endpoint = e.point;
+      }
+
+      this._gradientGUI.lineVector = this._gradientGUI.endpoint.subtract(this._gradientGUI.startpoint);
+      let length = this._gradientGUI.lineVector.length;
+
+      this._transformContainer();
+
+      this._buildGradientLine(length);
+
+      this._gradientGUI.stops.forEach(stopObj => {
+        stopObj.data.setOffset(length, stopObj.data.offset);
+      });
+    }
+
+    if (this.currentTransformation !== 'gradient-none') this._updateItems();
+  }
+
+  finishGradientTransformation(item, e) {
+    if (!this._currentTransformation) return;
+    if (this.currentTransformation !== 'gradient-none') this._updateItems();
+    this._currentTransformation = null;
+  }
+
+  _updateItems() {
+    let colorObj = {
+      origin: this._gradientGUI.startpoint,
+      destination: this._gradientGUI.endpoint,
+      stops: this._gradientGUI.stops.map(stopPath => {
+        return {
+          color: stopPath.data.color,
+          offset: stopPath.data.offset
+        };
+      }),
+      radial: this._gradientGUI.radial
+    }; // there better not be any groups
+
+    if (this._gradientGUI.stroke) {
+      this._itemsInSelection.forEach(item => {
+        item.strokeColor = colorObj;
+      });
+    } else {
+      this._itemsInSelection.forEach(item => {
+        item.fillColor = colorObj;
+      });
+    }
+  }
+
+  _selectStop(stopObj) {
+    if (this._gradientGUI.selectedStop) {
+      this._gradientGUI.selectedStop.data.setSelected(false);
+    }
+
+    this._gradientGUI.selectedStop = stopObj;
+    stopObj.data.setSelected(true);
+  }
+
+  _interpolateStop(length, stops, offset) {
+    // Assuming unsorted stops list, find the stops right before and after given offset
+    let stop1, stop2;
+    let index1 = 0;
+    let index2 = 1;
+    stops.forEach(stop => {
+      let stopOffset = stop.data.offset;
+
+      if (index1 <= stopOffset && stopOffset <= offset) {
+        stop1 = stop;
+        index1 = stopOffset;
+      } else if (offset <= stopOffset && stopOffset <= index2) {
+        stop2 = stop;
+        index2 = stopOffset;
+      }
+    });
+    let color;
+
+    if (!stop1) {
+      // Offset is the leftmost stop, use the color of nextStop
+      color = stop2.data.color.clone();
+    } else if (!stop2) {
+      // Offset is the rightmost stop, use the color of prevStop
+      color = stop1.data.color.clone();
+    } else {
+      // Both stops exist, interpolate the color
+      var offsetRelative = (offset - index1) / (index2 - index1);
+      var color1 = stop1.data.color;
+      var color2 = stop2.data.color;
+      color = color1.add(color2.subtract(color1).multiply(offsetRelative));
+      color.alpha = color1.alpha + (color2.alpha - color1.alpha) * offsetRelative;
+    }
+
+    return this._buildGradientStop(length, color, offset);
+  }
+
+  _transformContainer() {
+    let container = this._gradientGUI.container;
+    container.matrix.reset();
+    container.translate(this._gradientGUI.startpoint);
+    container.rotate(this._gradientGUI.lineVector.angle, this._gradientGUI.startpoint);
+  }
+
+  _calculateDistanceFromLine(startLine, endLine, point) {
+    let pointVector = point.subtract(startLine);
+    return Math.abs(pointVector.cross(endLine.subtract(startLine).normalize()));
+  }
+
+  _calculateOffset(startLine, endLine, point) {
+    let relativePoint = point.subtract(startLine);
+    let lineVector = endLine.subtract(startLine);
+    let length = lineVector.length;
+    return relativePoint.dot(lineVector) / (length * length);
   }
 
 }
@@ -63456,7 +63813,8 @@ Wick.View.Selection = class extends Wick.View {
     this._widget.build({
       boxRotation: this.model.widgetRotation,
       items: this._getSelectedObjectViews(),
-      pivot: new paper.Point(this.model.pivotPoint.x, this.model.pivotPoint.y)
+      pivot: new paper.Point(this.model.pivotPoint.x, this.model.pivotPoint.y),
+      useGradientGUI: this.model.useGradientGUI
     });
   }
 
@@ -63976,7 +64334,7 @@ Wick.View.Frame = class extends Wick.View {
     var originalWickPath = child.data.wickUUID ? Wick.ObjectCache.getObjectByUUID(child.data.wickUUID) : null;
     var pathJSON = Wick.View.Path.exportJSON(child);
     var wickPath = new Wick.Path({json:pathJSON});
-     this.model.addPath(wickPath);
+      this.model.addPath(wickPath);
     wickPath.fontWeight = originalWickPath ? originalWickPath.fontWeight : 400;
     wickPath.fontStyle = originalWickPath ? originalWickPath.fontStyle : 'normal';
     wickPath.identifier = originalWickPath ? originalWickPath.identifier : null;

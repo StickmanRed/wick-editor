@@ -212,6 +212,14 @@ class Inspector extends Component {
           onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
           enableGradient={true}
           selectionProps={{
+            setGradientActive: () => {
+              this.props.project.selection.useGradientGUI = 'fill';
+              this.props.project.view.render();
+            },
+            setGradientInactive: () => {
+              this.props.project.selection.useGradientGUI = false;
+              this.props.project.view.render();
+            },
             selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
             selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
             targetCanvas: this.props.project.view._svgCanvas
@@ -234,6 +242,14 @@ class Inspector extends Component {
           onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
           enableGradient={true}
           selectionProps={{
+            setGradientActive: () => {
+              this.props.project.selection.useGradientGUI = 'stroke';
+              this.props.project.view.render();
+            },
+            setGradientInactive: () => {
+              this.props.project.selection.useGradientGUI = false;
+              this.props.project.view.render();
+            },
             selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
             selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
             targetCanvas: this.props.project.view._svgCanvas

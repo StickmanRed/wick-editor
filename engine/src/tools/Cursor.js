@@ -138,7 +138,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Update selection drag
             if(!this._widget.currentTransformation) {
-                this._widget.startTransformation(this.hitResult.item);
+                this._widget.startTransformation(this.hitResult.item, e);
             }
             this._widget.updateTransformation(this.hitResult.item, e);
         } else if (this.selectionBox.active) {
@@ -147,7 +147,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         } else if(this.hitResult.item && this.hitResult.type === 'fill') {
             // We're dragging the selection itself, so move the whole item.
             if(!this._widget.currentTransformation) {
-                this._widget.startTransformation(this.hitResult.item);
+                this._widget.startTransformation(this.hitResult.item, e);
             }
             this._widget.updateTransformation(this.hitResult.item, e);
         } else {

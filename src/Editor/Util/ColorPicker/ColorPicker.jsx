@@ -170,12 +170,17 @@ export default function ColorPicker (props) {
               changeColorPickerType={props.changeColorPickerType}
               disableAlpha={props.disableAlpha}
               enableGradient={props.enableGradient}
+              
               color={color}
               onChangeComplete={props.onChangeComplete}
               onChangeIntermediate={props.onChangeIntermediate}
+
+              selectedObjectsBounds={props.selectedObjectsBounds}
+              setGradientActive={props.setGradientActive}
+              setGradientInactive={props.setGradientInactive}
+
               lastColorsUsed={props.lastColorsUsed}
               updateLastColors={props.updateLastColors}
-              selectedObjectsBounds={props.selectedObjectsBounds}
             />
           </Popover>
       </button>
