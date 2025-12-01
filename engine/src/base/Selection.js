@@ -1053,4 +1053,10 @@ Wick.Selection = class extends Wick.Base {
     set useGradientGUI (type) {
         this._useGradientGUI = type;
     }
+    get selectedStopIndex () {
+        return this._selectedStopIndex || 0;
+    }
+    set selectedStopIndex (index) {
+        this._selectedStopIndex = index;
+    }
 }

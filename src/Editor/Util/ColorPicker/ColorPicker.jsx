@@ -178,6 +178,8 @@ export default function ColorPicker (props) {
               selectedObjectsBounds={props.selectedObjectsBounds}
               setGradientActive={props.setGradientActive}
               setGradientInactive={props.setGradientInactive}
+              getSelectedStopIndex={props.getSelectedStopIndex}
+              setSelectedStopIndex={props.setSelectedStopIndex}
 
               lastColorsUsed={props.lastColorsUsed}
               updateLastColors={props.updateLastColors}

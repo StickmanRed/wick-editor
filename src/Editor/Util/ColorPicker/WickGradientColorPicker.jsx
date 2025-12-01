@@ -12,7 +12,6 @@ class WickGradientColorPicker extends Component {
         super(props);
 
         this.state = {
-            selectedControlStopIndex: 0,
             colorOnDrag: null,
             outOfSyncColor: this.props.color
         };
@@ -31,21 +30,29 @@ class WickGradientColorPicker extends Component {
         this.editLastColors = true;
         this.setState({ colorOnDrag: null });
     }
-    onGradientChange = (color, stopColor) => {
+    onGradientChange = (color, args) => {
         // Sort color stops, keep the selected stop
-        let selectedStop = color.stops[this.state.selectedControlStopIndex];
+        let index;
+        if (args && typeof args.stopIndex === 'number') {
+            index = args.stopIndex;
+        }
+        else {
+            index = this.props.getSelectedStopIndex();
+        }
+        let selectedStop = color.stops[index];
         color.stops = color.stops.toSorted((stop1, stop2) => stop1.offset - stop2.offset);
         let newIndex = color.stops.indexOf(selectedStop);
         if (newIndex < 0) newIndex = 0;
 
+        this.props.setSelectedStopIndex(newIndex);
         this.props.onChangeComplete(color);
-        if (stopColor) {
-            this.props.updateLastColors(stopColor, this.editLastColors);
+
+        if (args && args.stopColor) {
+            this.props.updateLastColors(args.stopColor, this.editLastColors);
             this.editLastColors = true;
         }
         this.setState({
-            colorOnDrag: null,
-            selectedControlStopIndex: newIndex
+            colorOnDrag: null
         });
     }
     switchSolid = (color) => {
@@ -187,7 +194,7 @@ class WickGradientColorPicker extends Component {
             color = this.reducePaperColor(color);
         }
         if (color.stops) {
-            index = this.state.selectedControlStopIndex;
+            index = this.props.getSelectedStopIndex();
             index = Math.min(index, color.stops.length - 1);
         }
         let bounds = this.reducePaperBounds(this.props.selectedObjectsBounds);
@@ -203,7 +210,6 @@ class WickGradientColorPicker extends Component {
                         </div>
                     }
                     selectedControlStopIndex={index}
-                    selectControlStop={index => this.setState({selectedControlStopIndex: index})}
                     onMount={this.props.setGradientActive}
                     onUnmount={this.props.setGradientInactive}
                     onChangeIntermediate={this.onChangeIntermediate}

@@ -74,6 +74,11 @@ Wick.Tools.Cursor = class extends Wick.Tool {
 
         // Update the image being used for the cursor
         this._setCursor(this._getCursor());
+
+        if(this._selection.useGradientGUI) {
+            // Update the selection widget (used for gradient hover)
+            this._widget.updateMove(this.hitResult.item, e);
+        }
     }
 
     onMouseDown (e) {
@@ -83,7 +88,14 @@ Wick.Tools.Cursor = class extends Wick.Tool {
 
         this.hitResult = this._updateHitResult(e);
 
-        if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
+        if(this._selection.useGradientGUI) {
+            // Clicked the gradient editor GUI, update the selection widget (used for stop selection)
+            let onStopSelected = (index) => {
+                this._selection.selectedStopIndex = index;
+                this.fireEvent({eventName: 'canvasModified', actionName: 'cursorSelectStop'});
+            }
+            this._widget.updateDown(this.hitResult.item, e, onStopSelected);
+        } else if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Clicked the selection box GUI, do nothing
         } else if(this.hitResult.item && this._isItemSelected(this.hitResult.item)) {
             // We clicked something that was already selected.

@@ -214,11 +214,17 @@ class Inspector extends Component {
           selectionProps={{
             setGradientActive: () => {
               this.props.project.selection.useGradientGUI = 'fill';
+              this.props.project.selection.selectedStopIndex = 0;
               this.props.project.view.render();
             },
             setGradientInactive: () => {
               this.props.project.selection.useGradientGUI = false;
+              this.props.project.selection.selectedStopIndex = 0;
               this.props.project.view.render();
+            },
+            getSelectedStopIndex: () => this.props.project.selection.selectedStopIndex,
+            setSelectedStopIndex: (index) => {
+              this.props.project.selection.selectedStopIndex = index;
             },
             selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
             selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),
@@ -244,11 +250,17 @@ class Inspector extends Component {
           selectionProps={{
             setGradientActive: () => {
               this.props.project.selection.useGradientGUI = 'stroke';
+              this.props.project.selection.selectedStopIndex = 0;
               this.props.project.view.render();
             },
             setGradientInactive: () => {
               this.props.project.selection.useGradientGUI = false;
+              this.props.project.selection.selectedStopIndex = 0;
               this.props.project.view.render();
+            },
+            getSelectedStopIndex: () => this.props.project.selection.selectedStopIndex,
+            setSelectedStopIndex: (index) => {
+              this.props.project.selection.selectedStopIndex = index;
             },
             selectedObjects: this.props.project.selection._selectedObjectsUUIDs.toSorted(),
             selectedObjectsBounds: this.props.project.selection.view._getSelectedObjectsBounds(),

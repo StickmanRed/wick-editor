@@ -8,11 +8,9 @@ import tinycolor from 'tinycolor2';
 
 class WickGradient extends Component {
     componentDidMount () {
-        console.feed.pointers.log('one has open up please');
         this.props.onMount();
     }
     componentWillUnmount () {
-        console.feed.pointers.log('is close now bye');
         this.props.onUnmount();
     }
     interpolateColor = (offset) => {
@@ -26,12 +24,14 @@ class WickGradient extends Component {
         return tinycolor.mix(firstStop.color, nextStop.color, percent).toRgbString();
     }
 
-    controlStopMouseDown = (index) => this.props.selectControlStop(index);
+    controlStopMouseDown = (index) => {
+        // Use onChangeComplete to sync the stops' ordering.
+        this.onChangeComplete({ stopIndex: parseInt(index) });
+    }
     containerMouseDown = (offset) => {
         let color = this.interpolateColor(offset.x);
         this.controlStops.push({ color, offset: offset.x });
-        this.props.selectControlStop(this.controlStops.length - 1);
-        this.onChangeIntermediate();
+        this.onChangeComplete({ stopIndex: this.controlStops.length - 1 });
     }
     colorSelectedStop = (color) => {
         let offset = this.controlStops[this.props.selectedControlStopIndex].offset;
@@ -45,12 +45,15 @@ class WickGradient extends Component {
         let stopIndex = this.props.selectedControlStopIndex;
         if (this.controlStops.length <= 2) {
             this.colorSelectedStop(this.controlStops[1 - stopIndex].color);
-            this.props.selectControlStop(1 - stopIndex);
+            stopIndex = 1 - stopIndex;
         }
         else {
             this.controlStops.splice(stopIndex, 1);
+            if (stopIndex >= this.controlStops.length) {
+                stopIndex = this.controlStops.length - 1;
+            }
         }
-        this.props.onChangeComplete(this.gradientObject());
+        this.onChangeComplete({ stopIndex });
     }
     gradientObject = () => ({
         stops: this.controlStops,
@@ -59,7 +62,7 @@ class WickGradient extends Component {
         radial: this.radial
     })
     onChangeIntermediate = () => this.props.onChangeIntermediate(this.gradientObject());
-    onChangeComplete = (stopColor) => this.props.onChangeComplete(this.gradientObject(), stopColor);
+    onChangeComplete = (args) => this.props.onChangeComplete(this.gradientObject(), args);
     onChangeEndpoint = (endpoint, override) => {
         if (typeof override.x === 'number') {
             endpoint.x = override.x * this.props.bounds.width + this.props.bounds.left;
@@ -67,11 +70,11 @@ class WickGradient extends Component {
         if (typeof override.y === 'number') {
             endpoint.y = override.y * this.props.bounds.height + this.props.bounds.top;
         }
-        this.props.onChangeComplete(this.gradientObject());
+        this.onChangeComplete();
     }
     onChangeRadial = (radial) => {
         this.radial = radial;
-        this.props.onChangeComplete(this.gradientObject());
+        this.onChangeComplete();
     }
     renderHeader = () => {
         return (
@@ -143,7 +146,7 @@ class WickGradient extends Component {
                         value={this.controlStops[this.props.selectedControlStopIndex].offset}
                         onChange={offset => {
                             this.offsetSelectedStop(offset);
-                            this.props.onChangeComplete(this.gradientObject());
+                            this.onChangeComplete();
                         }} />
                     <ActionButton
                         color="red"
@@ -177,7 +180,7 @@ class WickGradient extends Component {
                 {this.props.colorHeader}
                 <WickColorPicker {...this.props}
                     onChangeIntermediate={color => { this.colorSelectedStop(color); this.onChangeIntermediate(); }}
-                    onChangeComplete={color => { this.colorSelectedStop(color); this.onChangeComplete(color); }}
+                    onChangeComplete={color => { this.colorSelectedStop(color); this.onChangeComplete({ stopColor: color }); }}
                     color={this.controlStops[this.props.selectedControlStopIndex].color} />
             </>
         );
