@@ -1,7 +1,7 @@
 {
   "main.css": "/wick-editor/test/static/css/main.a0cceb04.chunk.css",
-  "main.js": "/wick-editor/test/static/js/main.3ef19aa2.chunk.js",
-  "main.js.map": "/wick-editor/test/static/js/main.3ef19aa2.chunk.js.map",
+  "main.js": "/wick-editor/test/static/js/main.d811dcb2.chunk.js",
+  "main.js.map": "/wick-editor/test/static/js/main.d811dcb2.chunk.js.map",
   "static/css/1.94ca7e3c.chunk.css": "/wick-editor/test/static/css/1.94ca7e3c.chunk.css",
   "static/js/1.9a8e5a14.chunk.js": "/wick-editor/test/static/js/1.9a8e5a14.chunk.js",
   "static/js/1.9a8e5a14.chunk.js.map": "/wick-editor/test/static/js/1.9a8e5a14.chunk.js.map",
@@ -179,6 +179,6 @@
   "static/css/main.a0cceb04.chunk.css.map": "/wick-editor/test/static/css/main.a0cceb04.chunk.css.map",
   "static/css/1.94ca7e3c.chunk.css.map": "/wick-editor/test/static/css/1.94ca7e3c.chunk.css.map",
   "index.html": "/wick-editor/test/index.html",
-  "precache-manifest.52d0d0f974a77f078612bf131bb4e963.js": "/wick-editor/test/precache-manifest.52d0d0f974a77f078612bf131bb4e963.js",
+  "precache-manifest.25a75216b3c22508d4865a3fb6725363.js": "/wick-editor/test/precache-manifest.25a75216b3c22508d4865a3fb6725363.js",
   "service-worker.js": "/wick-editor/test/service-worker.js"
 }
