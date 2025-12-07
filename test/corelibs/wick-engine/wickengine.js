@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.12.2.21.56.49";
+var WICK_ENGINE_BUILD_VERSION = "2025.12.7.12.17.43";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -62481,7 +62481,6 @@ class SelectionWidget {
     });
     outerBox.addTo(stopObj);
     colorBox.addTo(stopObj);
-    stopObj.strokeColor = SelectionWidget.DESELECTED_COLOR;
     let arrow;
 
     if (!isHover) {
@@ -62493,10 +62492,13 @@ class SelectionWidget {
         data: {
           isSelectionBoxGUI: true,
           parentItem: stopObj
-        }
+        } // Note to self: Rebuild one last time to add these changes
+
       });
       arrow.addTo(stopObj);
     }
+
+    stopObj.strokeColor = SelectionWidget.DESELECTED_COLOR;
 
     if (isHover) {
       // Don't include the hover stop in cursor hit tests
