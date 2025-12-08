@@ -14,7 +14,7 @@
         <!-- The Wick Engine build is injected here during the engine build step (see gulpfile.js) -->
         <script>
             /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.12.7.12.17.43";
+var WICK_ENGINE_BUILD_VERSION = "2025.12.7.14.19.27";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -53105,6 +53105,31 @@ Wick.Selection = class extends Wick.Base {
     this._selectedStopIndex = index;
   }
 
+  deleteSelectedStop() {
+    if (this.useGradientGUI) {
+      let fillColor = this.fillColor;
+
+      if (fillColor) {
+        let stops = fillColor.gradient.stops;
+        let stopIndex = this.selectedStopIndex;
+
+        if (stops.length <= 2) {
+          stops[stopIndex].color = stops[1 - stopIndex].color;
+          stopIndex = 1 - stopIndex;
+        } else {
+          stops.splice(stopIndex, 1);
+
+          if (stopIndex >= stops.length) {
+            stopIndex = stops.length - 1;
+          }
+        }
+
+        this.selectedStopIndex = stopIndex;
+        this.fillColor = fillColor;
+      }
+    }
+  }
+
 };
 /*
  * Copyright 2020 WICKLETS LLC
@@ -62394,8 +62419,11 @@ class SelectionWidget {
         color: color.clone(),
         offset: 1
       }];
-      startpoint = item.bounds.topCenter;
-      endpoint = item.bounds.bottomCenter;
+
+      let bounds = this._calculateBoundingBoxOfItems(this._itemsInSelection);
+
+      startpoint = bounds.topCenter;
+      endpoint = bounds.bottomCenter;
     }
 
     this._gradientGUI.startpoint = startpoint;
@@ -62507,8 +62535,7 @@ class SelectionWidget {
         data: {
           isSelectionBoxGUI: true,
           parentItem: stopObj
-        } // Note to self: Rebuild one last time to add these changes
-
+        }
       });
       arrow.addTo(stopObj);
     }
