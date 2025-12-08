@@ -79,21 +79,23 @@ class WickGradient extends Component {
     renderHeader = () => {
         return (
             <div className="wick-color-picker-header">
-                <div>{/* className="wick-color-picker-action-button">*/}
+                <div className="wick-color-picker-action-button">
                     <ActionButton
                         color="tool"
                         id="color-picker-gradient-linear-button"
+                        tooltip="Linear"
                         action={ () => this.onChangeRadial(false) }
                         isActive={ () => !this.radial }
-                        text="Linear" />
+                        icon="linear" />
                 </div>
-                <div style={{marginRight: 'auto'}}>{/* className="wick-color-picker-action-button spacer">*/}
+                <div className="wick-color-picker-action-button spacer">
                     <ActionButton
                         color="tool"
                         id="color-picker-gradient-radial-button"
+                        tooltip="Radial"
                         action={ () => this.onChangeRadial(true) }
                         isActive={ () => this.radial }
-                        text="Radial" />
+                        icon="radial" />
                 </div>
             </div>
         );

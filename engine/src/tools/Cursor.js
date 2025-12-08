@@ -76,8 +76,17 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         this._setCursor(this._getCursor());
 
         if(this._selection.useGradientGUI) {
-            // Update the selection widget (used for gradient hover)
-            this._widget.updateMove(this.hitResult.item, e);
+            // Update the gradient hover stop
+            const widget = this._widget;
+            if(widget._gradientGUI.container.visible) {
+                let item = this.hitResult.item;
+                if(item && item.data.parentItem) item = item.data.parentItem;
+                if(!item || !item.data.handleType) {
+                    widget._buildHoverStop(e.point);
+                } else {
+                    widget._gradientGUI.hoverStop.visible = false;
+                }
+            }
         }
     }
 
@@ -89,12 +98,29 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         this.hitResult = this._updateHitResult(e);
 
         if(this._selection.useGradientGUI) {
-            // Clicked the gradient editor GUI, update the selection widget (used for stop selection)
-            let onStopSelected = (index) => {
-                this._selection.selectedStopIndex = index;
-                this.fireEvent({eventName: 'canvasModified', actionName: 'cursorSelectStop'});
+            // Clicked the gradient editor GUI, check for stop creation/selection
+            const widget = this._widget;
+            widget._gradientGUI.createdStopOnDown = false;
+            if(widget._gradientGUI.container.visible) {
+                let item = this.hitResult.item;
+                if(item && item.data.parentItem) item = item.data.parentItem;
+                let stopIndex = null;
+
+                if(item && item.data.handleType === 'gradient-stop') {
+                    widget._selectStop(item);
+                    stopIndex = widget._gradientGUI.stops.indexOf(item);
+                } else if(!item || !item.data.handleType) {
+                    stopIndex = widget._createStopFromPoint(e.point);
+                    if(stopIndex !== null) {
+                        widget._gradientGUI.createdStopOnDown = true;
+                    }
+                }
+
+                if(stopIndex !== null) {
+                    this._selection.selectedStopIndex = stopIndex;
+                    this.fireEvent({eventName: 'canvasModified', actionName: 'cursorSelectStop'});
+                }
             }
-            this._widget.updateDown(this.hitResult.item, e, onStopSelected);
         } else if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Clicked the selection box GUI, do nothing
         } else if(this.hitResult.item && this._isItemSelected(this.hitResult.item)) {

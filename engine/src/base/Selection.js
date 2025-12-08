@@ -1059,4 +1059,25 @@ Wick.Selection = class extends Wick.Base {
     set selectedStopIndex (index) {
         this._selectedStopIndex = index;
     }
+    deleteSelectedStop() {
+        if (this.useGradientGUI) {
+            let fillColor = this.fillColor;
+            if (fillColor) {
+                let stops = fillColor.gradient.stops;
+                let stopIndex = this.selectedStopIndex;
+                if (stops.length <= 2) {
+                    stops[stopIndex].color = stops[1 - stopIndex].color;
+                    stopIndex = 1 - stopIndex;
+                }
+                else {
+                    stops.splice(stopIndex, 1);
+                    if (stopIndex >= stops.length) {
+                        stopIndex = stops.length - 1;
+                    }
+                }
+                this.selectedStopIndex = stopIndex;
+                this.fillColor = fillColor;
+            }
+        }
+    }
 }

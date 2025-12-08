@@ -127,7 +127,7 @@ export default function ColorPicker (props) {
     
     // Don't close if click started on popover
     // Don't close if clicked on selected objects
-    let clickedCanvas = data.downTarget === props.targetCanvas;
+    let clickedCanvas = (e.touches ? e.target : data.downTarget) === props.targetCanvas;
     let selectionUnchanged = arraysEqual(props.selectedObjects, lastObjects);
     if (!data.clickedPopover && !(clickedCanvas && selectionUnchanged)) {
       setOpen(false)
