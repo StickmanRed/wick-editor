@@ -29,8 +29,7 @@ class SelectionWidget {
         this._item = new paper.Group({ insert:false });
         
         let startPath = new paper.Path.Circle({
-            //center: [0, 0],
-            radius: SelectionWidget.HANDLE_RADIUS,
+            radius: SelectionWidget.ENDPOINT_RADIUS,
             fillColor: SelectionWidget.BOX_STROKE_COLOR,
             insert: false,
             applyMatrix: false,
@@ -39,10 +38,8 @@ class SelectionWidget {
                 handleEdge: 'start'
             }
         });
-        startPath.onLoad = () => {startPath.size = [40, 40]}
         let endPath = new paper.Path.Circle({
-            //center: [0, 0],
-            radius: SelectionWidget.HANDLE_RADIUS,
+            radius: SelectionWidget.ENDPOINT_RADIUS,
             fillColor: SelectionWidget.BOX_STROKE_COLOR,
             insert: false,
             applyMatrix: false,
@@ -687,7 +684,7 @@ class SelectionWidget {
 
         let stopObj = new paper.Group({
             pivot: [0,0],
-            position: [0, -SelectionWidget.HANDLE_RADIUS],
+            position: [0, -SelectionWidget.ENDPOINT_RADIUS],
             applyMatrix: false,
             insert: false,
             data: {
@@ -761,7 +758,7 @@ class SelectionWidget {
         stopObj.data.setScaling = () => {
             const scaling = 1 / paper.view.zoom;
             stopObj.scaling = scaling;
-            stopObj.position.y = -SelectionWidget.HANDLE_RADIUS * scaling;
+            stopObj.position.y = -SelectionWidget.ENDPOINT_RADIUS * scaling;
         }
         stopObj.data.setScaling();
         return stopObj;
@@ -788,6 +785,9 @@ class SelectionWidget {
             this.currentTransformation = 'gradient-stop';
         } else if(item && item.data.handleType === 'gradient-point') {
             this.currentTransformation = 'gradient-point';
+            this._gradientGUI.initialStartpoint = this._gradientGUI.startpoint;
+            this._gradientGUI.initialEndpoint = this._gradientGUI.endpoint;
+            this._gradientGUI.initialLineVector = this._gradientGUI.lineVector;
         } else if(this._gradientGUI.createdStopOnDown) {
             // Move the new color stop
             this.currentTransformation = 'gradient-stop';
@@ -812,7 +812,21 @@ class SelectionWidget {
             } else {
                 this._gradientGUI.endpoint = e.point;
             }
-            this._gradientGUI.lineVector = this._gradientGUI.endpoint.subtract(this._gradientGUI.startpoint);
+            if(e.modifiers.shift) {
+                this._gradientGUI.lineVector = this._gradientGUI.initialLineVector;
+                if(item.data.handleEdge === 'start') {
+                    this._gradientGUI.endpoint = e.point.add(this._gradientGUI.lineVector);
+                } else {
+                    this._gradientGUI.startpoint = e.point.subtract(this._gradientGUI.lineVector);
+                }
+            } else {
+                if(item.data.handleEdge === 'start') {
+                    this._gradientGUI.endpoint = this._gradientGUI.initialEndpoint;
+                } else {
+                    this._gradientGUI.startpoint = this._gradientGUI.initialStartpoint;
+                }
+                this._gradientGUI.lineVector = this._gradientGUI.endpoint.subtract(this._gradientGUI.startpoint);
+            }
             this._transformContainer();
             this._buildGradientLine();
             this._gradientGUI.stops.forEach((stopObj) => {
@@ -958,10 +972,11 @@ SelectionWidget.ROTATION_HOTSPOT_RADIUS = 20;
 SelectionWidget.ROTATION_HOTSPOT_FILLCOLOR = 'rgba(100,150,255,0.5)';
 SelectionWidget.GHOST_STROKE_COLOR = 'rgba(0, 0, 0, 1.0)';
 SelectionWidget.GHOST_STROKE_WIDTH = 1;
+SelectionWidget.ENDPOINT_RADIUS = 8;
 SelectionWidget.COLOR_STOP_RECT_RADIUS = 12;
 SelectionWidget.COLOR_STOP_RECT_PADDING = 2;
 SelectionWidget.COLOR_STOP_OUTLINE_WIDTH = 2;
-SelectionWidget.COLOR_STOP_CREATION_DISTANCE = SelectionWidget.HANDLE_RADIUS + 2.2 * SelectionWidget.COLOR_STOP_RECT_RADIUS;
+SelectionWidget.COLOR_STOP_CREATION_DISTANCE = SelectionWidget.ENDPOINT_RADIUS + 2.2 * SelectionWidget.COLOR_STOP_RECT_RADIUS;
 SelectionWidget.SELECTED_COLOR = '#0c8ce9';
 SelectionWidget.DESELECTED_COLOR = '#cccccc';
 

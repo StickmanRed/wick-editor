@@ -108,9 +108,7 @@ export default function ColorPicker (props) {
       colorCSSOpaque += ')';
     }
     else {
-      colorCSS = `linear-gradient(${color.toCSS()})`;
-      let { red, green, blue } = color;
-      colorCSSOpaque = `linear-gradient(rgb(${red},${green},${blue}))`;
+      colorCSS = color.toCSS();
     }
   }
   let itemID = props.id;
@@ -149,10 +147,12 @@ export default function ColorPicker (props) {
         onClick={toggle}
         style={props.stroke ?
           { borderColor: colorCSS } :
-          { backgroundImage: `${colorCSS}, ${CHECKERBOARD_URL}`, backgroundColor: 'white' }
+          color.gradient ?
+          { backgroundImage: `${colorCSS}, ${CHECKERBOARD_URL}`, backgroundColor: 'white' } :
+          { backgroundColor: colorCSS }
         }
         >
-          {!props.stroke &&
+          {(!props.stroke && color.gradient) &&
           <div className="btn-color-picker-background-opaque"
             style={{ backgroundImage: colorCSSOpaque }} />
           }

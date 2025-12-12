@@ -26,8 +26,10 @@ class WickGradientColorPicker extends Component {
     }
     onColorChange = (color) => {
         this.props.onChangeComplete(color);
-        this.props.updateLastColors(color, this.editLastColors);
-        this.editLastColors = true;
+        if (this.props.updateLastColors) {
+            this.props.updateLastColors(color, this.editLastColors);
+            this.editLastColors = true;
+        }
         this.setState({ colorOnDrag: null });
     }
     onGradientChange = (color, args) => {
