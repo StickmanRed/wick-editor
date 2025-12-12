@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2025.10.9.13.21.33";
+var WICK_ENGINE_BUILD_VERSION = "2025.12.11.17.7.46";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -49617,6 +49617,7 @@ Wick.Layer = class extends Wick.Base {
     super(args);
     this.locked = args.locked === undefined ? false : args.locked;
     this.hidden = args.hidden === undefined ? false : args.hidden;
+    this.opacity = args.opacity === undefined ? 1 : args.opacity;
     this.name = args.name || null;
   }
 
@@ -49625,6 +49626,7 @@ Wick.Layer = class extends Wick.Base {
 
     data.locked = this.locked;
     data.hidden = this.hidden;
+    data.opacity = this.opacity;
     return data;
   }
 
@@ -49633,6 +49635,7 @@ Wick.Layer = class extends Wick.Base {
 
     this.locked = data.locked;
     this.hidden = data.hidden;
+    this.opacity = data.opacity;
   }
 
   get classname() {
@@ -49655,6 +49658,21 @@ Wick.Layer = class extends Wick.Base {
 
   get index() {
     return this.parent && this.parent.layers.indexOf(this);
+  }
+  /**
+   * The opacity of the layer.
+   * @type {number}
+   */
+
+
+  get opacity() {
+    return this._opacity;
+  }
+
+  set opacity(opacity) {
+    if (typeof opacity === 'number' && !isNaN(opacity)) {
+      this._opacity = Math.max(Math.min(opacity, 1), 0);
+    } else this._opacity = 1;
   }
   /**
    * Set this layer to be the active layer in its timeline.
@@ -65109,7 +65127,7 @@ Wick.View.Layer = class extends Wick.View {
       frame.view.render();
       this.activeFrameLayers.push(frame.view.objectsLayer);
       frame.view.objectsLayer.locked = false;
-      frame.view.objectsLayer.opacity = 1.0;
+      frame.view.objectsLayer.opacity = this.model._opacity;
     } // Disable mouse events on layers if they are locked.
     // (However, this is ignored while the project is playing so the interact tool always works.)
     // (This is also ignored for layers which are inside clips and not the current focus.)
@@ -65157,7 +65175,7 @@ Wick.View.Layer = class extends Wick.View {
     onionMult = Math.min(1, Math.max(0, onionMult));
     var opacity = onionMult * Wick.View.Layer.BASE_ONION_OPACITY;
     frame.view.objectsLayer.locked = true;
-    frame.view.objectsLayer.opacity = opacity;
+    frame.view.objectsLayer.opacity = opacity * this.model._opacity;
   }
 
 };
