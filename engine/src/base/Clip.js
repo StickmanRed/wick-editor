@@ -1120,6 +1120,17 @@ Wick.Clip = class extends Wick.Tickable {
     set rotation(rotation) {
         this.transformation.rotation = rotation;
     }
+    /**
+     * The skew of the clip.
+     * @type {number}
+     */
+    get skew() {
+        return this.transformation.skew;
+    }
+
+    set skew(skew) {
+        this.transformation.skew = skew;
+    }
 
     /**
      * The opacity of the clip.
