@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "589e445465892abb11ee",
-    "url": "/wick-editor/test/static/css/main.c31bc844.chunk.css"
+    "revision": "cb96d8502e961001d8a2",
+    "url": "/wick-editor/test/static/css/main.ef1f16e8.chunk.css"
   },
   {
-    "revision": "589e445465892abb11ee",
-    "url": "/wick-editor/test/static/js/main.589e4454.chunk.js"
+    "revision": "cb96d8502e961001d8a2",
+    "url": "/wick-editor/test/static/js/main.cb96d850.chunk.js"
   },
   {
-    "revision": "28866d5b03d5dd04b524",
-    "url": "/wick-editor/test/static/css/1.6421c423.chunk.css"
+    "revision": "a20d6b5145df8711d175",
+    "url": "/wick-editor/test/static/css/1.5e08d9ce.chunk.css"
   },
   {
-    "revision": "28866d5b03d5dd04b524",
-    "url": "/wick-editor/test/static/js/1.28866d5b.chunk.js"
+    "revision": "a20d6b5145df8711d175",
+    "url": "/wick-editor/test/static/js/1.a20d6b51.chunk.js"
   },
   {
     "revision": "7f30652f952f9205efcd",
@@ -52,8 +52,20 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/brushsmoothness.4bad7455.svg"
   },
   {
+    "revision": "38501b87b5e94dabc104ab4ffc2fe8a1",
+    "url": "/wick-editor/test/static/media/style-icon.38501b87.svg"
+  },
+  {
+    "revision": "8db1b4099de0edca9cd779e6566c990a",
+    "url": "/wick-editor/test/static/media/style-icon-active.8db1b409.svg"
+  },
+  {
     "revision": "5c1d16f9b99249d7f58360c3c7441688",
     "url": "/wick-editor/test/static/media/sound.5c1d16f9.svg"
+  },
+  {
+    "revision": "e1be1ab47b9048b0465271797c7ea0bc",
+    "url": "/wick-editor/test/static/media/fillopacity-icon.e1be1ab4.svg"
   },
   {
     "revision": "03345b4c97237186b4b411c879663e34",
@@ -112,12 +124,8 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/swatches.2f1c23e9.svg"
   },
   {
-    "revision": "6497c936dfb67a045ad962d09388fcd5",
-    "url": "/wick-editor/test/static/media/linear.6497c936.svg"
-  },
-  {
-    "revision": "3b6bdb8a52ccbce3a3a165bb2f4afb4d",
-    "url": "/wick-editor/test/static/media/radial.3b6bdb8a.svg"
+    "revision": "2f03b033777850f1e7782f4d6b921fc9",
+    "url": "/wick-editor/test/static/media/gradienttool.2f03b033.svg"
   },
   {
     "revision": "599d3aaa9ad0fbbc7e94b50a505c753c",
@@ -170,6 +178,14 @@ self.__precacheManifest = [
   {
     "revision": "5c9dd1b1e8aab988facdaa4783783f6c",
     "url": "/wick-editor/test/static/media/relativebrush.5c9dd1b1.png"
+  },
+  {
+    "revision": "fa53efc66ded43f7886c6d728c9a651c",
+    "url": "/wick-editor/test/static/media/gradient-mode-none.fa53efc6.svg"
+  },
+  {
+    "revision": "a1c6e94cf853f9d839c73eda455fff69",
+    "url": "/wick-editor/test/static/media/gradient-mode-uniform.a1c6e94c.svg"
   },
   {
     "revision": "755e2c136b8e1db91199b4cfd888b94d",
@@ -272,6 +288,10 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/upload-icon-dark.bc201a21.svg"
   },
   {
+    "revision": "d74a1a82e2ddc5a2e017e370d78b260d",
+    "url": "/wick-editor/test/static/media/reverse-gradient.d74a1a82.svg"
+  },
+  {
     "revision": "35c8ded661f6bb463c5ecccdf1e04612",
     "url": "/wick-editor/test/static/media/settings.35c8ded6.svg"
   },
@@ -290,6 +310,10 @@ self.__precacheManifest = [
   {
     "revision": "a5d714082f8ab117f14500b51242bb8d",
     "url": "/wick-editor/test/static/media/clip-dark.a5d71408.svg"
+  },
+  {
+    "revision": "94049f0c0035461d460c49c1ca823f54",
+    "url": "/wick-editor/test/static/media/layer-dark.94049f0c.svg"
   },
   {
     "revision": "5ea64ff04312d22d113fa634d9bc7290",
@@ -580,14 +604,6 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/transform-icon-active.5e1e03e7.svg"
   },
   {
-    "revision": "38501b87b5e94dabc104ab4ffc2fe8a1",
-    "url": "/wick-editor/test/static/media/style-icon.38501b87.svg"
-  },
-  {
-    "revision": "8db1b4099de0edca9cd779e6566c990a",
-    "url": "/wick-editor/test/static/media/style-icon-active.8db1b409.svg"
-  },
-  {
     "revision": "da9ae860047599b002f8e153697faa9a",
     "url": "/wick-editor/test/static/media/font-icon.da9ae860.svg"
   },
@@ -640,8 +656,24 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/opacity-icon.194043c2.svg"
   },
   {
-    "revision": "e1be1ab47b9048b0465271797c7ea0bc",
-    "url": "/wick-editor/test/static/media/fillopacity-icon.e1be1ab4.svg"
+    "revision": "d644417c8d2847e3f728053633c70f64",
+    "url": "/wick-editor/test/static/media/gradient-startX-icon.d644417c.svg"
+  },
+  {
+    "revision": "77d5238ccc643821e3f7670670b6363e",
+    "url": "/wick-editor/test/static/media/gradient-startY-icon.77d5238c.svg"
+  },
+  {
+    "revision": "200dc645f6deec94a1481f111053fcd7",
+    "url": "/wick-editor/test/static/media/gradient-endX-icon.200dc645.svg"
+  },
+  {
+    "revision": "03a87067aa8aa9d34bc429c156fe321f",
+    "url": "/wick-editor/test/static/media/gradient-endY-icon.03a87067.svg"
+  },
+  {
+    "revision": "f8d5a147fd6353fcb10c95600370bfbc",
+    "url": "/wick-editor/test/static/media/gradient-stopoffset-icon.f8d5a147.svg"
   },
   {
     "revision": "aea2219d900ab79f3eaa450b7f35fca4",
@@ -736,7 +768,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "162b6fc775100883ce4be263e567834a",
+    "revision": "efda92cf7ad0f3cc4bf9f402e3d38529",
     "url": "/wick-editor/test/index.html"
   }
 ];
