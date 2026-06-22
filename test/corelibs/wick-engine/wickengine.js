@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2026.3.12.20.26.8";
+var WICK_ENGINE_BUILD_VERSION = "2026.6.22.13.11.17";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -51494,6 +51494,7 @@ Wick.Project = class extends Wick.Base {
   }
 
   playAudioScrubSounds() {
+    if (this.playing) return;
     this.activeTimeline.layers.forEach(layer => {
       // We want to start activated sounds, adjust time of active sounds, and stop deactivated sounds.
       // If audioScrubSounds doesn't have a sound for this layer:
@@ -51723,6 +51724,7 @@ Wick.Project = class extends Wick.Base {
     window._scriptOnErrorCallback = args.onError;
     this._playing = true;
     this.view.paper.view.autoUpdate = false;
+    this.stopAudioScrubSounds();
 
     if (this._tickIntervalID) {
       this.stop();
@@ -66704,6 +66706,7 @@ Wick.GUIElement.Frame = class extends Wick.GUIElement {
     this._clickedEdge = this._mouseOverFrameEdge();
     var playheadPosition = this.model.start + Math.floor(this.localMouse.x / this.gridCellWidth);
     this.model.project.activeTimeline.playheadPosition = playheadPosition;
+    this.model.project.playAudioScrubSounds();
 
     if (this.model.isSelected) {
       if (e.shiftKey) {
