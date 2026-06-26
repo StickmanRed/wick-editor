@@ -1416,6 +1416,7 @@ Wick.Project = class extends Wick.Base {
     }
 
     playAudioScrubSounds () {
+        if (this.playing) return;
         this.activeTimeline.layers.forEach(layer => {
             // We want to start activated sounds, adjust time of active sounds, and stop deactivated sounds.
             // If audioScrubSounds doesn't have a sound for this layer:

@@ -177,6 +177,7 @@ Wick.GUIElement.Frame = class extends Wick.GUIElement {
 
         var playheadPosition = this.model.start + Math.floor(this.localMouse.x / this.gridCellWidth);
         this.model.project.activeTimeline.playheadPosition = playheadPosition;
+        this.model.project.playAudioScrubSounds();
 
         if(this.model.isSelected) {
             if(e.shiftKey) {
