@@ -96,6 +96,7 @@ Wick.Selection = class extends Wick.Base {
             "width",
             "height",
             "rotation",
+            "skew",
             "opacity",
             "sound",
             "soundVolume",
@@ -103,6 +104,7 @@ Wick.Selection = class extends Wick.Base {
             "identifier",
             "easingType",
             "fullRotations",
+            "tweenMethod",
             "scaleX",
             "scaleY",
             "animationType",
@@ -558,6 +560,24 @@ Wick.Selection = class extends Wick.Base {
     }
 
     /**
+     * The skew of a single clip.
+     * @type {number}
+     */
+    get skew() {
+        if (!(this.getSelectedObject() && (this.selectionType === "clip" || this.selectionType === "button")))
+            return null;
+        return this._getSingleAttribute('skew');
+    }
+
+    set skew(skew) {
+        let clip = this.getSelectedObject();
+        if (clip && (this.selectionType === "clip" || this.selectionType === "button")) {
+            this.project.tryToAutoCreateTween();
+            clip.skew = skew;
+        }
+    }
+
+    /**
      * It is the original width of the selection at creation.
      * @type {number}
      */
@@ -884,6 +904,18 @@ Wick.Selection = class extends Wick.Base {
 
     set fullRotations (fullRotations) {
         return this._setSingleAttribute('fullRotations', fullRotations);
+    }
+
+    /**
+     * The decomposition method of a tween.
+     * @type {Number}
+     */
+    get tweenMethod () {
+        return this._getSingleAttribute('tweenMethod');
+    }
+
+    set tweenMethod (tweenMethod) {
+        return this._setSingleAttribute('tweenMethod', tweenMethod);
     }
 
     /**

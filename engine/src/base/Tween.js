@@ -58,6 +58,7 @@ Wick.Tween = class extends Wick.Base {
         this._transformation = args.transformation || new Wick.Transformation();
         this.fullRotations = args.fullRotations === undefined ? 0 : args.fullRotations;
         this.easingType = args.easingType || 'none';
+        this.tweenMethod = args.tweenMethod || 'normal';
 
         this._originalLayerIndex = -1;
     }
@@ -75,11 +76,19 @@ Wick.Tween = class extends Wick.Base {
         var t = Wick.Tween._calculateTimeValue(tweenA, tweenB, playheadPosition);
 
         // Interpolate every transformation attribute using the t value
+        var transformA = tweenA.transformation;
+        var transformB = tweenB.transformation;
+        if(tweenA.tweenMethod === 'normal') {
+            var paperTransform = {},
+                opacity;
+            transformA = transformA.paperValues;
+            transformB = transformB.paperValues;
+        }
         ["x", "y", "scaleX", "scaleY", "rotation", "skew", "opacity"].forEach(propName => {
             var tweenFn = tweenA._getTweenFunction();
             var tt = tweenFn(t);
-            var valA = tweenA.transformation[propName];
-            var valB = tweenB.transformation[propName];
+            var valA = transformA[propName];
+            var valB = transformB[propName];
             if(propName === 'rotation') {
                 // Constrain rotation values to range of -180 to 180
                 // (Disabled for now - a bug in paper.js clamps these for us)
@@ -90,8 +99,19 @@ Wick.Tween = class extends Wick.Base {
                 // Convert full rotations to 360 degree amounts
                 valB += tweenA.fullRotations * 360;
             }
-            interpTween.transformation[propName] = lerp(valA, valB, tt);
+            if(tweenA.tweenMethod === 'skew') interpTween.transformation[propName] = lerp(valA, valB, tt);
+            else {
+                if(propName === 'opacity') opacity = lerp(valA, valB, tt);
+                else paperTransform[propName] = lerp(valA, valB, tt);
+            }
         });
+
+        if(tweenA.tweenMethod === 'normal') {
+            interpTween.transformation = Wick.Transformation.fromMatrix(
+                Wick.Transformation.toMatrixPaper(paperTransform)
+            );
+            interpTween.transformation.opacity = opacity;
+        }
 
         interpTween.playheadPosition = playheadPosition;
         return interpTween;
@@ -108,6 +128,7 @@ Wick.Tween = class extends Wick.Base {
         data.transformation = this._transformation.values;
         data.fullRotations = this.fullRotations;
         data.easingType = this.easingType;
+        data.tweenMethod = this.tweenMethod;
 
         data.originalLayerIndex = this.layerIndex !== -1 ? this.layerIndex : this._originalLayerIndex;
 
@@ -121,6 +142,7 @@ Wick.Tween = class extends Wick.Base {
         this._transformation = new Wick.Transformation(data.transformation);
         this.fullRotations = data.fullRotations;
         this.easingType = data.easingType;
+        this.tweenMethod = data.tweenMethod;
 
         this._originalLayerIndex = data.originalLayerIndex;
     }
@@ -164,6 +186,17 @@ Wick.Tween = class extends Wick.Base {
             return;
         }
         this._easingType = easingType;
+    }
+
+    /**
+     * 
+     */
+    get tweenMethod () {
+        return this._tweenMethod;
+    }
+    set tweenMethod (tweenMethod) {
+        if (tweenMethod === 'skew') this._tweenMethod = 'skew';
+        else this._tweenMethod = 'normal';
     }
 
     /**

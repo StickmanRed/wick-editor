@@ -57,6 +57,15 @@ Wick.Transformation = class {
     }
 
     /**
+     * An object containing transform values from paper.js decomposition.
+     */
+    get paperValues () {
+        const values = this.fromMatrixPaper(this.toMatrix());
+        values.opacity = this.opacity;
+        return values;
+    }
+
+    /**
      * Creates a copy of this transformation.
      * @returns {Wick.Transformation} the copied transformation.
      */
@@ -69,7 +78,7 @@ Wick.Transformation = class {
      * @param {Array} values A list of matrix values as passed to a paper.js Matrix object.
      * @returns {Wick.Transformation}
      */
-    fromMatrix (values) {
+    static fromMatrix (values) {
         const [a, b, c, d, tx, ty] = values;
         const rotationX = Math.atan2(b, a) * 180 / Math.PI,
               rotationY = Math.atan2(-c, d) * 180 / Math.PI,
@@ -94,24 +103,50 @@ Wick.Transformation = class {
         const {x, y, scaleX, scaleY, rotation, skew} = this;
         const rotationX = rotation * Math.PI / 180,
               rotationY = (skew + rotation) * Math.PI / 180;
+        const a = scaleX * Math.cos(rotationX),
+              b = scaleX * Math.sin(rotationX),
+              d = scaleY * Math.cos(rotationY),
+              c = -scaleY * Math.sin(rotationY);
+        return [a, b, c, d, x, y];
+    }
 
+    /**
+     * Returns a transform object using paper.js decomposition.
+     * @param {Array} values A list of matrix values as passed to a paper.js Matrix object.
+     * @returns {Object}
+     */
+    fromMatrixPaper (values) {
+        const [a, b, c, d, tx, ty] = values;
+        const decomposed = (new paper.Matrix(a,b,c,d,tx,ty)).decompose();
+        return {
+            x:        decomposed.translation.x,
+            y:        decomposed.translation.y,
+            scaleX:   decomposed.scaling.x,
+            scaleY:   decomposed.scaling.y,
+            rotation: decomposed.rotation,
+            skew:     decomposed.skewing.x,
+            opacity:  1
+        };
+    }
+
+    static toMatrixPaper (args) {
+        const {x, y, scaleX, scaleY, rotation, skew} = args;
+        const degrees = 180 / Math.PI,
+              rotateRad = rotation / degrees,
+              skewRad = skew / degrees;
         let a, b, c, d;
-        if (Math.abs(rotationX) === Math.PI / 2) {
-            a = 0;
-            b = Math.sign(rotationX) * scaleX;
-        }
+            
+        if (skew.x === 0) a = b = c = d = 0;
         else {
-            a = scaleX * Math.cos(rotationX);
-            b = scaleX * Math.sin(rotationX);
+            let r = scaleX,
+                det = scaleY * r,
+                at = Math.tan(skewRad) * r * r;
+            a = Math.cos(rotateRad) * r;
+            b = Math.sqrt(r * r - a * a) * (rotateRad > 0 ? 1 : -1);
+            d = (b*at + a*det) / (a*a + b*b);
+            c = (at - b*d) / a;
         }
-        if (Math.abs(rotationY) === Math.PI / 2) {
-            d = 0;
-            c = -Math.sign(rotationX) * scaleY;
-        }
-        else {
-            d = scaleY * Math.cos(rotationY);
-            c = -scaleY * Math.sin(rotationY);
-        }
+
         return [a, b, c, d, x, y];
     }
 }

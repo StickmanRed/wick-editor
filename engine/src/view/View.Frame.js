@@ -129,7 +129,7 @@ Wick.View.Frame = class extends Wick.View {
         }).forEach(child => {
             if (child instanceof paper.Group || child instanceof Wick.Clip) {
                 var wickClip = Wick.ObjectCache.getObjectByUUID(child.data.wickUUID);
-                wickClip.transformation = Wick.Transformation.prototype.fromMatrix(child.matrix.values);
+                wickClip.transformation = Wick.Transformation.fromMatrix(child.matrix.values);
                 wickClip.transformation.opacity = child.opacity;
             }
         });
