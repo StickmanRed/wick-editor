@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2026.6.22.13.11.17";
+var WICK_ENGINE_BUILD_VERSION = "2026.7.8.18.37.22";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -51582,7 +51582,7 @@ Wick.Project = class extends Wick.Base {
   }
 
   stopAudioScrubSounds() {
-    for (const soundObj in this.audioScrubSounds) {
+    for (const soundObj of this.audioScrubSounds) {
       soundObj.stopSound();
     }
   }
