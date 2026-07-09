@@ -1498,7 +1498,7 @@ Wick.Project = class extends Wick.Base {
     }
 
     stopAudioScrubSounds () {
-        for (const soundObj in this.audioScrubSounds) {
+        for (const soundObj of this.audioScrubSounds) {
             soundObj.stopSound();
         }
     }
