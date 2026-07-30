@@ -14,7 +14,7 @@
         <!-- The Wick Engine build is injected here during the engine build step (see gulpfile.js) -->
         <script>
             /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2026.6.26.18.46.46";
+var WICK_ENGINE_BUILD_VERSION = "2026.7.29.21.56.21";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -50128,6 +50128,7 @@ Wick.Project = class extends Wick.Base {
     this._internalErrorMessages = [];
     this.soundsPlayed = []; // List of all sounds that have been played during this play through of the project.
 
+    this.audioScrubSounds = {};
     this._mouseTargets = [];
     this._keysDown = [];
     this._keysLastDown = [];
@@ -51547,6 +51548,100 @@ Wick.Project = class extends Wick.Base {
   get muted() {
     return this._muted;
   }
+
+  playAudioScrubSounds() {
+    if (this.playing) return;
+    this.activeTimeline.layers.forEach(layer => {
+      // We want to start activated sounds, adjust time of active sounds, and stop deactivated sounds.
+      // If audioScrubSounds doesn't have a sound for this layer:
+      //     Create a new sound object
+      // Else if the current frame doesn't have a sound:
+      //     Stop the previous sound
+      // Else if the active sound didn't change:
+      //     Move the sound to the new time
+      // Else if the active sound changed:
+      //     Stop the previous sound and create a new sound object
+      const frame = layer.activeFrame;
+      if (!frame) return;
+      const frameUUID = frame.uuid,
+            soundAsset = frame.sound;
+      let stopPrevSound = false,
+          startNewSound = false,
+          moveExistingSound = false;
+
+      if (!(layer.uuid in this.audioScrubSounds)) {
+        // No sound currently playing for this layer
+        if (soundAsset) {
+          // If the new frame has a sound, start playing it
+          startNewSound = true;
+          moveExistingSound = true;
+        }
+      } else if (!soundAsset) {
+        // Sound currently playing, but new frame has no sound
+        stopPrevSound = true;
+      } else if (frameUUID === this.audioScrubSounds[layer.uuid].frameUUID) {
+        // Stayed inside last frame with sound
+        moveExistingSound = true;
+      } else {
+        // Switched to new frame with sound
+        stopPrevSound = true;
+        startNewSound = true;
+        moveExistingSound = true;
+      }
+
+      if (stopPrevSound) {
+        this.audioScrubSounds[layer.uuid].stopSound();
+      }
+
+      if (startNewSound) {
+        // Initializing an object (entering frame or audio scrubbing first time)
+        this.audioScrubSounds[layer.uuid] = {
+          frameUUID,
+          soundAsset,
+          soundID: null,
+          autostopID: null,
+
+          playSound(options) {
+            // Cancel the function that auto-stops the sound after a frame
+            if (this.autostopID) {
+              // Sound already started
+              clearTimeout(this.autostopID);
+
+              soundAsset._howl.seek(options.seekMS / 1000, this.soundID);
+            } else {
+              // Initiate sound
+              this.soundID = soundAsset.play(options);
+            } // frame length in ms
+
+
+            this.autostopID = setTimeout(this.stopSound, 1000 / soundAsset.project.framerate);
+          },
+
+          stopSound() {
+            // Stop sound asset and clean up
+            soundAsset.stop(this.soundID);
+            clearTimeout(this.autostopID);
+            delete soundAsset.project.audioScrubSounds[layer.uuid];
+          }
+
+        };
+      }
+
+      if (moveExistingSound) {
+        this.audioScrubSounds[layer.uuid].playSound({
+          seekMS: frame.playheadSoundOffsetMS + frame.soundStart,
+          volume: frame.soundVolume,
+          loop: frame.soundLoop
+        });
+      }
+    });
+  }
+
+  stopAudioScrubSounds() {
+    for (const soundObj of Object.values(this.audioScrubSounds)) {
+      soundObj.stopSound();
+    }
+  }
   /**
    * Should the project render black bars around the canvas area?
    * (These only show up if the size of the window/element that the project
@@ -51685,6 +51780,7 @@ Wick.Project = class extends Wick.Base {
     window._scriptOnErrorCallback = args.onError;
     this._playing = true;
     this.view.paper.view.autoUpdate = false;
+    this.stopAudioScrubSounds();
 
     if (this._tickIntervalID) {
       this.stop();
@@ -66731,6 +66827,7 @@ Wick.GUIElement.Frame = class extends Wick.GUIElement {
     this._clickedEdge = this._mouseOverFrameEdge();
     var playheadPosition = this.model.start + Math.floor(this.localMouse.x / this.gridCellWidth);
     this.model.project.activeTimeline.playheadPosition = playheadPosition;
+    this.model.project.playAudioScrubSounds();
 
     if (this.model.isSelected) {
       if (e.shiftKey) {
@@ -67738,6 +67835,7 @@ Wick.GUIElement.NumberLine = class extends Wick.GUIElement {
 
     if (timeline.playheadPosition !== this.mousePlayheadPosition) {
       timeline.playheadPosition = this.mousePlayheadPosition;
+      this.project.model.playAudioScrubSounds();
       this.projectWasSoftModified();
     }
   }
