@@ -133,6 +133,7 @@ Wick.GUIElement.NumberLine = class extends Wick.GUIElement {
         var timeline = this.project.model.activeTimeline;
         if(timeline.playheadPosition !== this.mousePlayheadPosition) {
             timeline.playheadPosition = this.mousePlayheadPosition;
+            this.project.model.playAudioScrubSounds();
             this.projectWasSoftModified();
         }
     }
