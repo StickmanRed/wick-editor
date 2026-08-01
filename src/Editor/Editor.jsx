@@ -82,7 +82,6 @@ class Editor extends EditorCore {
       showCanvasActions: false,
       showBrushModes: false,
       showCursorTransformModes: false,
-      showGradientToolModes: false,
       showCodeErrors: false,
       codeError: null,
       popoutOutlinerSize: 250,
@@ -616,8 +615,7 @@ class Editor extends EditorCore {
 
     this.setState({
       showBrushModes: state,
-      showCursorTransformModes: false,
-      showGradientToolModes: false
+      showCursorTransformModes: false
     });
   }
 
@@ -632,24 +630,7 @@ class Editor extends EditorCore {
 
     this.setState({
       showBrushModes: false,
-      showCursorTransformModes: state,
-      showGradientToolModes: false
-    });
-  }
-
-  /**
-   * Opens and closes the gradient modes popover.
-   * @param {boolean} state - Optional. True will open the gradient modes menu, false will close.
-   */
-  toggleGradientToolModes = (state) => {
-    if (state === undefined || (typeof state !== "boolean")) {
-      state = !this.state.showGradientToolModes;
-    }
-
-    this.setState({
-      showBrushModes: false,
-      showCursorTransformModes: false,
-      showGradientToolModes: state
+      showCursorTransformModes: state
     });
   }
 
@@ -1009,11 +990,9 @@ class Editor extends EditorCore {
                       showCanvasActions={this.state.showCanvasActions}
                       showBrushModes={this.state.showBrushModes}
                       showCursorTransformModes={this.state.showCursorTransformModes}
-                      showGradientToolModes={this.state.showGradientToolModes}
                       toggleCanvasActions={this.toggleCanvasActions}
                       toggleBrushModes={this.toggleBrushModes}
                       toggleCursorTransformModes={this.toggleCursorTransformModes}
-                      toggleGradientToolModes={this.toggleGradientToolModes}
                       colorPickerType={this.state.colorPickerType}
                       changeColorPickerType={this.changeColorPickerType}
                       updateLastColors={this.updateLastColors}
@@ -1126,7 +1105,6 @@ class Editor extends EditorCore {
 
                           getToolSetting={this.getToolSetting}
                           setToolSetting={this.setToolSetting}
-                          getActiveTool={this.getActiveTool}
                           getSelectionType={this.getSelectionType}
                           getAllSoundAssets={this.getAllSoundAssets}
                           getAllSelectionAttributes={this.getAllSelectionAttributes}
@@ -1193,7 +1171,6 @@ class Editor extends EditorCore {
                       <Inspector
                         getToolSetting={this.getToolSetting}
                         setToolSetting={this.setToolSetting}
-                        getActiveTool={this.getActiveTool}
                         getSelectionType={this.getSelectionType}
                         getAllSoundAssets={this.getAllSoundAssets}
                         getAllSelectionAttributes={this.getAllSelectionAttributes}

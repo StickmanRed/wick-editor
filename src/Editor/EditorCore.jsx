@@ -53,7 +53,6 @@ class EditorCore extends Component {
       // See: https://github.com/reactstrap/reactstrap/issues/894
       this.toggleBrushModes(false);
       this.toggleCursorTransformModes(false);
-      this.toggleGradientToolModes(false);
 
       this.projectDidChange({ actionName: "Set Active Tool: " + newTool });
     }
@@ -526,28 +525,6 @@ class EditorCore extends Component {
   distributeSelectionToLayers = () => {
     this.project.distributeSelectionToLayers();
     this.projectDidChange({ actionName: "Distribute Selection To Layers" });
-  }
-
-  /**
-   * Reverses the gradient of the gradient tool target.
-   */
-  reverseGradient = () => {
-    var activeTool = this.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      activeTool.reverseGradient();
-      this.projectDidChange({ actionName: "Reverse Gradient" });
-    }
-  }
-
-  /**
-   * Deletes the selected color stop of the gradient tool.
-   */
-  deleteGradientStop = () => {
-    var activeTool = this.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      activeTool.deleteSelectedColorStop();
-      this.projectDidChange({ actionName: "Delete Gradient Color Stop" });
-    }
   }
 
   /**
