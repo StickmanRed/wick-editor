@@ -87,7 +87,6 @@ Wick.Project = class extends Wick.Base {
             eraser: new Wick.Tools.Eraser(),
             eyedropper: new Wick.Tools.Eyedropper(),
             fillbucket: new Wick.Tools.FillBucket(),
-            gradienttool: new Wick.Tools.GradientTool(),
             interact: new Wick.Tools.Interact(),
             line: new Wick.Tools.Line(),
             none: new Wick.Tools.None(),
@@ -770,7 +769,6 @@ Wick.Project = class extends Wick.Base {
      * Deletes all objects in the selection.
      */
     deleteSelectedObjects() {
-        if (this.activeTool === this.tools.gradienttool && this.activeTool.selectedStop) this.activeTool.deleteSelectedColorStop();
         var objects = this.selection.getSelectedObjects();
 
         this.selection.clear();

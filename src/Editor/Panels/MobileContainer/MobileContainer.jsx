@@ -73,7 +73,6 @@ class MobileContainer extends Component {
                 <MobileInspector 
                     getToolSetting={props.getToolSetting}
                     setToolSetting={props.setToolSetting}
-                    getActiveTool={props.getActiveTool}
                     getSelectionType={props.getSelectionType}
                     getAllSoundAssets={props.getAllSoundAssets}
                     getAllSelectionAttributes={props.getAllSelectionAttributes}
