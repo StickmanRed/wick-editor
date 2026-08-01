@@ -1,5 +1,5 @@
 /*Wick Engine https://github.com/Wicklets/wick-engine*/
-var WICK_ENGINE_BUILD_VERSION = "2026.6.26.18.46.46";
+var WICK_ENGINE_BUILD_VERSION = "2026.2.2.17.35.42";
 /*!
  * Paper.js v0.12.4 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -46742,16 +46742,6 @@ Wick.Transformation = class {
     };
   }
   /**
-   * An object containing transform values from paper.js decomposition.
-   */
-
-
-  get paperValues() {
-    const values = this.fromMatrixPaper(this.toMatrix());
-    values.opacity = this.opacity;
-    return values;
-  }
-  /**
    * Creates a copy of this transformation.
    * @returns {Wick.Transformation} the copied transformation.
    */
@@ -46767,7 +46757,7 @@ Wick.Transformation = class {
    */
 
 
-  static fromMatrix(values) {
+  fromMatrix(values) {
     const [a, b, c, d, tx, ty] = values;
     const rotationX = Math.atan2(b, a) * 180 / Math.PI,
           rotationY = Math.atan2(-c, d) * 180 / Math.PI,
@@ -46800,55 +46790,24 @@ Wick.Transformation = class {
     } = this;
     const rotationX = rotation * Math.PI / 180,
           rotationY = (skew + rotation) * Math.PI / 180;
-    const a = scaleX * Math.cos(rotationX),
-          b = scaleX * Math.sin(rotationX),
-          d = scaleY * Math.cos(rotationY),
-          c = -scaleY * Math.sin(rotationY);
-    return [a, b, c, d, x, y];
-  }
-  /**
-   * Returns a transform object using paper.js decomposition.
-   * @param {Array} values A list of matrix values as passed to a paper.js Matrix object.
-   * @returns {Object}
-   */
-
-
-  fromMatrixPaper(values) {
-    const [a, b, c, d, tx, ty] = values;
-    const decomposed = new paper.Matrix(a, b, c, d, tx, ty).decompose();
-    return {
-      x: decomposed.translation.x,
-      y: decomposed.translation.y,
-      scaleX: decomposed.scaling.x,
-      scaleY: decomposed.scaling.y,
-      rotation: decomposed.rotation,
-      skew: decomposed.skewing.x,
-      opacity: 1
-    };
-  }
-
-  static toMatrixPaper(args) {
-    const {
-      x,
-      y,
-      scaleX,
-      scaleY,
-      rotation,
-      skew
-    } = args;
-    const degrees = 180 / Math.PI,
-          rotateRad = rotation / degrees,
-          skewRad = skew / degrees;
     let a, b, c, d;
-    if (skew.x === 0) a = b = c = d = 0;else {
-      let r = scaleX,
-          det = scaleY * r,
-          at = Math.tan(skewRad) * r * r;
-      a = Math.cos(rotateRad) * r;
-      b = Math.sqrt(r * r - a * a) * (rotateRad > 0 ? 1 : -1);
-      d = (b * at + a * det) / (a * a + b * b);
-      c = (at - b * d) / a;
+
+    if (Math.abs(rotationX) === Math.PI / 2) {
+      a = 0;
+      b = Math.sign(rotationX) * scaleX;
+    } else {
+      a = scaleX * Math.cos(rotationX);
+      b = scaleX * Math.sin(rotationX);
     }
+
+    if (Math.abs(rotationY) === Math.PI / 2) {
+      d = 0;
+      c = -Math.sign(rotationX) * scaleY;
+    } else {
+      d = scaleY * Math.cos(rotationY);
+      c = -scaleY * Math.sin(rotationY);
+    }
+
     return [a, b, c, d, x, y];
   }
 
@@ -52280,7 +52239,7 @@ Wick.Selection = class extends Wick.Base {
 
 
   get allAttributeNames() {
-    return ["strokeWidth", "fillColor", "strokeColor", "name", "filename", "fontSize", "fontFamily", "fontWeight", "fontStyle", "src", "frameLength", "x", "y", "originX", "originY", "width", "height", "rotation", "skew", "opacity", "sound", "soundVolume", "soundStart", "identifier", "easingType", "fullRotations", "tweenMethod", "scaleX", "scaleY", "animationType", "singleFrameNumber", "isSynced"];
+    return ["strokeWidth", "fillColor", "strokeColor", "name", "filename", "fontSize", "fontFamily", "fontWeight", "fontStyle", "src", "frameLength", "x", "y", "originX", "originY", "width", "height", "rotation", "opacity", "sound", "soundVolume", "soundStart", "identifier", "easingType", "fullRotations", "scaleX", "scaleY", "animationType", "singleFrameNumber", "isSynced"];
   }
   /**
    * Returns true if an object is selectable.
@@ -52760,25 +52719,6 @@ Wick.Selection = class extends Wick.Base {
     this.view.rotation = rotation;
   }
   /**
-   * The skew of a single clip.
-   * @type {number}
-   */
-
-
-  get skew() {
-    if (!(this.getSelectedObject() && (this.selectionType === "clip" || this.selectionType === "button"))) return null;
-    return this._getSingleAttribute('skew');
-  }
-
-  set skew(skew) {
-    let clip = this.getSelectedObject();
-
-    if (clip && (this.selectionType === "clip" || this.selectionType === "button")) {
-      this.project.tryToAutoCreateTween();
-      clip.skew = skew;
-    }
-  }
-  /**
    * It is the original width of the selection at creation.
    * @type {number}
    */
@@ -53135,19 +53075,6 @@ Wick.Selection = class extends Wick.Base {
 
   set fullRotations(fullRotations) {
     return this._setSingleAttribute('fullRotations', fullRotations);
-  }
-  /**
-   * The decomposition method of a tween.
-   * @type {Number}
-   */
-
-
-  get tweenMethod() {
-    return this._getSingleAttribute('tweenMethod');
-  }
-
-  set tweenMethod(tweenMethod) {
-    return this._setSingleAttribute('tweenMethod', tweenMethod);
   }
   /**
    * The filename of the selected asset. Read only.
@@ -53903,7 +53830,6 @@ Wick.Tween = class extends Wick.Base {
     this._transformation = args.transformation || new Wick.Transformation();
     this.fullRotations = args.fullRotations === undefined ? 0 : args.fullRotations;
     this.easingType = args.easingType || 'none';
-    this.tweenMethod = args.tweenMethod || 'normal';
     this._originalLayerIndex = -1;
   }
   /**
@@ -53920,22 +53846,12 @@ Wick.Tween = class extends Wick.Base {
     var t = Wick.Tween._calculateTimeValue(tweenA, tweenB, playheadPosition); // Interpolate every transformation attribute using the t value
 
 
-    var transformA = tweenA.transformation;
-    var transformB = tweenB.transformation;
-
-    if (tweenA.tweenMethod === 'normal') {
-      var paperTransform = {},
-          opacity;
-      transformA = transformA.paperValues;
-      transformB = transformB.paperValues;
-    }
-
     ["x", "y", "scaleX", "scaleY", "rotation", "skew", "opacity"].forEach(propName => {
       var tweenFn = tweenA._getTweenFunction();
 
       var tt = tweenFn(t);
-      var valA = transformA[propName];
-      var valB = transformB[propName];
+      var valA = tweenA.transformation[propName];
+      var valB = tweenB.transformation[propName];
 
       if (propName === 'rotation') {
         // Constrain rotation values to range of -180 to 180
@@ -53949,16 +53865,8 @@ Wick.Tween = class extends Wick.Base {
         valB += tweenA.fullRotations * 360;
       }
 
-      if (tweenA.tweenMethod === 'skew') interpTween.transformation[propName] = lerp(valA, valB, tt);else {
-        if (propName === 'opacity') opacity = lerp(valA, valB, tt);else paperTransform[propName] = lerp(valA, valB, tt);
-      }
+      interpTween.transformation[propName] = lerp(valA, valB, tt);
     });
-
-    if (tweenA.tweenMethod === 'normal') {
-      interpTween.transformation = Wick.Transformation.fromMatrix(Wick.Transformation.toMatrixPaper(paperTransform));
-      interpTween.transformation.opacity = opacity;
-    }
-
     interpTween.playheadPosition = playheadPosition;
     return interpTween;
   }
@@ -53974,7 +53882,6 @@ Wick.Tween = class extends Wick.Base {
     data.transformation = this._transformation.values;
     data.fullRotations = this.fullRotations;
     data.easingType = this.easingType;
-    data.tweenMethod = this.tweenMethod;
     data.originalLayerIndex = this.layerIndex !== -1 ? this.layerIndex : this._originalLayerIndex;
     return data;
   }
@@ -53986,7 +53893,6 @@ Wick.Tween = class extends Wick.Base {
     this._transformation = new Wick.Transformation(data.transformation);
     this.fullRotations = data.fullRotations;
     this.easingType = data.easingType;
-    this.tweenMethod = data.tweenMethod;
     this._originalLayerIndex = data.originalLayerIndex;
   }
   /**
@@ -54033,18 +53939,6 @@ Wick.Tween = class extends Wick.Base {
     }
 
     this._easingType = easingType;
-  }
-  /**
-   * 
-   */
-
-
-  get tweenMethod() {
-    return this._tweenMethod;
-  }
-
-  set tweenMethod(tweenMethod) {
-    if (tweenMethod === 'skew') this._tweenMethod = 'skew';else this._tweenMethod = 'normal';
   }
   /**
    * Remove this tween from its parent frame.
@@ -65477,7 +65371,7 @@ Wick.View.Frame = class extends Wick.View {
     }).forEach(child => {
       if (child instanceof paper.Group || child instanceof Wick.Clip) {
         var wickClip = Wick.ObjectCache.getObjectByUUID(child.data.wickUUID);
-        wickClip.transformation = Wick.Transformation.fromMatrix(child.matrix.values);
+        wickClip.transformation = Wick.Transformation.prototype.fromMatrix(child.matrix.values);
         wickClip.transformation.opacity = child.opacity;
       }
     });

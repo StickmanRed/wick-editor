@@ -515,16 +515,6 @@ class Inspector extends Component {
     )
   }
 
-  renderClipSkew = () => {
-    return (
-      <InspectorNumericInput
-        tooltip="Clip Skew"
-        val={this.getSelectionAttribute('skew')}
-        onChange={(val) => this.setSelectionAttribute('skew', val)}
-        id="inspector-clip-skew" />
-    )
-  }
-
   /**
    * Renders an inspector row allowing viewing and editing of the selection's opacity.
    */
@@ -552,23 +542,6 @@ class Inspector extends Component {
         {this.renderSize()}
         {this.renderScale()}
         {this.renderRotation()}
-        {this.renderOpacity()}
-      </div>
-    )
-  }
-
-  /**
-   * Renders an inspector row for a single clip that includes its skew.
-   */
-  renderSingleClipTransformProperties = () => {
-    return (
-      <div className="inspector-item">
-        {this.renderPosition()}
-        {this.renderOrigin()}
-        {this.renderSize()}
-        {this.renderScale()}
-        {this.renderRotation()}
-        {this.renderClipSkew()}
         {this.renderOpacity()}
       </div>
     )
@@ -697,20 +670,6 @@ class Inspector extends Component {
       </div>
     );
   }
-  
-   renderTweenMethod = () => {
-    return (
-      <div className="inspector-item">
-        <InspectorCheckbox
-          tooltip="Skew Rotate" 
-          checked={this.getSelectionAttribute('tweenMethod') === 'skew'}
-          onChange={(val) => this.setSelectionAttribute(
-            'tweenMethod',
-            (this.getSelectionAttribute('tweenMethod') === 'skew') ? 'normal' : 'skew'
-          )}/>
-      </div>
-    );
-  }
 
   renderGradientEndpointProperties = () => {
     return (
@@ -829,7 +788,6 @@ class Inspector extends Component {
       <div className="inspector-content">
         {this.renderTweenEasingType()}
         {this.renderTweenFullRotations()}
-        {this.renderTweenMethod()}
       </div>
      );
   }
@@ -882,7 +840,7 @@ class Inspector extends Component {
           getActive={() => this.getSelectionAttribute('singleFrameNumber')}
           onChange={(val) => this.setSelectionAttribute('singleFrameNumber', val)} />
         {this.renderIdentifier()}
-        {this.renderSingleClipTransformProperties()}
+        {this.renderSelectionTransformProperties()}
       </div>
     );
   }
