@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "b41f64073654a74cbcd0",
-    "url": "/wick-editor/test/static/css/main.ef1f16e8.chunk.css"
+    "revision": "e59c94a1bc7680d1c914",
+    "url": "/wick-editor/test/static/css/main.b9f3afbd.chunk.css"
   },
   {
-    "revision": "b41f64073654a74cbcd0",
-    "url": "/wick-editor/test/static/js/main.b41f6407.chunk.js"
+    "revision": "e59c94a1bc7680d1c914",
+    "url": "/wick-editor/test/static/js/main.e59c94a1.chunk.js"
   },
   {
-    "revision": "a20d6b5145df8711d175",
-    "url": "/wick-editor/test/static/css/1.5e08d9ce.chunk.css"
+    "revision": "542cb72f3a2c4b2a06aa",
+    "url": "/wick-editor/test/static/css/1.cb8c320a.chunk.css"
   },
   {
-    "revision": "a20d6b5145df8711d175",
-    "url": "/wick-editor/test/static/js/1.a20d6b51.chunk.js"
+    "revision": "542cb72f3a2c4b2a06aa",
+    "url": "/wick-editor/test/static/js/1.542cb72f.chunk.js"
   },
   {
     "revision": "7f30652f952f9205efcd",
@@ -52,20 +52,8 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/brushsmoothness.4bad7455.svg"
   },
   {
-    "revision": "38501b87b5e94dabc104ab4ffc2fe8a1",
-    "url": "/wick-editor/test/static/media/style-icon.38501b87.svg"
-  },
-  {
-    "revision": "8db1b4099de0edca9cd779e6566c990a",
-    "url": "/wick-editor/test/static/media/style-icon-active.8db1b409.svg"
-  },
-  {
     "revision": "5c1d16f9b99249d7f58360c3c7441688",
     "url": "/wick-editor/test/static/media/sound.5c1d16f9.svg"
-  },
-  {
-    "revision": "e1be1ab47b9048b0465271797c7ea0bc",
-    "url": "/wick-editor/test/static/media/fillopacity-icon.e1be1ab4.svg"
   },
   {
     "revision": "03345b4c97237186b4b411c879663e34",
@@ -124,8 +112,12 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/swatches.2f1c23e9.svg"
   },
   {
-    "revision": "2f03b033777850f1e7782f4d6b921fc9",
-    "url": "/wick-editor/test/static/media/gradienttool.2f03b033.svg"
+    "revision": "4f9c3f7d54c209ed50965e5dd2c30cd6",
+    "url": "/wick-editor/test/static/media/linear.4f9c3f7d.svg"
+  },
+  {
+    "revision": "37e5537eddba04a2f8fe33c386fb807a",
+    "url": "/wick-editor/test/static/media/radial.37e5537e.svg"
   },
   {
     "revision": "599d3aaa9ad0fbbc7e94b50a505c753c",
@@ -178,14 +170,6 @@ self.__precacheManifest = [
   {
     "revision": "5c9dd1b1e8aab988facdaa4783783f6c",
     "url": "/wick-editor/test/static/media/relativebrush.5c9dd1b1.png"
-  },
-  {
-    "revision": "fa53efc66ded43f7886c6d728c9a651c",
-    "url": "/wick-editor/test/static/media/gradient-mode-none.fa53efc6.svg"
-  },
-  {
-    "revision": "a1c6e94cf853f9d839c73eda455fff69",
-    "url": "/wick-editor/test/static/media/gradient-mode-uniform.a1c6e94c.svg"
   },
   {
     "revision": "755e2c136b8e1db91199b4cfd888b94d",
@@ -286,10 +270,6 @@ self.__precacheManifest = [
   {
     "revision": "bc201a21e51a64c5229b23f8f3949257",
     "url": "/wick-editor/test/static/media/upload-icon-dark.bc201a21.svg"
-  },
-  {
-    "revision": "d74a1a82e2ddc5a2e017e370d78b260d",
-    "url": "/wick-editor/test/static/media/reverse-gradient.d74a1a82.svg"
   },
   {
     "revision": "35c8ded661f6bb463c5ecccdf1e04612",
@@ -604,6 +584,14 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/transform-icon-active.5e1e03e7.svg"
   },
   {
+    "revision": "38501b87b5e94dabc104ab4ffc2fe8a1",
+    "url": "/wick-editor/test/static/media/style-icon.38501b87.svg"
+  },
+  {
+    "revision": "8db1b4099de0edca9cd779e6566c990a",
+    "url": "/wick-editor/test/static/media/style-icon-active.8db1b409.svg"
+  },
+  {
     "revision": "da9ae860047599b002f8e153697faa9a",
     "url": "/wick-editor/test/static/media/font-icon.da9ae860.svg"
   },
@@ -656,24 +644,8 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/opacity-icon.194043c2.svg"
   },
   {
-    "revision": "d644417c8d2847e3f728053633c70f64",
-    "url": "/wick-editor/test/static/media/gradient-startX-icon.d644417c.svg"
-  },
-  {
-    "revision": "77d5238ccc643821e3f7670670b6363e",
-    "url": "/wick-editor/test/static/media/gradient-startY-icon.77d5238c.svg"
-  },
-  {
-    "revision": "200dc645f6deec94a1481f111053fcd7",
-    "url": "/wick-editor/test/static/media/gradient-endX-icon.200dc645.svg"
-  },
-  {
-    "revision": "03a87067aa8aa9d34bc429c156fe321f",
-    "url": "/wick-editor/test/static/media/gradient-endY-icon.03a87067.svg"
-  },
-  {
-    "revision": "f8d5a147fd6353fcb10c95600370bfbc",
-    "url": "/wick-editor/test/static/media/gradient-stopoffset-icon.f8d5a147.svg"
+    "revision": "e1be1ab47b9048b0465271797c7ea0bc",
+    "url": "/wick-editor/test/static/media/fillopacity-icon.e1be1ab4.svg"
   },
   {
     "revision": "aea2219d900ab79f3eaa450b7f35fca4",
@@ -768,7 +740,7 @@ self.__precacheManifest = [
     "url": "/wick-editor/test/static/media/white-heart.14b06d09.svg"
   },
   {
-    "revision": "1e270e3acc3fb2d0801f6a8ab5b3642b",
+    "revision": "a8210ce81fac23ebcd9565b0570bb16a",
     "url": "/wick-editor/test/index.html"
   }
 ];
