@@ -1137,6 +1137,20 @@ Wick.Clip = class extends Wick.Tickable {
     }
 
     /**
+     * The shear of the clip.
+     * @type {number}
+     */
+    get shear() {
+        return this.transformation.shear;
+    }
+
+    set shear(shear) {
+        this.transformation.shear = shear;
+
+        this._onDirtyTransform();
+    }
+
+    /**
      * The opacity of the clip.
      * @type {number}
      */
