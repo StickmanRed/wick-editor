@@ -134,11 +134,6 @@ Wick.ToolSettings = class {
             name: 'cursorTransformMode',
             default: 'freescale',
             options: ['freescale', 'uniform', 'skew', 'skewscale']
-        }, {
-            type: "choice",
-            name: 'gradientToolMode',
-            default: 'none',
-            options: ['none', 'uniform']
         }];
     }
 

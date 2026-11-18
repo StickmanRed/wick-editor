@@ -74,6 +74,20 @@ Wick.Tools.Cursor = class extends Wick.Tool {
 
         // Update the image being used for the cursor
         this._setCursor(this._getCursor());
+
+        if(this._selection.useGradientGUI) {
+            // Update the gradient hover stop
+            const widget = this._widget;
+            if(widget._gradientGUI.container.visible) {
+                let item = this.hitResult.item;
+                if(item && item.data.parentItem) item = item.data.parentItem;
+                if(!item || !item.data.handleType) {
+                    widget._buildHoverStop(e.point);
+                } else {
+                    widget._gradientGUI.hoverStop.visible = false;
+                }
+            }
+        }
     }
 
     onMouseDown (e) {
@@ -85,6 +99,35 @@ Wick.Tools.Cursor = class extends Wick.Tool {
 
         this._widget.transformMode = this.getSetting('cursorTransformMode');
 
+        if(this._selection.useGradientGUI) {
+            // Clicked the gradient editor GUI, check for stop creation/selection
+            const widget = this._widget;
+            widget._gradientGUI.createdStopOnDown = false;
+            if(widget._gradientGUI.container.visible) {
+                let item = this.hitResult.item;
+                if(item && item.data.parentItem) item = item.data.parentItem;
+                let stopIndex = null;
+
+                if(item && item.data.handleType === 'gradient-stop') {
+                    widget._selectStop(item);
+                    stopIndex = widget._gradientGUI.stops.indexOf(item);
+                } else if(!item || !item.data.handleType) {
+                    stopIndex = widget._createStopFromPoint(e.point);
+                    if(stopIndex !== null) {
+                        widget._gradientGUI.createdStopOnDown = true;
+                    }
+                }
+                
+                if(stopIndex !== null) {
+                    this._selection.selectedStopIndex = stopIndex;
+					widget._updateItems();
+                    this.fireEvent({eventName: 'canvasModified', actionName: 'cursorSelectStop'});
+                }
+				
+				if((item && item.data.handleType && item.data.handleType.startsWith('gradient-'))
+				   || stopIndex !== null) return;
+            }
+        }
         if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Clicked the selection box GUI, do nothing
         } else if(this.hitResult.item && this._isItemSelected(this.hitResult.item)) {
@@ -140,7 +183,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         if(this.hitResult.item && this.hitResult.item.data.isSelectionBoxGUI) {
             // Update selection drag
             if(!this._widget.currentTransformation) {
-                this._widget.startTransformation(this.hitResult.item);
+                this._widget.startTransformation(this.hitResult.item, e);
             }
             this._widget.updateTransformation(this.hitResult.item, e);
         } else if (this.selectionBox.active) {
@@ -149,7 +192,7 @@ Wick.Tools.Cursor = class extends Wick.Tool {
         } else if(this.hitResult.item && this.hitResult.type === 'fill') {
             // We're dragging the selection itself, so move the whole item.
             if(!this._widget.currentTransformation) {
-                this._widget.startTransformation(this.hitResult.item);
+                this._widget.startTransformation(this.hitResult.item, e);
             }
             this._widget.updateTransformation(this.hitResult.item, e);
         } else {
@@ -241,6 +284,12 @@ Wick.Tools.Cursor = class extends Wick.Tool {
     _getCursor () {
         if(!this.hitResult.item) {
             return this.CURSOR_DEFAULT;
+        /*} else if (
+			(this.hitResult.item.data.parentItem
+				&& this.hitResult.item.data.parentItem.data.handleType === 'gradient-stop')
+			|| this.hitResult.item.data.handleType === 'gradient-point'
+		) {
+			return this.CURSOR_GRAD;*/
         } else if (this.hitResult.item.data.isSelectionBoxGUI) {
             // Don't show any custom cursor if the mouse is over the border, the border does nothing
             if(this.hitResult.item.name === 'border') {

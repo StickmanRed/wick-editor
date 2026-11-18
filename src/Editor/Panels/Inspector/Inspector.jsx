@@ -65,9 +65,6 @@ class Inspector extends Component {
       "multiassetmixed": this.renderAsset,
       "multisoundasset": this.renderAsset,
       "multiimageasset": this.renderAsset,
-      "gradientfill": this.renderGradientTarget,
-      "gradientstroke": this.renderGradientTarget,
-      "gradientstop": this.renderGradientStop,
     }
 
     /**
@@ -81,8 +78,6 @@ class Inspector extends Component {
       'addAssetToCanvas': ["imageasset"],
       'convertLayersToClip': ["layer", "multilayer"],
       'distributeSelectionToLayers': ["path", "text", "image", "multipath", "multiclip", "multicanvas"],
-      'reverseGradient': ["gradientfill", "gradientstroke"],
-      'deleteGradientStop': ["gradientstop"]
     }
 
     /**
@@ -109,17 +104,14 @@ class Inspector extends Component {
       "multiassetmixed": "Multi-Asset",
       "multisoundasset": "Multi-Asset Sound",
       "multiimageasset": "Multi-Asset Image",
-      "gradientfill": "Fill",
-      "gradientstroke": "Stroke",
-      "gradientstop": "Gradient Stop",
       "unknown": "",
     }
   }
 
   /**
    * Returns the value of a requested selection attribute.
-   * @param {string} attribute Selection attribute to retrieve.
-   * @return {string|number|undefined} Value of the selection attribute to retrieve. Returns undefined if attribute does not exist.
+   * @param  {string} attribute Selection attribute to retrieve.
+   * @return {string|number|undefined} Value of the selection attribute to retrieve. Returns undefined is attribute does not exist.
    */
   getSelectionAttribute = (attribute) => {
     if (attribute === 'fillColorOpacity') {
@@ -131,41 +123,48 @@ class Inspector extends Component {
 
   /**
    * Returns the selection fill color opacity.
-   * @return {number} fill color opacity from 0 to 1.
+   * @return {string} fill color opacity from 0 to 1.
    */
   getSelectionFillColorOpacity = () => {
-    return this.getSelectionAttribute('fillColor').alpha;
-  }
-
-  /**
-   * Returns the value of a requested gradient tool attribute.
-   * @param {string} attribute Gradient tool attribute to retrieve.
-   * @return {string|number|undefined} Value of the attribute to retrieve. Returns undefined if attribute does not exist or gradient tool is inactive.
-   */
-  getGradientToolAttribute = (attribute) => {
-    var activeTool = this.props.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      return activeTool[attribute];
+    let color = this.getSelectionAttribute('fillColor');
+    if (color instanceof window.paper.Color && color.gradient) {
+      let maxOpacity = color.gradient.stops.reduce((total, stop) => stop.color.alpha > total ? stop.color.alpha : total, 0);
+      return maxOpacity;
     }
-    else {
-      return undefined;
-    }
+    return color.alpha;
   }
 
   /**
    * Sets the value of the selection fillColor opacity.
-   * @param {number} value Fill color opacity from 0 to 1.
+   * @param  {string} attribute Selection attribute to retrieve.
    */
   setSelectionFillColorOpacity = (value) => {
     var color = this.getSelectionAttribute('fillColor');
-    color.alpha = value;
-    this.setSelectionAttribute('fillColor', color);
+    if (color instanceof window.paper.Color && color.gradient) {
+      let maxOpacity = color.gradient.stops.reduce((total, stop) => stop.color.alpha > total ? stop.color.alpha : total, 0);
+      if (maxOpacity === 0) {
+        color.gradient.stops.forEach(stop => {
+          stop.color.alpha = value;
+        });
+      }
+      else {
+        let changeFactor = value / maxOpacity;
+        color.gradient.stops.forEach(stop => {
+          stop.color.alpha *= changeFactor;
+        });
+      }
+
+    }
+    else {
+      color.alpha = value;
+      this.setSelectionAttribute('fillColor', color);
+    }
   }
 
   /**
    * Updates the value of a selection attribute for the selected item in the editor.
    * @param {string} attribute Name of the attribute to update.
-   * @param {string|number} newValue New value of the attribute to update.
+   * @param {string|number} newValue  New value of the attribute to update.
    */
   setSelectionAttribute = (attribute, newValue) => {
     if (attribute === 'fillColorOpacity') {
@@ -175,15 +174,17 @@ class Inspector extends Component {
   }
 
   /**
-   * Updates the value of a gradient tool attribute.
-   * @param {string} attribute Name of the gradient tool attribute to update.
-   * @param {string|number} newValue New value of the attribute to update.
+   * Updates the value of a selection attribute without adding to the undo stack.
+   * @param {string} attribute Name of the attribute to update.
+   * @param {string|number} newValue  New value of the attribute to update.
    */
-  setGradientToolAttribute = (attribute, newValue) => {
-    var activeTool = this.props.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      activeTool[attribute] = newValue;
+  setSelectionAttributeIntermediate = (attribute, newValue) => {
+    if (attribute === 'fillColorOpacity') {
+      return this.setSelectionFillColorOpacity(newValue);
     }
+    this.props.project.selection[attribute] = newValue;
+    this.props.project.view.render();
+    this.props.project.guiElement.draw();
   }
 
   // Inspector Row Types
@@ -212,8 +213,15 @@ class Inspector extends Component {
         <InspectorColorNumericInput
           tooltip1="Fill"
           tooltip2="Opacity"
-          val1={this.getSelectionAttribute('fillColor').toCSS()}
+          val1={this.getSelectionAttribute('fillColor')}
           onChange1={(col) => this.setSelectionAttribute('fillColor', col)}
+          onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('fillColor', col)}
+          enableGradient={true}
+          selectionProps={{
+            getSelection: () => this.props.project.selection,
+            renderSelection: () => this.props.project.view.render(),
+            targetCanvas: this.props.project.view._svgCanvas
+          }}
           id={"inspector-selection-fill-color"}
           val2={this.getSelectionAttribute('fillColorOpacity')}
           onChange2={(val) => this.setSelectionAttribute('fillColorOpacity', val)}
@@ -227,8 +235,15 @@ class Inspector extends Component {
           tooltip1="Stroke"
           tooltip2="Weight"
 
-          val1={this.getSelectionAttribute('strokeColor').toCSS()}
+          val1={this.getSelectionAttribute('strokeColor')}
           onChange1={(col) => this.setSelectionAttribute('strokeColor', col)}
+          onChangeIntermediate1={(col) => this.setSelectionAttributeIntermediate('strokeColor', col)}
+          enableGradient={true}
+          selectionProps={{
+            getSelection: () => this.props.project.selection,
+            renderSelection: () => this.props.project.view.render(),
+            targetCanvas: this.props.project.view._svgCanvas
+          }}
           id={"inspector-selection-stroke-color"}
           stroke={true}
 
@@ -515,13 +530,16 @@ class Inspector extends Component {
     )
   }
 
-  renderClipSkew = () => {
+  /**
+   * Renders an inspector row allowing viewing and editing of the selection's shear.
+   */
+  renderShear = () => {
     return (
       <InspectorNumericInput
-        tooltip="Clip Skew"
-        val={this.getSelectionAttribute('skew')}
-        onChange={(val) => this.setSelectionAttribute('skew', val)}
-        id="inspector-clip-skew" />
+        tooltip="Shear"
+        val={this.getSelectionAttribute('shear')}
+        onChange={(val) => this.setSelectionAttribute('shear', val)}
+        id="inspector-shear" />
     )
   }
 
@@ -552,23 +570,7 @@ class Inspector extends Component {
         {this.renderSize()}
         {this.renderScale()}
         {this.renderRotation()}
-        {this.renderOpacity()}
-      </div>
-    )
-  }
-
-  /**
-   * Renders an inspector row for a single clip that includes its skew.
-   */
-  renderSingleClipTransformProperties = () => {
-    return (
-      <div className="inspector-item">
-        {this.renderPosition()}
-        {this.renderOrigin()}
-        {this.renderSize()}
-        {this.renderScale()}
-        {this.renderRotation()}
-        {this.renderClipSkew()}
+        {this.renderShear()}
         {this.renderOpacity()}
       </div>
     )
@@ -697,81 +699,6 @@ class Inspector extends Component {
       </div>
     );
   }
-  
-   renderTweenMethod = () => {
-    return (
-      <div className="inspector-item">
-        <InspectorCheckbox
-          tooltip="Skew Rotate" 
-          checked={this.getSelectionAttribute('tweenMethod') === 'skew'}
-          onChange={(val) => this.setSelectionAttribute(
-            'tweenMethod',
-            (this.getSelectionAttribute('tweenMethod') === 'skew') ? 'normal' : 'skew'
-          )}/>
-      </div>
-    );
-  }
-
-  renderGradientEndpointProperties = () => {
-    return (
-      <div className="inspector-item">
-        <InspectorSelector
-          tooltip="Type"
-          type="select"
-          options={[{label: 'linear', value: 'linear'}, {label: 'radial', value: 'radial'}]}
-          value={this.getGradientToolAttribute('gradientType')}
-          isSearchable={true}
-          onChange={(val) => {this.setGradientToolAttribute('gradientType', val.value)}} />
-        <InspectorDualNumericInput
-          tooltip1="Start X"
-          tooltip2="Start Y"
-          val1={this.getGradientToolAttribute('originX')}
-          val2={this.getGradientToolAttribute('originY')}
-          onChange1={(val) => this.setGradientToolAttribute('originX', val)}
-          onChange2={(val) => this.setGradientToolAttribute('originY', val)}
-          id="inspector-gradient-tool-origin" />
-        <InspectorDualNumericInput
-          tooltip1="End X"
-          tooltip2="End Y"
-          val1={this.getGradientToolAttribute('destinationX')}
-          val2={this.getGradientToolAttribute('destinationY')}
-          onChange1={(val) => this.setGradientToolAttribute('destinationX', val)}
-          onChange2={(val) => this.setGradientToolAttribute('destinationY', val)}
-          id="inspector-gradient-tool-destination" />
-        <InspectorNumericInput
-          tooltip="Angle"
-          val={this.getGradientToolAttribute('lineAngle')}
-          onChange={(val) => this.setGradientToolAttribute('lineAngle', val)}
-          id="inspector-gradient-tool-line-angle" />
-      </div>
-    )
-  }
-
-  renderGradientStopProperties = () => {
-    return (
-      <div className="inspector-item">
-        <InspectorColorNumericInput
-          tooltip1="Color"
-          tooltip2="Opacity"
-          val1={this.getGradientToolAttribute('stopColor').toCSS()}
-          onChange1={(col) => this.setGradientToolAttribute('stopColor', col)}
-          id={"inspector-gradient-stop-color"}
-          val2={this.getGradientToolAttribute('stopOpacity')}
-          onChange2={(val) => this.setGradientToolAttribute('stopOpacity', val)}
-          divider={false}
-          colorPickerType={this.props.colorPickerType}
-          changeColorPickerType={this.props.changeColorPickerType}
-          updateLastColors={this.props.updateLastColors}
-          lastColorsUsed={this.props.lastColorsUsed}
-        />
-        <InspectorNumericInput
-          tooltip="Offset"
-          val={this.getGradientToolAttribute('stopOffset')}
-          onChange={(val) => this.setGradientToolAttribute('stopOffset', val)}
-          id="inspector-gradient-tool-stop-offset" />
-      </div>
-    )
-  }
 
   // Selection contents and properties
 
@@ -829,7 +756,6 @@ class Inspector extends Component {
       <div className="inspector-content">
         {this.renderTweenEasingType()}
         {this.renderTweenFullRotations()}
-        {this.renderTweenMethod()}
       </div>
      );
   }
@@ -882,7 +808,7 @@ class Inspector extends Component {
           getActive={() => this.getSelectionAttribute('singleFrameNumber')}
           onChange={(val) => this.setSelectionAttribute('singleFrameNumber', val)} />
         {this.renderIdentifier()}
-        {this.renderSingleClipTransformProperties()}
+        {this.renderSelectionTransformProperties()}
       </div>
     );
   }
@@ -1004,28 +930,6 @@ class Inspector extends Component {
   }
 
   /**
-   * Renders the inspector view for all properties of a gradient target selection.
-   */
-  renderGradientTarget = () => {
-    return (
-      <div className="inspector-content">
-        {this.renderGradientEndpointProperties()}
-      </div>
-    )
-  }
-
-  /**
-   * Renders the inspector view for all properties of a gradient stop selection.
-   */
-  renderGradientStop = () => {
-    return (
-      <div className="inspector-content">
-        {this.renderGradientStopProperties()}
-      </div>
-    )
-  }
-
-  /**
    * Renders a default selection view with no properties.
    */
   renderUnknown = () => {
@@ -1073,11 +977,11 @@ class Inspector extends Component {
 
   /**
    * Renders all actions for the current selection.
-   * @param {string} selectionType The selection type to show actions.
    * @returns {Component} JSX component containing all the actions for the current selection.
    */
-  renderActions = (selectionType) => {
+  renderActions = () => {
     let actions = [];
+    let selectionType = this.props.getSelectionType();
 
     Object.keys(this.actionRules).forEach(action => {
         let actionList = this.actionRules[action];
@@ -1127,33 +1031,18 @@ class Inspector extends Component {
   }
 
   render() {
-    var activeTool = this.props.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      let selectionType = activeTool.selectionType;
-      return(
-        <div className="docked-pane inspector" aria-label="Inspector Panel">
-          {this.renderTitle(selectionType)}
-          <div className="inspector-body">
-            {this.renderDisplay(selectionType)}
-            {this.renderActions(selectionType)}
-          </div>
+    let selectionType = this.props.getSelectionType();
+    return(
+      <div className="docked-pane inspector" aria-label="Inspector Panel">
+        {this.renderTitle(selectionType)}
+        <div className="inspector-body">
+          {this.renderDisplay(selectionType)}
+          {this.renderActions()}
+          {this.props.selectionIsScriptable() && this.renderScripts()}
+          {selectionType === 'clip' && this.renderAnimationSetting()}
         </div>
-      )
-    }
-    else {
-      let selectionType = this.props.getSelectionType();
-      return(
-        <div className="docked-pane inspector" aria-label="Inspector Panel">
-          {this.renderTitle(selectionType)}
-          <div className="inspector-body">
-            {this.renderDisplay(selectionType)}
-            {this.renderActions(selectionType)}
-            {this.props.selectionIsScriptable() && this.renderScripts()}
-            {selectionType === 'clip' && this.renderAnimationSetting()}
-          </div>
-        </div>
-      )
-    }
+      </div>
+    )
   }
 }
 

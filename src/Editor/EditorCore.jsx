@@ -53,7 +53,6 @@ class EditorCore extends Component {
       // See: https://github.com/reactstrap/reactstrap/issues/894
       this.toggleBrushModes(false);
       this.toggleCursorTransformModes(false);
-      this.toggleGradientToolModes(false);
 
       this.projectDidChange({ actionName: "Set Active Tool: " + newTool });
     }
@@ -529,28 +528,6 @@ class EditorCore extends Component {
   }
 
   /**
-   * Reverses the gradient of the gradient tool target.
-   */
-  reverseGradient = () => {
-    var activeTool = this.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      activeTool.reverseGradient();
-      this.projectDidChange({ actionName: "Reverse Gradient" });
-    }
-  }
-
-  /**
-   * Deletes the selected color stop of the gradient tool.
-   */
-  deleteGradientStop = () => {
-    var activeTool = this.getActiveTool();
-    if (activeTool.name === 'gradienttool') {
-      activeTool.deleteSelectedColorStop();
-      this.projectDidChange({ actionName: "Delete Gradient Color Stop" });
-    }
-  }
-
-  /**
    * Creates a new button from the selected paths and clips and adds it to the project.
    * @param {string} name The name of the button after creation.
    */
@@ -604,8 +581,13 @@ class EditorCore extends Component {
         cancelText: "Cancel",
       });
     } else {
-      this.project.deleteSelectedObjects();
-      this.projectDidChange({actionName: "Delete Selected Objects"});
+      if(this.project.selection.useGradientGUI) {
+        this.project.selection.deleteSelectedStop();
+        this.projectDidChange({actionName: "Delete Selected Stop"});
+      } else {
+        this.project.deleteSelectedObjects();
+        this.projectDidChange({actionName: "Delete Selected Objects"});
+      }
     }
   }
 

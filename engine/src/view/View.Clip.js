@@ -172,8 +172,8 @@ Wick.View.Clip = class extends Wick.View {
 
         //this._radius = null;
 
-        this.group.pivot = new this.paper.Point(0,0);
-        this.group.matrix.set(this.model.transformation.toMatrix());
+        this.group.pivot = this.model.pivot || new this.paper.Point(0,0);
+        this.group.matrix.translate(this.group.pivot.multiply(-1)).prepend(new paper.Matrix(this.model.transformation.matrix));
         this.group.opacity = this.model.transformation.opacity;
     }
 
@@ -202,8 +202,8 @@ Wick.View.Clip = class extends Wick.View {
         });
         group.addChild(border);
 
-        group.pivot = new this.paper.Point(0,0);
-        group.matrix.set(this.model.transformation.toMatrix());
+        group.pivot = this.model.pivot || new this.paper.Point(0,0);
+        group.matrix.translate(this.group.pivot.multiply(-1)).prepend(new paper.Matrix(this.model.transformation.matrix));
 
         return group;
     }
